@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#171009;font-family:'Noto Sans TC',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#e0b877}a:hover{color:#f0cd94}
+::selection{background:#e0b877;color:#241a12}
+input,textarea,button,select{font-family:'Noto Sans TC',system-ui,sans-serif}
+button{transition:transform .16s cubic-bezier(.34,1.56,.64,1),opacity .16s ease,box-shadow .2s ease}
+button:active{transform:scale(.96)}
+input,textarea{transition:border-color .2s ease,box-shadow .2s ease}
+input:focus,textarea:focus{border-color:#e0b877 !important;box-shadow:0 0 0 3px rgba(224,184,119,.12)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes sheetUp{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:none}}
+@keyframes steam{0%{transform:translateY(0) scaleX(1);opacity:0}25%{opacity:.85}100%{transform:translateY(-14px) scaleX(1.4);opacity:0}}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(224,184,119,.5)}55%{box-shadow:0 0 0 7px rgba(224,184,119,0)}}
+@keyframes ringSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes growBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes growW{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes popIn{0%{opacity:0;transform:scale(.85)}70%{transform:scale(1.03)}100%{opacity:1;transform:scale(1)}}
+.rng{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:0;cursor:pointer}
+.rng::-webkit-slider-runnable-track{height:4px;background:transparent}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f4d9a8,#e0b877 55%,#c8985a);border:3px solid #241a12;box-shadow:0 2px 8px rgba(0,0,0,.55),0 0 0 1px rgba(224,184,119,.35);margin-top:-10px;transition:transform .15s ease}
+.rng:active::-webkit-slider-thumb{transform:scale(1.25)}
+.rng::-moz-range-track{height:4px;background:transparent}
+.rng::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f4d9a8,#e0b877 55%,#c8985a);border:3px solid #241a12;box-shadow:0 2px 8px rgba(0,0,0,.55)}
+</style>
+</helmet>
+
+<div style="max-width:430px;margin:0 auto;min-height:100vh;background:#241a12;color:#f2ead9;display:flex;flex-direction:column;position:relative;box-shadow:0 0 60px rgba(0,0,0,.6)">
+
+<!-- ================= 首頁 ================= -->
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="padding:48px 28px 40px;display:flex;flex-direction:column;gap:26px;flex:1;background:radial-gradient(120% 60% at 50% 0%,#33241539 0%,transparent 60%);animation:fadeIn .4s ease both">
+  <div style="display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;margin-top:14px;position:relative;animation:fadeUp .6s ease both">
+    <div style="position:absolute;top:-26px;left:50%;width:190px;height:190px;margin-left:-95px;border-radius:50%;border:1px solid rgba(224,184,119,.14);pointer-events:none"></div>
+    <div style="position:absolute;top:-14px;left:50%;width:166px;height:166px;margin-left:-83px;border-radius:50%;border:1px dashed rgba(224,184,119,.10);pointer-events:none;animation:ringSpin 90s linear infinite"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+      <div style="display:flex;gap:7px;align-items:flex-end;height:20px;margin-bottom:2px">
+        <div style="width:2px;height:12px;border-radius:2px;background:#e0b877;animation:steam 2.6s ease-in-out .2s infinite"></div>
+        <div style="width:2px;height:15px;border-radius:2px;background:#e0b877;animation:steam 2.6s ease-in-out .9s infinite"></div>
+        <div style="width:2px;height:11px;border-radius:2px;background:#e0b877;animation:steam 2.6s ease-in-out 1.6s infinite"></div>
+      </div>
+      <div style="width:44px;height:24px;border:2px solid #e0b877;border-top:none;border-radius:0 0 24px 24px;position:relative">
+        <div style="position:absolute;right:-11px;top:1px;width:9px;height:11px;border:2px solid #e0b877;border-left:none;border-radius:0 8px 8px 0"></div>
+      </div>
+      <div style="width:26px;height:2px;background:#e0b877;margin-top:4px;border-radius:1px"></div>
+    </div>
+    <div style="font-family:'Noto Serif TC',serif;font-size:34px;font-weight:600;letter-spacing:.14em;margin-top:6px">杯測會</div>
+    <div style="display:flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:.34em;color:#b08d63">
+      <div style="width:22px;height:1px;background:#6a543e"></div>CUPPING SESSION<div style="width:22px;height:1px;background:#6a543e"></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;animation:fadeUp .6s ease .08s both">
+    <div style="font-size:13px;color:#b08d63">你的名字 <span style="font-size:11px;color:#6a543e">辨識身份 · 跨場次累積成績</span></div>
+    <input value="{{ userName }}" onChange="{{ setUserName }}" placeholder="例：小魏" style="height:48px;background:#3a2a1a;border:1px solid #4a382a;border-radius:12px;color:#f2ead9;font-size:15px;padding:0 16px;outline:none">
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px;animation:fadeUp .6s ease .16s both">
+    <div style="font-size:13px;color:#b08d63">輸入房間代碼加入</div>
+    <div style="position:relative;display:flex;gap:8px">
+      <div style="flex:1;height:60px;border-radius:12px;background:#3a2a1a;border:1px solid {{ codeB0 }};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:30px">{{ codeC0 }}</div>
+      <div style="flex:1;height:60px;border-radius:12px;background:#3a2a1a;border:1px solid {{ codeB1 }};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:30px">{{ codeC1 }}</div>
+      <div style="flex:1;height:60px;border-radius:12px;background:#3a2a1a;border:1px solid {{ codeB2 }};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:30px">{{ codeC2 }}</div>
+      <div style="flex:1;height:60px;border-radius:12px;background:#3a2a1a;border:1px solid {{ codeB3 }};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:30px">{{ codeC3 }}</div>
+      <input value="{{ code }}" onChange="{{ setCode }}" maxLength="4" autoCapitalize="characters" style="position:absolute;inset:0;width:100%;opacity:0;font-size:30px;background:transparent;border:none;letter-spacing:2em;color:transparent;caret-color:transparent">
+    </div>
+    <button onClick="{{ joinRoom }}" style="height:54px;border-radius:27px;background:#e0b877;color:#241a12;border:none;font-size:16px;font-weight:700;letter-spacing:.1em;cursor:pointer">加入房間</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;color:#6a543e;font-size:12px;animation:fadeUp .6s ease .22s both"><div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#3a2c1e)"></div>或<div style="flex:1;height:1px;background:linear-gradient(270deg,transparent,#3a2c1e)"></div></div>
+  <button onClick="{{ goSetup }}" style="height:54px;border-radius:27px;background:transparent;border:1.5px solid #e0b877;color:#e0b877;font-size:16px;font-weight:500;letter-spacing:.1em;cursor:pointer;animation:fadeUp .6s ease .28s both" style-hover="background:rgba(224,184,119,.08)">建立房間（房主）</button>
+  <button onClick="{{ goArchive }}" style="height:50px;border-radius:25px;background:transparent;border:1px solid #4a382a;color:#b08d63;font-size:14px;letter-spacing:.08em;cursor:pointer;animation:fadeUp .6s ease .34s both" style-hover="border-color:#6a543e;color:#e0b877">杯測豆歷史資料庫</button>
+  <div style="margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px;font-size:10.5px;letter-spacing:.18em;color:#6a543e;animation:fadeUp .6s ease .4s both"><div style="width:4px;height:4px;border-radius:50%;background:#4a382a"></div>CUP OF EXCELLENCE 評分規範 · 36–100<div style="width:4px;height:4px;border-radius:50%;background:#4a382a"></div></div>
+</div>
+</sc-if>
+
+<!-- ================= 房主設定 ================= -->
+<sc-if value="{{ isSetup }}" hint-placeholder-val="{{ false }}">
+<div style="padding:24px 22px 40px;display:flex;flex-direction:column;gap:20px;flex:1;animation:fadeUp .45s ease both">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button onClick="{{ goHome }}" style="width:40px;height:40px;border-radius:50%;background:#3a2a1a;border:1px solid #4a382a;color:#e0b877;font-size:16px;cursor:pointer">←</button>
+    <div style="display:flex;flex-direction:column;gap:1px">
+      <div style="font-size:9.5px;letter-spacing:.32em;color:#8a6f52">HOST SETUP</div>
+      <div style="font-family:'Noto Serif TC',serif;font-size:24px;font-weight:600">建立房間</div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:13px;color:#b08d63">杯測模式</div>
+    <div style="display:flex;gap:10px">
+      <button onClick="{{ setBlind }}" style="flex:1;padding:14px 10px;border-radius:14px;text-align:left;cursor:pointer;background:{{ blindBg }};border:1.5px solid {{ blindBd }};color:{{ blindFg }}">
+        <div style="font-size:15px;font-weight:700">盲測</div>
+        <div style="font-size:11px;margin-top:4px;opacity:.75">只看編號，公佈後猜豆排行</div>
+      </button>
+      <button onClick="{{ setOpen }}" style="flex:1;padding:14px 10px;border-radius:14px;text-align:left;cursor:pointer;background:{{ openBg }};border:1.5px solid {{ openBd }};color:{{ openFg }}">
+        <div style="font-size:15px;font-weight:700">公開</div>
+        <div style="font-size:11px;margin-top:4px;opacity:.75">顯示豆名，公佈平均與自評</div>
+      </button>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-size:13px;color:#b08d63">杯測活動</div>
+      <div style="font-size:11px;color:#6a543e">同一活動可跨場比較成績</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <sc-for list="{{ activityChips }}" as="ac" hint-placeholder-count="3">
+        <button onClick="{{ ac.pick }}" style="height:38px;padding:0 16px;border-radius:19px;font-size:13px;cursor:pointer;background:{{ ac.bg }};border:1px solid {{ ac.bd }};color:{{ ac.fg }}">{{ ac.name }}</button>
+      </sc-for>
+      <button onClick="{{ toggleAddAct }}" style="height:38px;padding:0 14px;border-radius:19px;font-size:13px;cursor:pointer;background:transparent;border:1px dashed #b08d63;color:#e0b877">＋ 新增活動</button>
+    </div>
+    <sc-if value="{{ addActOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:8px">
+        <input value="{{ newActName }}" onChange="{{ setNewActName }}" placeholder="活動名稱 例：店內品鑑會" style="flex:1;height:44px;background:#241a12;border:1px solid #4a382a;border-radius:11px;color:#f2ead9;font-size:14px;padding:0 14px;outline:none;min-width:0">
+        <button onClick="{{ confirmAddAct }}" style="height:44px;padding:0 18px;border-radius:22px;background:#e0b877;color:#241a12;border:none;font-size:13px;font-weight:700;cursor:pointer;flex:none">新增</button>
+      </div>
+    </sc-if>
+    <input value="{{ subtitle }}" onChange="{{ setSubtitle }}" placeholder="場次副標題 例：五月訂閱" style="height:44px;background:#241a12;border:1px solid #4a382a;border-radius:11px;color:#f2ead9;font-size:14px;padding:0 14px;outline:none">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="font-size:12px;color:#8a6f52;flex:none">杯測時間</div>
+      <input type="datetime-local" value="{{ sessDate }}" onChange="{{ setSessDate }}" style="flex:1;height:44px;background:#241a12;border:1px solid #4a382a;border-radius:11px;color:#f2ead9;font-size:13px;padding:0 12px;outline:none;min-width:0;color-scheme:dark">
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:13px;color:#b08d63">評分計時</div>
+    <div style="font-size:12px;color:#8a6f52">正計時 · 無時間上限</div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:13px;color:#b08d63">今日豆單 <span style="color:#6a543e">{{ beanCount }} 支</span></div>
+    <button onClick="{{ openAddMenu }}" style="height:36px;padding:0 16px;border-radius:18px;background:transparent;border:1px solid #e0b877;color:#e0b877;font-size:13px;cursor:pointer">＋ 新增</button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <sc-for list="{{ beanRows }}" as="b" hint-placeholder-count="3">
+      <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:26px;height:26px;border-radius:50%;background:#241a12;border:1px solid #6a543e;display:flex;align-items:center;justify-content:center;font-size:12px;color:#b08d63;flex:none">{{ b.no }}</div>
+          <input value="{{ b.name }}" onChange="{{ b.setName }}" placeholder="豆名（必填）" style="flex:1;height:38px;background:#241a12;border:1px solid #4a382a;border-radius:9px;color:#f2ead9;font-size:14px;padding:0 12px;outline:none">
+          <button onClick="{{ b.remove }}" style="width:32px;height:32px;border-radius:50%;background:transparent;border:none;color:#8a6f52;font-size:16px;cursor:pointer;flex:none">✕</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <select value="{{ b.origin }}" onChange="{{ b.setOrigin }}" style="height:36px;background:#241a12;border:1px solid #4a382a;border-radius:9px;color:#c9b8a2;font-size:12px;padding:0 8px;outline:none;min-width:0;appearance:auto">
+            <option value="">產區/國家</option>
+            <sc-for list="{{ originOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
+          </select>
+          <select value="{{ b.process }}" onChange="{{ b.setProcess }}" style="height:36px;background:#241a12;border:1px solid #4a382a;border-radius:9px;color:#c9b8a2;font-size:12px;padding:0 8px;outline:none;min-width:0;appearance:auto">
+            <option value="">處理法</option>
+            <sc-for list="{{ processOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
+          </select>
+          <select value="{{ b.variety }}" onChange="{{ b.setVariety }}" style="height:36px;background:#241a12;border:1px solid #4a382a;border-radius:9px;color:#c9b8a2;font-size:12px;padding:0 8px;outline:none;min-width:0;appearance:auto">
+            <option value="">品種</option>
+            <sc-for list="{{ varietyOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
+          </select>
+          <input value="{{ b.roaster }}" onChange="{{ b.setRoaster }}" placeholder="烘焙商" style="height:36px;background:#241a12;border:1px solid #4a382a;border-radius:9px;color:#c9b8a2;font-size:12px;padding:0 10px;outline:none;min-width:0">
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <sc-if value="{{ noBeans }}" hint-placeholder-val="{{ false }}">
+    <div style="border:1.5px dashed #4a382a;border-radius:14px;padding:22px;text-align:center;font-size:13px;color:#8a6f52">尚未新增豆子，點「＋ 新增」建立今日豆單</div>
+  </sc-if>
+  <button onClick="{{ createRoom }}" style="height:54px;border-radius:27px;background:{{ createBg }};color:{{ createFg }};border:none;font-size:16px;font-weight:700;letter-spacing:.1em;cursor:pointer;margin-top:8px">建立房間 →</button>
+</div>
+</sc-if>
+
+<!-- ================= 房間頂欄（進房後共用） ================= -->
+<sc-if value="{{ inRoom }}" hint-placeholder-val="{{ false }}">
+<div style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #3a2c1e;position:sticky;top:0;background:#241a12;z-index:5">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:10px;padding:6px 12px;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.2em;color:#e0b877">{{ roomCode }}</div>
+    <div style="font-size:11px;padding:4px 10px;border-radius:10px;background:#3a2a1a;color:#b08d63;border:1px solid #4a382a">{{ modeLabel }}</div>
+  </div>
+  <div style="display:flex;background:#3a2a1a;border:1px solid #4a382a;border-radius:18px;padding:3px">
+    <button onClick="{{ rolePart }}" style="height:30px;padding:0 12px;border-radius:15px;border:none;font-size:12px;cursor:pointer;background:{{ partTabBg }};color:{{ partTabFg }};font-weight:{{ partTabW }}">參與者</button>
+    <button onClick="{{ roleHost }}" style="height:30px;padding:0 12px;border-radius:15px;border:none;font-size:12px;cursor:pointer;background:{{ hostTabBg }};color:{{ hostTabFg }};font-weight:{{ hostTabW }}">房主</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 等待中（Lobby） ================= -->
+<sc-if value="{{ isLobby }}" hint-placeholder-val="{{ false }}">
+<div style="padding:28px 24px 120px;display:flex;flex-direction:column;gap:24px;flex:1;animation:fadeUp .45s ease both">
+  <div style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;margin-top:8px">
+    <div style="font-size:12px;letter-spacing:.25em;color:#b08d63">房間代碼</div>
+    <div style="border:1.5px dashed #b08d63;border-radius:14px;padding:14px 32px;font-family:'Cormorant Garamond',serif;font-size:44px;letter-spacing:.35em;color:#e0b877">{{ roomCode }}</div>
+    <div style="font-size:12px;color:#8a6f52">{{ activityName }} · {{ modeLabel }}模式 · {{ beanCount }} 支豆 · {{ sessDateLabel }}</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:13px;color:#b08d63">杯測師 <span style="color:#6a543e">{{ partCount }} 位</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <sc-for list="{{ lobbyPeople }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;align-items:center;gap:8px;background:#3a2a1a;border:1px solid {{ p.bd }};border-radius:20px;padding:8px 14px">
+          <div style="width:8px;height:8px;border-radius:50%;background:#7fae6b"></div>
+          <div style="font-size:13px;color:#f2ead9">{{ p.name }}</div>
+          <sc-if value="{{ p.tag }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#e0b877;letter-spacing:.1em">{{ p.tag }}</div></sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:13px;color:#b08d63">今日豆單</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ lobbyBeans }}" as="b" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center;gap:12px;background:#3a2a1a;border:1px solid #4a382a;border-radius:12px;padding:12px 14px">
+          <div style="width:30px;height:30px;border-radius:50%;background:#241a12;border:1px solid #6a543e;display:flex;align-items:center;justify-content:center;font-size:13px;color:#e0b877;flex:none">{{ b.no }}</div>
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+            <div style="font-size:14px;font-weight:500;color:#f2ead9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.title }}</div>
+            <div style="font-size:11px;color:#8a6f52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.sub }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ isBlind }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:11px;color:#8a6f52;text-align:center">盲測模式：評分時只會看到樣本編號，順序已打亂</div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 評分中 ================= -->
+<sc-if value="{{ isScoring }}" hint-placeholder-val="{{ false }}">
+<div style="padding:20px 22px 150px;display:flex;flex-direction:column;gap:18px;flex:1;animation:fadeUp .45s ease both">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:11px;letter-spacing:.25em;color:#b08d63">{{ sampleKicker }}</div>
+      <div style="font-family:'Noto Serif TC',serif;font-size:26px;font-weight:600">{{ sampleTitle }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:#3a2a1a;border:1px solid {{ timerBd }};border-radius:20px;padding:8px 14px">
+      <div style="width:8px;height:8px;border-radius:50%;background:{{ timerDot }};animation:pulseDot 2.2s ease-out infinite"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:{{ timerFg }}">{{ timerText }}</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <sc-for list="{{ sampleChips }}" as="ch" hint-placeholder-count="6">
+      <button onClick="{{ ch.pick }}" style="width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:13px;background:{{ ch.bg }};border:1px solid {{ ch.bd }};color:{{ ch.fg }};font-weight:{{ ch.w }}">{{ ch.label }}</button>
+    </sc-for>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:12px;color:#8a6f52">評分方式</div>
+    <div style="display:flex;background:#3a2a1a;border:1px solid #4a382a;border-radius:18px;padding:3px">
+      <button onClick="{{ setPro }}" style="height:32px;padding:0 14px;border-radius:15px;border:none;font-size:12px;cursor:pointer;background:{{ proBg }};color:{{ proFg }};font-weight:{{ proW }}">專業評分</button>
+      <button onClick="{{ setEasy }}" style="height:32px;padding:0 14px;border-radius:15px;border:none;font-size:12px;cursor:pointer;background:{{ easyBg }};color:{{ easyFg }};font-weight:{{ easyW }}">簡易評分</button>
+    </div>
+  </div>
+  <sc-if value="{{ isPro }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <sc-for list="{{ cats }}" as="c" hint-placeholder-count="8">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div style="font-size:14px;font-weight:500">{{ c.label }} <span style="font-size:11px;color:#8a6f52">{{ c.en }}</span></div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#e0b877">{{ c.disp }}</div>
+        </div>
+        <div style="position:relative;height:28px;display:flex;align-items:center">
+          <div style="position:absolute;left:0;right:0;height:4px;border-radius:2px;background:#4a382a"></div>
+          <div style="position:absolute;left:0;height:4px;border-radius:2px;background:linear-gradient(90deg,#8a6f52,#e0b877);width:{{ c.pct }}"></div>
+          <input class="rng" type="range" min="{{ scaleMin }}" max="8" step="0.25" value="{{ c.raw }}" onChange="{{ c.onChange }}" style="position:absolute;left:-2px;right:-2px;width:100%">
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#6a543e">
+          <sc-for list="{{ ticks }}" as="tk" hint-placeholder-count="5"><span>{{ tk.t }}</span></sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:14px;font-weight:500">缺點扣分 <span style="font-size:11px;color:#8a6f52">Defects</span></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#c96f4a">−{{ defTotal }}</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:12px;color:#b08d63">以 1 杯計</div>
+      <div style="display:flex;background:#241a12;border:1px solid #4a382a;border-radius:17px;padding:3px">
+        <button onClick="{{ defNone }}" style="height:30px;padding:0 14px;border-radius:14px;border:none;font-size:12px;cursor:pointer;background:{{ dNoneBg }};color:{{ dNoneFg }}">無</button>
+        <button onClick="{{ defLight }}" style="height:30px;padding:0 14px;border-radius:14px;border:none;font-size:12px;cursor:pointer;background:{{ dLightBg }};color:{{ dLightFg }}">輕微 −2</button>
+        <button onClick="{{ defHeavy }}" style="height:30px;padding:0 14px;border-radius:14px;border:none;font-size:12px;cursor:pointer;background:{{ dHeavyBg }};color:{{ dHeavyFg }}">明顯 −4</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ isEasy }}" hint-placeholder-val="{{ false }}">
+  <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-size:14px;font-weight:500">直接輸入總分</div>
+      <div style="font-size:11px;color:#8a6f52">36–100</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;justify-content:center">
+      <button onClick="{{ easyDown }}" style="width:48px;height:48px;border-radius:50%;background:#241a12;border:1px solid #4a382a;color:#e0b877;font-size:20px;cursor:pointer">−</button>
+      <input value="{{ easyVal }}" onChange="{{ setEasyVal }}" inputMode="decimal" style="width:130px;height:64px;text-align:center;font-family:'Cormorant Garamond',serif;font-size:34px;background:#241a12;border:1.5px solid #e0b877;border-radius:14px;color:#e0b877;outline:none">
+      <button onClick="{{ easyUp }}" style="width:48px;height:48px;border-radius:50%;background:#241a12;border:1px solid #4a382a;color:#e0b877;font-size:20px;cursor:pointer">＋</button>
+    </div>
+  </div>
+  </sc-if>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:13px;color:#b08d63">風味備註</div>
+    <textarea value="{{ notes }}" onChange="{{ setNotes }}" placeholder="柑橘、焦糖、花香…" style="border-radius:12px;background:#3a2a1a;border:1px solid #4a382a;padding:12px 14px;font-size:14px;color:#f2ead9;min-height:64px;resize:vertical;outline:none"></textarea>
+  </div>
+  <sc-if value="{{ isBlind }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div style="font-size:13px;color:#b08d63">我猜這支是</div>
+        <div style="font-size:11px;color:#6a543e">可複選候選 · 鎖定後再定案</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ scoreGuessChips }}" as="sg" hint-placeholder-count="3">
+          <button onClick="{{ sg.pick }}" style="height:36px;padding:0 14px;border-radius:18px;font-size:12px;cursor:pointer;background:{{ sg.bg }};border:1px solid {{ sg.bd }};color:{{ sg.fg }}">{{ sg.name }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <div style="display:flex;align-items:center;justify-content:space-between;background:radial-gradient(140% 160% at 0% 0%,#443019 0%,#3a2a1a 55%);border:1px solid #e0b877;border-radius:16px;padding:14px 18px;box-shadow:0 6px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(224,184,119,.18)">
+    <div style="display:flex;flex-direction:column">
+      <div style="font-size:11px;letter-spacing:.2em;color:#b08d63">本樣本總分</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:36px;line-height:1;color:#e0b877">{{ sampleTotal }}</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button onClick="{{ prevSample }}" style="width:46px;height:46px;border-radius:50%;background:transparent;border:1.5px solid #6a543e;color:#e0b877;font-size:16px;cursor:pointer">←</button>
+      <sc-if value="{{ isLastSample }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ submitSheet }}" style="height:46px;padding:0 22px;border-radius:23px;background:#e0b877;color:#241a12;border:none;font-size:15px;font-weight:700;cursor:pointer">交卷 ✓</button>
+      </sc-if>
+      <sc-if value="{{ notLastSample }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ nextSample }}" style="height:46px;padding:0 22px;border-radius:23px;background:#e0b877;color:#241a12;border:none;font-size:15px;font-weight:700;cursor:pointer">下一支 →</button>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 已交卷等待 ================= -->
+<sc-if value="{{ isWaitSub }}" hint-placeholder-val="{{ false }}">
+<div style="padding:60px 32px 140px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center;flex:1;justify-content:center;animation:fadeUp .45s ease both">
+  <div style="width:72px;height:72px;border-radius:50%;border:1.5px solid #e0b877;display:flex;align-items:center;justify-content:center;font-size:30px;color:#e0b877;animation:popIn .5s cubic-bezier(.2,.8,.2,1) both">✓</div>
+  <div style="font-family:'Noto Serif TC',serif;font-size:26px;font-weight:600">已交卷</div>
+  <div style="font-size:14px;color:#b08d63;line-height:1.7">評分已送出。為避免爆雷，<br>結果將由房主統一公佈。</div>
+  <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:14px;padding:14px 24px;display:flex;align-items:center;gap:10px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#e0b877">{{ submittedCount }}/{{ partCount }}</div>
+    <div style="font-size:12px;color:#8a6f52">位已交卷</div>
+  </div>
+  <div style="font-size:12px;color:#6a543e">計時 {{ timerText }}</div>
+</div>
+</sc-if>
+
+<!-- ================= 盲測猜豆 ================= -->
+<sc-if value="{{ isGuess }}" hint-placeholder-val="{{ false }}">
+<div style="padding:24px 22px 150px;display:flex;flex-direction:column;gap:18px;flex:1;animation:fadeUp .45s ease both">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <div style="font-size:11px;letter-spacing:.25em;color:#b08d63">評分已鎖定 · 盲測揭曉前</div>
+    <div style="font-family:'Noto Serif TC',serif;font-size:26px;font-weight:600">猜猜每支樣本是哪支豆？</div>
+    <div style="font-size:12px;color:#8a6f52">金框＝評分時勾選的候選；每支樣本點選一個定案，猜對數量決定排行榜名次</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <sc-for list="{{ guessRows }}" as="g" hint-placeholder-count="3">
+      <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div style="font-size:15px;font-weight:700">{{ g.label }}</div>
+          <div style="font-size:11px;color:#8a6f52">你的總分 {{ g.myScore }}</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ g.beans }}" as="gb" hint-placeholder-count="3">
+            <button onClick="{{ gb.pick }}" style="height:36px;padding:0 14px;border-radius:18px;font-size:12px;cursor:pointer;background:{{ gb.bg }};border:1px solid {{ gb.bd }};color:{{ gb.fg }}">{{ gb.name }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <button onClick="{{ submitGuess }}" style="height:54px;border-radius:27px;border:none;font-size:16px;font-weight:700;letter-spacing:.1em;cursor:pointer;background:{{ guessBtnBg }};color:{{ guessBtnFg }}">{{ guessBtnLabel }}</button>
+</div>
+</sc-if>
+
+<!-- ================= 等待公佈 ================= -->
+<sc-if value="{{ isWaitReveal }}" hint-placeholder-val="{{ false }}">
+<div style="padding:60px 32px 140px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center;flex:1;justify-content:center;animation:fadeUp .45s ease both">
+  <div style="width:72px;height:72px;border-radius:50%;border:1.5px dashed #b08d63;display:flex;align-items:center;justify-content:center;font-size:26px;color:#e0b877;animation:ringSpin 24s linear infinite"><div style="animation:ringSpin 24s linear infinite reverse">⏳</div></div>
+  <div style="font-family:'Noto Serif TC',serif;font-size:26px;font-weight:600">等待房主公佈結果</div>
+  <div style="font-size:14px;color:#b08d63;line-height:1.7">{{ waitRevealHint }}</div>
+</div>
+</sc-if>
+
+<!-- ================= 結果：公開模式 ================= -->
+<sc-if value="{{ isRevealOpen }}" hint-placeholder-val="{{ false }}">
+<div style="padding:24px 22px 120px;display:flex;flex-direction:column;gap:18px;flex:1;animation:fadeUp .45s ease both">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:11px;letter-spacing:.25em;color:#b08d63">結果公佈 · 公開模式</div>
+      <div style="font-family:'Noto Serif TC',serif;font-size:26px;font-weight:600">今日成績</div>
+    </div>
+    <button onClick="{{ openExport }}" style="height:40px;padding:0 18px;border-radius:20px;background:transparent;border:1.5px solid #e0b877;color:#e0b877;font-size:13px;cursor:pointer">匯出 ↓</button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <sc-for list="{{ resultRows }}" as="r" hint-placeholder-count="4">
+      <div style="background:#3a2a1a;border:1px solid {{ r.bd }};border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:{{ r.rankFg }};min-width:30px;text-align:center">{{ r.rank }}</div>
+        <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.name }}</div>
+          <div style="font-size:11px;color:#8a6f52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.sub }}</div>
+          <div style="font-size:11px;color:#b08d63">你打 {{ r.mine }} 分（{{ r.diff }}）</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end">
+          <div style="font-size:10px;letter-spacing:.2em;color:#8a6f52">平均</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1;color:#e0b877">{{ r.avg }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:14px;font-weight:700">{{ activityName }} · 歷史比較</div>
+      <button onClick="{{ openAddSess }}" style="height:32px;padding:0 12px;border-radius:16px;background:transparent;border:1px solid #e0b877;color:#e0b877;font-size:11px;cursor:pointer">＋ 新增場次</button>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:12px;height:110px">
+      <sc-for list="{{ histBars }}" as="hb" hint-placeholder-count="4">
+        <button onClick="{{ hb.toggle }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;background:transparent;border:none;padding:0;cursor:pointer">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:{{ hb.fg }}">{{ hb.val }}</div>
+          <div style="width:100%;max-width:44px;border-radius:6px 6px 0 0;background:{{ hb.bg }};height:{{ hb.h }};outline:{{ hb.outline }};transform-origin:bottom;animation:growBar .7s cubic-bezier(.2,.8,.2,1) both"></div>
+          <div style="font-size:10px;color:{{ hb.lfg }};line-height:1.3">{{ hb.label }}</div>
+        </button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ histDetailShow }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#241a12;border:1px solid #4a382a;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div style="font-size:13px;font-weight:700;color:#e0b877">{{ histDetailTitle }}</div>
+          <div style="font-size:11px;color:#8a6f52">豆單</div>
+        </div>
+        <sc-for list="{{ histDetailBeans }}" as="hd" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#c9b8a2"><div style="width:5px;height:5px;border-radius:50%;background:#6a543e;flex:none"></div>{{ hd.name }}</div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <div style="font-size:10px;color:#6a543e">點長條看該場豆單 · 歷史場次為示意資料，預留後端串接</div>
+  </div>
+  <button onClick="{{ resetAll }}" style="height:50px;border-radius:25px;background:transparent;border:1.5px solid #b08d63;color:#e0b877;font-size:14px;cursor:pointer;margin-top:6px">結束杯測 · 回到首頁</button>
+</div>
+</sc-if>
+
+<!-- ================= 結果：盲測模式 ================= -->
+<sc-if value="{{ isRevealBlind }}" hint-placeholder-val="{{ false }}">
+<div style="padding:24px 22px 120px;display:flex;flex-direction:column;gap:20px;flex:1;animation:fadeUp .45s ease both">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:11px;letter-spacing:.25em;color:#b08d63">結果公佈 · 盲測揭曉</div>
+      <div style="font-family:'Noto Serif TC',serif;font-size:26px;font-weight:600">正確答案</div>
+    </div>
+    <button onClick="{{ openExport }}" style="height:40px;padding:0 18px;border-radius:20px;background:transparent;border:1.5px solid #e0b877;color:#e0b877;font-size:13px;cursor:pointer">匯出 ↓</button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ answerRows }}" as="a" hint-placeholder-count="4">
+      <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:12px">
+        <div style="width:34px;height:34px;border-radius:50%;background:#241a12;border:1px solid #6a543e;display:flex;align-items:center;justify-content:center;font-size:13px;color:#e0b877;flex:none">{{ a.sample }}</div>
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.bean }}</div>
+          <div style="font-size:11px;color:#8a6f52">{{ a.guessNote }}</div>
+        </div>
+        <div style="font-size:16px;color:{{ a.markFg }}">{{ a.mark }}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end">
+          <div style="font-size:10px;color:#8a6f52">平均</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;line-height:1;color:#e0b877">{{ a.avg }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;margin-top:4px">猜豆排行榜</div>
+    <sc-for list="{{ leaderRows }}" as="l" hint-placeholder-count="4">
+      <div style="background:{{ l.bg }};border:1px solid {{ l.bd }};border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:14px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:{{ l.rankFg }};min-width:26px;text-align:center">{{ l.rank }}</div>
+        <div style="font-size:14px;font-weight:{{ l.w }};flex:1;color:{{ l.fg }}">{{ l.name }}</div>
+        <div style="font-size:13px;color:#b08d63">猜對 <span style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#e0b877">{{ l.correct }}</span> / {{ l.total }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-size:14px;font-weight:700">盲測累積排行榜</div>
+      <div style="font-size:11px;color:#8a6f52">{{ cumLabel }}</div>
+    </div>
+    <sc-for list="{{ cumRows }}" as="c" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:12px;padding:8px 6px;border-radius:10px;background:{{ c.bg }}">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:{{ c.rankFg }};min-width:22px;text-align:center">{{ c.rank }}</div>
+        <div style="font-size:13px;font-weight:{{ c.w }};flex:1;color:{{ c.fg }}">{{ c.name }}</div>
+        <div style="display:flex;align-items:center;gap:6px;flex:2">
+          <div style="flex:1;height:5px;border-radius:3px;background:#241a12;overflow:hidden"><div style="height:100%;border-radius:3px;background:{{ c.barBg }};width:{{ c.barW }};transform-origin:left;animation:growW .8s cubic-bezier(.2,.8,.2,1) both"></div></div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#e0b877;min-width:30px;text-align:right">{{ c.pts }}</div>
+        </div>
+      </div>
+    </sc-for>
+    <div style="font-size:10px;color:#6a543e">依名字辨識身份，累積各場猜對數 · 歷史為示意資料</div>
+  </div>
+  <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:14px;font-weight:700">{{ activityName }} · 歷史比較</div>
+      <button onClick="{{ openAddSess }}" style="height:32px;padding:0 12px;border-radius:16px;background:transparent;border:1px solid #e0b877;color:#e0b877;font-size:11px;cursor:pointer">＋ 新增場次</button>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:12px;height:110px">
+      <sc-for list="{{ histBars }}" as="hb" hint-placeholder-count="4">
+        <button onClick="{{ hb.toggle }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;background:transparent;border:none;padding:0;cursor:pointer">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:{{ hb.fg }}">{{ hb.val }}</div>
+          <div style="width:100%;max-width:44px;border-radius:6px 6px 0 0;background:{{ hb.bg }};height:{{ hb.h }};outline:{{ hb.outline }};transform-origin:bottom;animation:growBar .7s cubic-bezier(.2,.8,.2,1) both"></div>
+          <div style="font-size:10px;color:{{ hb.lfg }};line-height:1.3">{{ hb.label }}</div>
+        </button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ histDetailShow }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#241a12;border:1px solid #4a382a;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div style="font-size:13px;font-weight:700;color:#e0b877">{{ histDetailTitle }}</div>
+          <div style="font-size:11px;color:#8a6f52">豆單</div>
+        </div>
+        <sc-for list="{{ histDetailBeans }}" as="hd" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#c9b8a2"><div style="width:5px;height:5px;border-radius:50%;background:#6a543e;flex:none"></div>{{ hd.name }}</div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <div style="font-size:10px;color:#6a543e">點長條看該場豆單 · 歷史場次為示意資料，預留後端串接</div>
+  </div>
+  <button onClick="{{ resetAll }}" style="height:50px;border-radius:25px;background:transparent;border:1.5px solid #b08d63;color:#e0b877;font-size:14px;cursor:pointer;margin-top:6px">結束杯測 · 回到首頁</button>
+</div>
+</sc-if>
+
+<!-- ================= 杯測豆歷史資料庫 ================= -->
+<sc-if value="{{ isArchive }}" hint-placeholder-val="{{ false }}">
+<div style="padding:24px 22px 40px;display:flex;flex-direction:column;gap:16px;flex:1;animation:fadeUp .45s ease both">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button onClick="{{ goHome }}" style="width:40px;height:40px;border-radius:50%;background:#3a2a1a;border:1px solid #4a382a;color:#e0b877;font-size:16px;cursor:pointer">←</button>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-family:'Noto Serif TC',serif;font-size:24px;font-weight:600">杯測豆歷史</div>
+      <div style="font-size:11px;color:#8a6f52">{{ archiveCount }} 筆紀錄 · 依日期排序</div>
+    </div>
+  </div>
+  <sc-for list="{{ archiveRows }}" as="ar" hint-placeholder-count="6">
+    <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+        <div style="font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ ar.name }}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;flex:none">
+          <div style="font-size:10px;color:#8a6f52">我的分數</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1;color:#e0b877">{{ ar.score }}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#b08d63">{{ ar.sub }}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #4a382a;padding-top:8px">
+        <div style="font-size:11px;color:#8a6f52">☕ {{ ar.session }}</div>
+        <div style="font-size:11px;color:#8a6f52;font-family:ui-monospace,Menlo,monospace">{{ ar.date }}</div>
+      </div>
+    </div>
+  </sc-for>
+</div>
+</sc-if>
+
+<!-- ================= 新增場次 ================= -->
+<sc-if value="{{ addSessOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(14,10,6,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .22s ease both" onClick="{{ closeAddSess }}">
+  <div style="width:100%;max-width:430px;background:linear-gradient(180deg,#2a1e13,#241a12 60px);border-top:1px solid #5a4530;border-radius:22px 22px 0 0;box-shadow:0 -18px 50px rgba(0,0,0,.5);animation:sheetUp .32s cubic-bezier(.2,.8,.2,1) both;padding:22px 22px 34px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box" onClick="{{ stopProp }}">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">新增歷史場次</div>
+      <div style="font-size:11px;color:#6a543e">補登過去場次 · 預留後端串接</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;color:#8a6f52">場次副標題</div>
+      <input value="{{ newSessSub }}" onChange="{{ setNewSessSub }}" placeholder="例：四月例會" style="height:46px;background:#3a2a1a;border:1px solid #4a382a;border-radius:11px;color:#f2ead9;font-size:14px;padding:0 14px;outline:none">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;color:#8a6f52">杯測日期</div>
+      <input type="date" value="{{ newSessDate }}" onChange="{{ setNewSessDate }}" style="height:46px;background:#3a2a1a;border:1px solid #4a382a;border-radius:11px;color:#f2ead9;font-size:14px;padding:0 14px;outline:none;color-scheme:dark">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;color:#8a6f52">全場平均分</div>
+      <input value="{{ newSessAvg }}" onChange="{{ setNewSessAvg }}" inputMode="decimal" placeholder="例：85.2" style="height:46px;background:#3a2a1a;border:1px solid #4a382a;border-radius:11px;color:#f2ead9;font-size:14px;padding:0 14px;outline:none">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;color:#8a6f52">豆單（逗號分隔）</div>
+      <input value="{{ newSessBeans }}" onChange="{{ setNewSessBeans }}" placeholder="例：花魁, 肯亞 AA, 藝伎" style="height:46px;background:#3a2a1a;border:1px solid #4a382a;border-radius:11px;color:#f2ead9;font-size:14px;padding:0 14px;outline:none">
+    </div>
+    <button onClick="{{ confirmAddSess }}" style="height:50px;border-radius:25px;background:#e0b877;color:#241a12;border:none;font-size:15px;font-weight:700;cursor:pointer">新增場次</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 設定正確答案（房主） ================= -->
+<sc-if value="{{ answerSheetOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(14,10,6,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .22s ease both" onClick="{{ closeAnswerSheet }}">
+  <div style="width:100%;max-width:430px;max-height:80vh;overflow-y:auto;background:linear-gradient(180deg,#2a1e13,#241a12 60px);border-top:1px solid #5a4530;border-radius:22px 22px 0 0;box-shadow:0 -18px 50px rgba(0,0,0,.5);animation:sheetUp .32s cubic-bezier(.2,.8,.2,1) both;padding:22px 22px 30px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box" onClick="{{ stopProp }}">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">設定正確答案 🔑</div>
+      <div style="font-size:11px;color:#6a543e">僅房主可見</div>
+    </div>
+    <div style="font-size:12px;color:#8a6f52;line-height:1.6">依實際出杯順序，指定每支樣本對應的豆子。每支豆只能對應一個樣本。</div>
+    <sc-for list="{{ ansRows }}" as="ar" hint-placeholder-count="4">
+      <div style="background:#3a2a1a;border:1px solid #4a382a;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:9px">
+        <div style="font-size:13px;font-weight:700;color:#e0b877">樣本 {{ ar.no }}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <sc-for list="{{ ar.beans }}" as="ab" hint-placeholder-count="3">
+            <button onClick="{{ ab.pick }}" style="height:34px;padding:0 13px;border-radius:17px;font-size:12px;cursor:pointer;background:{{ ab.bg }};border:1px solid {{ ab.bd }};color:{{ ab.fg }}">{{ ab.name }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+    <button onClick="{{ confirmAnswers }}" style="height:52px;border-radius:26px;border:none;font-size:15px;font-weight:700;cursor:pointer;background:{{ ansBtnBg }};color:{{ ansBtnFg }}">{{ ansBtnLabel }}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 新增豆子選單 ================= -->
+<sc-if value="{{ addMenuOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(14,10,6,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .22s ease both" onClick="{{ closeAddSheet }}">
+  <div style="width:100%;max-width:430px;background:linear-gradient(180deg,#2a1e13,#241a12 60px);border-top:1px solid #5a4530;border-radius:22px 22px 0 0;box-shadow:0 -18px 50px rgba(0,0,0,.5);animation:sheetUp .32s cubic-bezier(.2,.8,.2,1) both;padding:22px 22px 34px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box" onClick="{{ stopProp }}">
+    <div style="font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">新增豆子</div>
+    <button onClick="{{ addManual }}" style="border-radius:14px;background:#3a2a1a;border:1px solid #4a382a;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:15px;font-weight:700;color:#f2ead9">✏️ 手動輸入</div>
+      <div style="font-size:12px;color:#8a6f52">直接填寫豆名、產區、處理法等欄位</div>
+    </button>
+    <button onClick="{{ openDb }}" style="border-radius:14px;background:#3a2a1a;border:1px solid #4a382a;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:15px;font-weight:700;color:#f2ead9">🗂 從豆單資料庫選擇</div>
+      <div style="font-size:12px;color:#8a6f52">下拉選擇資料庫豆單 · 預留 API 串接</div>
+    </button>
+    <button onClick="{{ openScan }}" style="border-radius:14px;background:#3a2a1a;border:1px solid #4a382a;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:15px;font-weight:700;color:#f2ead9">📷 拍照掃描豆袋</div>
+      <div style="font-size:12px;color:#8a6f52">OCR 文字辨識自動填入 · 預留功能</div>
+    </button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 豆單資料庫 ================= -->
+<sc-if value="{{ dbOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(14,10,6,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .22s ease both" onClick="{{ closeAddSheet }}">
+  <div style="width:100%;max-width:430px;max-height:70vh;overflow-y:auto;background:linear-gradient(180deg,#2a1e13,#241a12 60px);border-top:1px solid #5a4530;border-radius:22px 22px 0 0;box-shadow:0 -18px 50px rgba(0,0,0,.5);animation:sheetUp .32s cubic-bezier(.2,.8,.2,1) both;padding:22px 22px 34px;display:flex;flex-direction:column;gap:10px;box-sizing:border-box" onClick="{{ stopProp }}">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">豆單資料庫</div>
+      <div style="font-size:11px;color:#6a543e">示意資料 · 預留 API 串接</div>
+    </div>
+    <sc-for list="{{ dbRows }}" as="db" hint-placeholder-count="5">
+      <button onClick="{{ db.add }}" style="border-radius:12px;background:#3a2a1a;border:1px solid #4a382a;padding:13px 14px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700;color:#f2ead9">{{ db.name }}</div>
+          <div style="font-size:11px;color:#8a6f52">{{ db.sub }}</div>
+        </div>
+        <div style="color:#e0b877;font-size:18px">＋</div>
+      </button>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 拍照掃描 ================= -->
+<sc-if value="{{ scanOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(14,10,6,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .22s ease both" onClick="{{ closeAddSheet }}">
+  <div style="width:100%;max-width:430px;background:linear-gradient(180deg,#2a1e13,#241a12 60px);border-top:1px solid #5a4530;border-radius:22px 22px 0 0;box-shadow:0 -18px 50px rgba(0,0,0,.5);animation:sheetUp .32s cubic-bezier(.2,.8,.2,1) both;padding:22px 22px 34px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box" onClick="{{ stopProp }}">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">拍照掃描豆袋</div>
+      <div style="font-size:11px;color:#6a543e">預留功能</div>
+    </div>
+    <div style="border:1.5px dashed #6a543e;border-radius:16px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#8a6f52">
+      <div style="font-size:34px">📷</div>
+      <div style="font-size:13px">對準豆袋標籤拍照</div>
+      <div style="font-size:11px;color:#6a543e;font-family:ui-monospace,Menlo,monospace">預留：OCR 辨識文字後自動填入欄位</div>
+    </div>
+    <button onClick="{{ simScan }}" style="height:50px;border-radius:25px;background:#e0b877;color:#241a12;border:none;font-size:15px;font-weight:700;cursor:pointer">模擬掃描結果（demo）</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 匯出視窗 ================= -->
+<sc-if value="{{ exportOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(14,10,6,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .22s ease both" onClick="{{ closeExport }}">
+  <div style="width:100%;max-width:430px;background:linear-gradient(180deg,#2a1e13,#241a12 60px);border-top:1px solid #5a4530;border-radius:22px 22px 0 0;box-shadow:0 -18px 50px rgba(0,0,0,.5);animation:sheetUp .32s cubic-bezier(.2,.8,.2,1) both;padding:22px 22px 34px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box" onClick="{{ stopProp }}">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">匯出結果</div>
+      <button onClick="{{ closeExport }}" style="width:36px;height:36px;border-radius:50%;background:#3a2a1a;border:1px solid #4a382a;color:#b08d63;font-size:15px;cursor:pointer">✕</button>
+    </div>
+    <textarea readOnly value="{{ exportText }}" style="border-radius:12px;background:#3a2a1a;border:1px solid #4a382a;padding:12px 14px;font-size:12px;color:#c9b8a2;min-height:220px;resize:none;outline:none;font-family:ui-monospace,Menlo,monospace;line-height:1.6"></textarea>
+    <button onClick="{{ copyExport }}" style="height:50px;border-radius:25px;background:#e0b877;color:#241a12;border:none;font-size:15px;font-weight:700;cursor:pointer">{{ copyLabel }}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 房主控制列 ================= -->
+<sc-if value="{{ showHostBar }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;pointer-events:none">
+  <div style="width:100%;max-width:430px;box-sizing:border-box;padding:10px 14px 14px;pointer-events:auto">
+    <div style="background:#2e2115;border:1.5px solid #e0b877;border-radius:18px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -6px 30px rgba(0,0,0,.5)">
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px">
+          <sc-for list="{{ stageDots }}" as="d" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:{{ d.bg }};border:1px solid {{ d.bd }}"></div>
+              <div style="font-size:10px;color:{{ d.fg }}">{{ d.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:11px;color:#b08d63">{{ hostHint }}</div>
+      </div>
+      <sc-if value="{{ hostActionShow }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ hostAction }}" style="height:46px;padding:0 18px;border-radius:23px;background:#e0b877;color:#241a12;border:none;font-size:14px;font-weight:700;cursor:pointer;flex:none">{{ hostActionLabel }}</button>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 430, &quot;height&quot;: 900}, &quot;baseScale&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;4–8&quot;, &quot;0–8&quot;], &quot;default&quot;: &quot;4–8&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;評分&quot;}, &quot;showEnglish&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;外觀&quot;}}">
+class Component extends DCLogic {
+  CATS = [
+    { key: 'clean', label: '乾淨度', en: 'Clean Cup' },
+    { key: 'sweet', label: '甜感', en: 'Sweetness' },
+    { key: 'acid', label: '酸質', en: 'Acidity' },
+    { key: 'mouth', label: '口感', en: 'Mouthfeel' },
+    { key: 'flavor', label: '風味', en: 'Flavor' },
+    { key: 'after', label: '餘韻', en: 'Aftertaste' },
+    { key: 'balance', label: '平衡', en: 'Balance' },
+    { key: 'overall', label: '整體', en: 'Overall' },
+  ];
+  OTHERS = ['阿豪', '小茜', 'Kevin', '阿嘉', '郁婷', '老王'];
+  ACTIVITIES = ['咖啡社杯測'];
+  ORIGINS = ['Bolivia', 'Brazil', 'Burundi', 'China', 'Colombia', 'Costa Rica', 'DR Congo', 'Ecuador', 'El Salvador', 'Ethiopia', 'Guatemala', 'Honduras', 'India', 'Indonesia', 'Kenya', 'Malawi', 'Mexico', 'Myanmar', 'Nicaragua', 'Panama', 'Papua New Guinea', 'Peru', 'Rwanda', 'Taiwan', 'Tanzania', 'Thailand', 'Uganda', 'Vietnam', 'Yemen'];
+  PROCESSES = ['Anaerobic', 'Carbonic Maceration', 'Double Fermentation', 'Honey (Black)', 'Honey (Red)', 'Honey (White)', 'Honey (Yellow)', 'Natural', 'Semi-Washed', 'Washed', 'Wet-Hulled'];
+  VARIETIES = ['Bourbon', 'Castillo', 'Catimor', 'Catuai', 'Caturra', 'Geisha', 'Heirloom (Ethiopia)', 'Java', 'Kent', 'Maragogipe', 'Mundo Novo', 'Pacamara', 'Pacas', 'Pink Bourbon', 'SL28', 'SL34', 'Sidra', 'Typica'];
+  DB = [
+    { name: '西達摩 古吉 花魁', origin: 'Ethiopia', process: 'Natural', variety: 'Heirloom (Ethiopia)', roaster: '山丘烘焙' },
+    { name: '哥斯大黎加 音樂家', origin: 'Costa Rica', process: 'Honey (Red)', variety: 'Catuai', roaster: '晨光咖啡' },
+    { name: '盧安達 女性計畫', origin: 'Rwanda', process: 'Washed', variety: 'Bourbon', roaster: '選豆室' },
+    { name: '宏都拉斯 荔枝蘭', origin: 'Honduras', process: 'Washed', variety: 'Pacas', roaster: '巷口自烘' },
+    { name: '葉門 摩卡 瑪塔莉', origin: 'Yemen', process: 'Natural', variety: 'Typica', roaster: '選豆室' },
+    { name: '祕魯 有機', origin: 'Peru', process: 'Washed', variety: 'Typica', roaster: '晨光咖啡' },
+    { name: '阿里山 郵政', origin: 'Taiwan', process: 'Honey (Yellow)', variety: 'Geisha', roaster: '山丘烘焙' },
+    { name: '巴西 皇后莊園', origin: 'Brazil', process: 'Natural', variety: 'Mundo Novo', roaster: '巷口自烘' },
+  ];
+
+  state = {
+    view: 'home', // home | setup (before joining a room)
+    inRoom: false,
+    stage: 'waiting', // waiting | scoring | locked | reveal
+    role: 'participant',
+    code: '',
+    roomCode: '7K4Q',
+    mode: 'blind',
+    scoreMode: 'pro',
+    activity: '咖啡社杯測',
+    activities: ['咖啡社杯測'],
+    addActOpen: false,
+    newActName: '',
+    subtitle: '',
+    userName: '',
+    history: [
+      { sub: '三月例會', date: '2026/03/14', avg: 84.2, beans: ['瓜地馬拉 花神', '肯亞 AA TOP', '衣索比亞 沃卡', '哥倫比亞 天堂莊園'] },
+      { sub: '四月手沖豆', date: '2026/04/11', avg: 85.6, beans: ['西達摩 花魁', '巴拿馬 藝伎', '哥斯大黎加 音樂家', '祕魯 有機'] },
+      { sub: '五月訂閱', date: '2026/05/09', avg: 84.9, beans: ['宏都拉斯 荔枝蘭', '盧安達 女性計畫', '阿里山 郵政', '巴西 皇后莊園'] },
+    ],
+    sessDate: (() => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); })(),
+    newSessDate: '',
+    archivedDone: false,
+    archive: [
+      { name: '瓜地馬拉 花神', sub: 'Guatemala · Washed · Bourbon · 山丘烘焙', score: 84.75, session: '咖啡社杯測 · 三月例會', date: '2026/03/14' },
+      { name: '肯亞 AA TOP', sub: 'Kenya · Washed · SL28 · 晨光咖啡', score: 87.25, session: '咖啡社杯測 · 三月例會', date: '2026/03/14' },
+      { name: '衣索比亞 沃卡', sub: 'Ethiopia · Natural · Heirloom (Ethiopia) · 選豆室', score: 85.5, session: '咖啡社杯測 · 三月例會', date: '2026/03/14' },
+      { name: '哥倫比亞 天堂莊園', sub: 'Colombia · Double Fermentation · Caturra · 巷口自烘', score: 86.0, session: '咖啡社杯測 · 三月例會', date: '2026/03/14' },
+      { name: '西達摩 花魁', sub: 'Ethiopia · Natural · Heirloom (Ethiopia) · 山丘烘焙', score: 88.25, session: '咖啡社杯測 · 四月手沖豆', date: '2026/04/11' },
+      { name: '巴拿馬 藝伎', sub: 'Panama · Washed · Geisha · 選豆室', score: 89.5, session: '咖啡社杯測 · 四月手沖豆', date: '2026/04/11' },
+      { name: '哥斯大黎加 音樂家', sub: 'Costa Rica · Honey (Red) · Catuai · 晨光咖啡', score: 85.0, session: '咖啡社杯測 · 四月手沖豆', date: '2026/04/11' },
+      { name: '祕魯 有機', sub: 'Peru · Washed · Typica · 晨光咖啡', score: 82.75, session: '咖啡社杯測 · 四月手沖豆', date: '2026/04/11' },
+      { name: '宏都拉斯 荔枝蘭', sub: 'Honduras · Washed · Pacas · 巷口自烘', score: 86.5, session: '咖啡社杯測 · 五月訂閱', date: '2026/05/09' },
+      { name: '盧安達 女性計畫', sub: 'Rwanda · Washed · Bourbon · 選豆室', score: 84.25, session: '咖啡社杯測 · 五月訂閱', date: '2026/05/09' },
+      { name: '阿里山 郵政', sub: 'Taiwan · Honey (Yellow) · Geisha · 山丘烘焙', score: 85.75, session: '咖啡社杯測 · 五月訂閱', date: '2026/05/09' },
+      { name: '巴西 皇后莊園', sub: 'Brazil · Natural · Mundo Novo · 巷口自烘', score: 83.0, session: '咖啡社杯測 · 五月訂閱', date: '2026/05/09' },
+    ],
+    histOpenIdx: null,
+    addSessOpen: false,
+    newSessSub: '', newSessAvg: '', newSessBeans: '',
+    addSheet: null,
+    timerMin: 8,
+    beans: [],
+    sheets: [],
+    sampleIdx: 0,
+    submitted: false,
+    guesses: [],
+    candidates: [],
+    guessSubmitted: false,
+    answerMap: [],
+    answerConfirmed: false,
+    answerSheetOpen: false,
+    secondsLeft: 0,
+    elapsed: 0,
+    exportOpen: false,
+    copied: false,
+  };
+
+  componentDidMount() {
+    this._t = setInterval(() => {
+      if (this.state.inRoom && this.state.stage === 'scoring') {
+        this.setState((s) => ({ elapsed: s.elapsed + 1 }));
+      }
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+
+  // deterministic pseudo-random 0..1 from a string
+  h(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return ((h >>> 0) % 10000) / 10000;
+  }
+
+  scaleMin() { return (this.props.baseScale ?? '4–8') === '0–8' ? 0 : 4; }
+
+  makeSheets(n) {
+    return Array.from({ length: n }, () => {
+      const vals = {};
+      this.CATS.forEach((c) => { vals[c.key] = 6; });
+      return { vals, defCups: 1, defInt: 0, notes: '', easy: '80' };
+    });
+  }
+
+  makeAnswerMap(n) {
+    const arr = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(this.h('ans' + i + this.state.roomCode) * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  DEMO_BEANS = [
+    { name: '耶加雪菲 日曬', origin: 'Ethiopia', process: 'Natural', variety: 'Heirloom (Ethiopia)', roaster: '山丘烘焙' },
+    { name: '薇薇特南果', origin: 'Guatemala', process: 'Washed', variety: 'Bourbon', roaster: '巷口自烘' },
+    { name: '粉紅波旁', origin: 'Colombia', process: 'Washed', variety: 'Pink Bourbon', roaster: '晨光咖啡' },
+    { name: '肯亞 AA', origin: 'Kenya', process: 'Washed', variety: 'SL28', roaster: '山丘烘焙' },
+    { name: '翡翠莊園 藝伎', origin: 'Panama', process: 'Washed', variety: 'Geisha', roaster: '選豆室' },
+    { name: '曼特寧 G1', origin: 'Indonesia', process: 'Wet-Hulled', variety: 'Catimor', roaster: '巷口自烘' },
+  ];
+
+  enterRoom(role) {
+    let beans = this.state.beans.filter((b) => b.name.trim());
+    if (role === 'participant' && beans.length === 0) beans = this.DEMO_BEANS.map((b) => ({ ...b }));
+    const n = beans.length;
+    this.setState({
+      inRoom: true, role, beans, stage: 'waiting',
+      sheets: this.makeSheets(n),
+      guesses: Array(n).fill(null),
+      candidates: Array.from({ length: n }, () => []),
+      answerMap: this.makeAnswerMap(n),
+      answerConfirmed: false, answerSheetOpen: false,
+      sampleIdx: 0, submitted: false, guessSubmitted: false, elapsed: 0,
+    });
+  }
+
+  sheetTotal(sheet) {
+    if (this.state.scoreMode === 'easy') {
+      const v = parseFloat(sheet.easy);
+      return isNaN(v) ? 36 : Math.min(100, Math.max(0, v));
+    }
+    let sum = 36;
+    this.CATS.forEach((c) => { sum += sheet.vals[c.key]; });
+    return sum - sheet.defInt;
+  }
+
+  sessDateLabel() {
+    const v = this.state.sessDate;
+    if (!v) return '';
+    return v.slice(0, 10).replace(/-/g, '/') + ' ' + v.slice(11, 16);
+  }
+
+  archiveSession() {
+    if (this.state.archivedDone) return;
+    const s = this.state;
+    const dateStr = (s.sessDate || '').slice(0, 10).replace(/-/g, '/');
+    const sessName = s.subtitle ? s.activity + ' · ' + s.subtitle : s.activity;
+    const entries = s.beans.map((b, bi) => {
+      const si = s.answerMap.indexOf(bi);
+      return {
+        name: b.name,
+        sub: [b.origin, b.process, b.variety, b.roaster].filter(Boolean).join(' · '),
+        score: this.sheetTotal(s.sheets[si]),
+        session: sessName,
+        date: dateStr,
+      };
+    });
+    this.setState((st) => ({ archive: st.archive.concat(entries), archivedDone: true }));
+  }
+
+  resetAll() {
+    this.setState({
+      view: 'home', inRoom: false, stage: 'waiting', role: 'participant', code: '', beans: [],
+      sheets: [], sampleIdx: 0, submitted: false, guesses: [], candidates: [], guessSubmitted: false,
+      answerMap: [], answerConfirmed: false, answerSheetOpen: false, secondsLeft: 0, elapsed: 0, exportOpen: false, copied: false, scoreMode: 'pro', addSheet: null,
+      subtitle: '', histOpenIdx: null, addSessOpen: false, newSessSub: '', newSessAvg: '', newSessBeans: '', newSessDate: '', archivedDone: false,
+    });
+  }
+
+  otherTotal(p, sampleIdx) {
+    let sum = 36;
+    this.CATS.forEach((c) => {
+      sum += 5 + Math.round(this.h(p + '-' + sampleIdx + '-' + c.key) * 12) / 4;
+    });
+    return sum;
+  }
+
+  sampleAvg(i) {
+    let t = this.sheetTotal(this.state.sheets[i]);
+    this.OTHERS.forEach((p) => { t += this.otherTotal(p, i); });
+    return t / (this.OTHERS.length + 1);
+  }
+
+  otherGuessCorrect(p) {
+    const n = this.state.beans.length;
+    let c = 0;
+    for (let i = 0; i < n; i++) {
+      if (this.h('g' + p + '-' + i + this.state.roomCode) < 0.5) c++;
+    }
+    return c;
+  }
+
+  submittedCount() {
+    const sim = Math.min(this.OTHERS.length, Math.floor(this.state.elapsed / 7));
+    return sim + (this.state.submitted ? 1 : 0);
+  }
+
+  fmtTime(sec) {
+    const m = Math.floor(sec / 60), s = sec % 60;
+    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+
+  updSheet(fn) {
+    this.setState((s) => {
+      const sheets = s.sheets.map((sh, i) => i === s.sampleIdx ? fn({ ...sh, vals: { ...sh.vals } }) : sh);
+      return { sheets };
+    });
+  }
+
+  buildExport() {
+    const s = this.state;
+    const lines = [];
+    lines.push('☕ 杯測結果 — 房間 ' + s.roomCode + '（' + (s.mode === 'blind' ? '盲測' : '公開') + '模式）');
+    lines.push('杯測師 ' + (this.OTHERS.length + 1) + ' 位 · 豆子 ' + s.beans.length + ' 支');
+    lines.push('────────────────');
+    const rows = s.beans.map((b, bi) => {
+      const si = s.answerMap.indexOf(bi);
+      return { b, avg: this.sampleAvg(si), mine: this.sheetTotal(s.sheets[si]), notes: s.sheets[si].notes };
+    }).sort((a, b) => b.avg - a.avg);
+    rows.forEach((r, i) => {
+      lines.push((i + 1) + '. ' + r.b.name + '（' + [r.b.origin, r.b.process, r.b.variety, r.b.roaster].filter(Boolean).join(' · ') + '）');
+      lines.push('   平均 ' + r.avg.toFixed(2) + ' ／ 你打 ' + r.mine.toFixed(2) + (r.notes ? ' ／ 備註：' + r.notes : ''));
+    });
+    if (s.mode === 'blind') {
+      lines.push('────────────────');
+      lines.push('猜豆排行榜：');
+      this.leaderData().forEach((l) => {
+        lines.push(l.rank + '. ' + l.name + ' 猜對 ' + l.correct + '/' + l.total);
+      });
+    }
+    return lines.join('\n');
+  }
+
+  leaderData() {
+    const n = this.state.beans.length;
+    const mine = this.state.guesses.filter((g, i) => g === this.state.answerMap[i]).length;
+    const people = [{ name: (this.state.userName || '').trim() || '你', correct: mine, isMe: true }]
+      .concat(this.OTHERS.map((p) => ({ name: p, correct: this.otherGuessCorrect(p), isMe: false })));
+    people.sort((a, b) => b.correct - a.correct);
+    return people.map((p, i) => ({ ...p, rank: i + 1, total: n }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const gold = '#e0b877', dim = '#4a382a', cream = '#f2ead9', mut = '#8a6f52';
+    const min = this.scaleMin();
+    const showEn = this.props.showEnglish ?? true;
+
+    // -------- view flags --------
+    const inRoom = s.inRoom;
+    let view;
+    if (!inRoom) view = s.view;
+    else if (s.stage === 'waiting') view = 'lobby';
+    else if (s.stage === 'scoring') view = s.submitted ? 'waitSub' : 'scoring';
+    else if (s.stage === 'locked') view = s.mode === 'blind' ? (s.guessSubmitted ? 'waitReveal' : 'guess') : 'waitReveal';
+    else view = s.mode === 'blind' ? 'revealBlind' : 'revealOpen';
+
+    // -------- home --------
+    const code = (s.code || '').toUpperCase();
+    const codeChar = (i) => code[i] || '';
+    const codeBorder = (i) => (code.length === i ? gold : dim);
+
+    // -------- setup --------
+    const beanRows = s.beans.map((b, i) => ({
+      ...b, no: i + 1,
+      setName: (e) => this.updBeanField(i, 'name', e.target.value),
+      setOrigin: (e) => this.updBeanField(i, 'origin', e.target.value),
+      setProcess: (e) => this.updBeanField(i, 'process', e.target.value),
+      setVariety: (e) => this.updBeanField(i, 'variety', e.target.value),
+      setRoaster: (e) => this.updBeanField(i, 'roaster', e.target.value),
+      remove: () => this.setState((st) => ({ beans: st.beans.filter((_, j) => j !== i) })),
+    }));
+
+    // -------- lobby --------
+    const lobbyPeople = [{ name: '你', tag: s.role === 'host' ? 'HOST' : '', bd: gold }]
+      .concat(this.OTHERS.map((p) => ({ name: p, tag: '', bd: dim })));
+    const lobbyBeans = s.beans.map((b, i) => ({
+      no: i + 1,
+      title: b.name,
+      sub: [b.origin, b.process, b.variety, b.roaster].filter(Boolean).join(' · '),
+    }));
+
+    // -------- scoring --------
+    const sheet = s.sheets[s.sampleIdx] || { vals: {}, defCups: 1, defInt: 0, notes: '', easy: '80' };
+    const cats = this.CATS.map((c) => {
+      const raw = sheet.vals[c.key] ?? 6;
+      return {
+        label: c.label, en: showEn ? c.en : '', raw,
+        disp: raw.toFixed(2),
+        pct: (((raw - min) / (8 - min)) * 100).toFixed(1) + '%',
+        onChange: (e) => {
+          const v = parseFloat(e.target.value);
+          this.updSheet((sh) => { sh.vals[c.key] = v; return sh; });
+        },
+      };
+    });
+    const nTicks = 8 - min;
+    const ticks = Array.from({ length: nTicks + 1 }, (_, i) => ({ t: String(min + i) }));
+    const sampleChips = s.sheets.map((_, i) => {
+      const active = i === s.sampleIdx;
+      return {
+        label: String(i + 1), pick: () => this.setState({ sampleIdx: i }),
+        bg: active ? gold : '#3a2a1a', bd: active ? gold : dim,
+        fg: active ? '#241a12' : mut, w: active ? 700 : 400,
+      };
+    });
+    const beanAt = s.beans[s.answerMap[s.sampleIdx]] || {};
+    const isBlind = s.mode === 'blind';
+    const sampleTitle = isBlind ? '樣本 ' + (s.sampleIdx + 1) : (beanAt.name || '');
+    const sampleKicker = isBlind
+      ? '盲測 · ' + (s.sampleIdx + 1) + ' / ' + s.sheets.length
+      : '公開 · ' + (s.sampleIdx + 1) + ' / ' + s.sheets.length + '（' + [beanAt.origin, beanAt.process].filter(Boolean).join(' · ') + '）';
+    const scoreGuessChips = s.beans.map((b, bi) => {
+      const sel = (s.candidates[s.sampleIdx] || []).includes(bi);
+      return {
+        name: b.name,
+        bg: sel ? gold : '#241a12', bd: sel ? gold : dim, fg: sel ? '#241a12' : '#c9b8a2',
+        pick: () => this.setState((st) => {
+          const candidates = st.candidates.map((c) => c.slice());
+          const cur = candidates[st.sampleIdx] || [];
+          candidates[st.sampleIdx] = sel ? cur.filter((x) => x !== bi) : cur.concat([bi]);
+          return { candidates };
+        }),
+      };
+    });
+
+    // -------- guess --------
+    const guessRows = s.sheets.map((sh, i) => ({
+      label: '樣本 ' + (i + 1),
+      myScore: this.sheetTotal(sh).toFixed(2),
+      beans: s.beans.map((b, bi) => {
+        const sel = s.guesses[i] === bi;
+        const cand = (s.candidates[i] || []).includes(bi);
+        return {
+          name: b.name,
+          bg: sel ? gold : '#241a12',
+          bd: sel || cand ? gold : dim,
+          fg: sel ? '#241a12' : (cand ? gold : '#c9b8a2'),
+          pick: () => this.setState((st) => {
+            const guesses = st.guesses.slice(); guesses[i] = bi; return { guesses };
+          }),
+        };
+      }),
+    }));
+    const allGuessed = s.guesses.length > 0 && s.guesses.every((g) => g !== null);
+
+    // -------- results --------
+    let resultRows = [], answerRows = [], leaderRows = [], histBars = [], cumRows = [];
+    let histDetailShow = false, histDetailTitle = '', histDetailBeans = [];
+    if (s.stage === 'reveal' && s.sheets.length) {
+      const cur = s.sheets.reduce((t, _, i) => t + this.sampleAvg(i), 0) / s.sheets.length;
+      const hist = s.history.map((hs) => ({ label: hs.sub, v: hs.avg, beans: hs.beans }))
+        .concat([{ label: s.subtitle ? '本場 · ' + s.subtitle : '本場', v: cur, me: true, beans: s.beans.map((b) => b.name) }]);
+      const vs = hist.map((x) => x.v);
+      const lo = Math.min(...vs) - 1.5, hi = Math.max(...vs) + 0.5;
+      histBars = hist.map((x, i) => {
+        const open = s.histOpenIdx === i;
+        return {
+          label: x.label, val: x.v.toFixed(2),
+          h: (((x.v - lo) / (hi - lo)) * 100).toFixed(0) + '%',
+          bg: x.me ? gold : '#6a543e', fg: x.me ? gold : mut, lfg: x.me ? gold : mut,
+          outline: open ? '2px solid #f2ead9' : 'none',
+          toggle: () => this.setState((st) => ({ histOpenIdx: st.histOpenIdx === i ? null : i })),
+        };
+      });
+      if (s.histOpenIdx !== null && hist[s.histOpenIdx]) {
+        histDetailShow = true;
+        const hd = hist[s.histOpenIdx];
+        histDetailTitle = hd.label + ' · ' + hd.v.toFixed(2) + (hd.date ? ' · ' + hd.date : '');
+        histDetailBeans = (hist[s.histOpenIdx].beans || []).map((n) => ({ name: n }));
+      }
+      // cumulative blind leaderboard across sessions
+      const meName = (s.userName || '').trim() || '你';
+      const myCur = s.guesses.filter((g, i) => g === s.answerMap[i]).length;
+      const people = [{ name: meName, isMe: true, cur: myCur }]
+        .concat(this.OTHERS.map((p) => ({ name: p, isMe: false, cur: this.otherGuessCorrect(p) })));
+      const cum = people.map((p) => {
+        let pts = p.cur;
+        s.history.forEach((hs) => { pts += Math.round(this.h(p.name + '|' + hs.sub) * hs.beans.length); });
+        return { ...p, pts };
+      }).sort((a, b) => b.pts - a.pts);
+      const maxPts = Math.max(...cum.map((c) => c.pts), 1);
+      cumRows = cum.map((c, i) => ({
+        rank: i + 1, name: c.name, pts: String(c.pts),
+        rankFg: i === 0 ? gold : mut,
+        bg: c.isMe ? '#2e2115' : 'transparent',
+        fg: c.isMe ? gold : cream, w: c.isMe ? 700 : 400,
+        barBg: c.isMe ? gold : '#6a543e',
+        barW: ((c.pts / maxPts) * 100).toFixed(0) + '%',
+      }));
+    }
+    if (s.stage === 'reveal' && s.sheets.length) {
+      const rows = s.beans.map((b, bi) => {
+        const si = s.answerMap.indexOf(bi);
+        const avg = this.sampleAvg(si);
+        const mine = this.sheetTotal(s.sheets[si]);
+        return { b, si, avg, mine };
+      }).sort((a, b) => b.avg - a.avg);
+      resultRows = rows.map((r, i) => ({
+        rank: i + 1,
+        rankFg: i === 0 ? gold : mut,
+        bd: i === 0 ? gold : dim,
+        name: r.b.name,
+        sub: [r.b.origin, r.b.process, r.b.variety, r.b.roaster].filter(Boolean).join(' · '),
+        avg: r.avg.toFixed(2),
+        mine: r.mine.toFixed(2),
+        diff: (r.mine - r.avg >= 0 ? '+' : '') + (r.mine - r.avg).toFixed(2) + ' vs 平均',
+      }));
+      answerRows = s.sheets.map((sh, i) => {
+        const bean = s.beans[s.answerMap[i]];
+        const my = s.guesses[i];
+        const correct = my === s.answerMap[i];
+        return {
+          sample: String(i + 1),
+          bean: bean.name,
+          guessNote: my === null ? '你未作答' : '你猜：' + (s.beans[my] ? s.beans[my].name : ''),
+          mark: correct ? '✓' : '✗',
+          markFg: correct ? '#7fae6b' : '#c96f4a',
+          avg: this.sampleAvg(i).toFixed(2),
+        };
+      });
+      leaderRows = this.leaderData().map((l) => ({
+        ...l,
+        rankFg: l.rank === 1 ? gold : mut,
+        bg: l.isMe ? '#2e2115' : '#3a2a1a',
+        bd: l.isMe ? gold : dim,
+        fg: l.isMe ? gold : cream,
+        w: l.isMe ? 700 : 400,
+      }));
+    }
+
+    // -------- host bar --------
+    const stages = [
+      { k: 'waiting', label: '等待中' },
+      { k: 'scoring', label: '評分中' },
+      { k: 'locked', label: '鎖定' },
+      { k: 'reveal', label: '公佈' },
+    ];
+    const curIdx = stages.findIndex((x) => x.k === s.stage);
+    const stageDots = stages.map((x, i) => ({
+      label: x.label,
+      bg: i <= curIdx ? gold : 'transparent',
+      bd: i <= curIdx ? gold : '#6a543e',
+      fg: i === curIdx ? gold : mut,
+    }));
+    const subCnt = this.submittedCount();
+    const total = this.OTHERS.length + 1;
+    let hostActionLabel = '', hostHint = '', hostActionShow = true;
+    if (s.stage === 'waiting') { hostActionLabel = '開始評分 ▶'; hostHint = total + ' 位已加入，準備就緒'; }
+    else if (s.stage === 'scoring') { hostActionLabel = '鎖定交卷 🔒'; hostHint = '已交卷 ' + subCnt + '/' + total + ' · 已計時 ' + this.fmtTime(s.elapsed); }
+    else if (s.stage === 'locked') {
+      if (isBlind && !s.answerConfirmed) { hostActionLabel = '設定正確答案 🔑'; hostHint = '公佈前請先設定各樣本對應的豆子'; }
+      else { hostActionLabel = '公佈結果 📣'; hostHint = isBlind ? '答案已設定，等待大家猜豆' : '交卷已鎖定，可公佈結果'; }
+    }
+    else { hostActionShow = false; hostHint = '結果已公佈給所有人'; }
+
+    const hostAction = () => {
+      if (s.stage === 'waiting') this.setState({ stage: 'scoring', elapsed: 0 });
+      else if (s.stage === 'scoring') {
+        const guesses = s.guesses.map((g, i) => g !== null ? g : ((s.candidates[i] || []).length === 1 ? s.candidates[i][0] : null));
+        this.setState({ stage: 'locked', guesses });
+      }
+      else if (s.stage === 'locked' && isBlind && !s.answerConfirmed) this.setState({ answerSheetOpen: true });
+      else if (s.stage === 'locked') {
+        this.setState({ stage: 'reveal' });
+        this.archiveSession();
+      }
+    };
+
+    const isHost = s.role === 'host';
+
+    return {
+      // views
+      isHome: view === 'home', isSetup: view === 'setup', isLobby: view === 'lobby',
+      isScoring: view === 'scoring', isWaitSub: view === 'waitSub', isGuess: view === 'guess',
+      isWaitReveal: view === 'waitReveal', isRevealOpen: view === 'revealOpen', isRevealBlind: view === 'revealBlind',
+      inRoom, isBlind,
+      // home
+      code: s.code, setCode: (e) => this.setState({ code: e.target.value.toUpperCase().slice(0, 4) }),
+      codeC0: codeChar(0), codeC1: codeChar(1), codeC2: codeChar(2), codeC3: codeChar(3),
+      codeB0: codeBorder(0), codeB1: codeBorder(1), codeB2: codeBorder(2), codeB3: codeBorder(3),
+      joinRoom: () => this.setState({ roomCode: code.length === 4 ? code : '7K4Q' }, () => this.enterRoom('participant')),
+      goSetup: () => this.setState({ view: 'setup' }),
+      goHome: () => this.setState({ view: 'home' }),
+      goArchive: () => this.setState({ view: 'archive' }),
+      isArchive: view === 'archive',
+      archiveCount: s.archive.length,
+      archiveRows: s.archive.slice().sort((a, b) => (b.date || '').localeCompare(a.date || '')).map((a) => ({
+        ...a, score: a.score.toFixed(2),
+      })),
+      sessDate: s.sessDate,
+      setSessDate: (e) => this.setState({ sessDate: e.target.value }),
+      sessDateLabel: this.sessDateLabel(),
+      newSessDate: s.newSessDate,
+      setNewSessDate: (e) => this.setState({ newSessDate: e.target.value }),
+      // setup
+      setBlind: () => this.setState({ mode: 'blind' }),
+      setOpen: () => this.setState({ mode: 'open' }),
+      blindBg: s.mode === 'blind' ? '#2e2115' : 'transparent', blindBd: s.mode === 'blind' ? gold : dim, blindFg: s.mode === 'blind' ? gold : mut,
+      openBg: s.mode === 'open' ? '#2e2115' : 'transparent', openBd: s.mode === 'open' ? gold : dim, openFg: s.mode === 'open' ? gold : mut,
+      activityName: s.subtitle ? s.activity + ' · ' + s.subtitle : s.activity,
+      subtitle: s.subtitle,
+      setSubtitle: (e) => this.setState({ subtitle: e.target.value }),
+      userName: s.userName,
+      setUserName: (e) => this.setState({ userName: e.target.value }),
+      cumLabel: '近 ' + (s.history.length + 1) + ' 場猜對總數',
+      cumRows, histDetailShow, histDetailTitle, histDetailBeans,
+      addSessOpen: s.addSessOpen,
+      openAddSess: () => this.setState({ addSessOpen: true }),
+      closeAddSess: () => this.setState({ addSessOpen: false }),
+      newSessSub: s.newSessSub, newSessAvg: s.newSessAvg, newSessBeans: s.newSessBeans,
+      setNewSessSub: (e) => this.setState({ newSessSub: e.target.value }),
+      setNewSessAvg: (e) => this.setState({ newSessAvg: e.target.value }),
+      setNewSessBeans: (e) => this.setState({ newSessBeans: e.target.value }),
+      confirmAddSess: () => this.setState((st) => {
+        const sub = st.newSessSub.trim();
+        const avg = parseFloat(st.newSessAvg);
+        if (!sub || isNaN(avg)) return { addSessOpen: false };
+        const beans = st.newSessBeans.split(/[,，]/).map((x) => x.trim()).filter(Boolean);
+        return {
+          history: st.history.concat([{ sub, avg, beans, date: (st.newSessDate || '').replace(/-/g, '/') }]),
+          addSessOpen: false, newSessSub: '', newSessAvg: '', newSessBeans: '', newSessDate: '',
+        };
+      }),
+      originOpts: this.ORIGINS, processOpts: this.PROCESSES, varietyOpts: this.VARIETIES,
+      toggleAddAct: () => this.setState((st) => ({ addActOpen: !st.addActOpen })),
+      addActOpen: s.addActOpen,
+      newActName: s.newActName,
+      setNewActName: (e) => this.setState({ newActName: e.target.value }),
+      confirmAddAct: () => this.setState((st) => {
+        const name = st.newActName.trim();
+        if (!name || st.activities.includes(name)) return { addActOpen: false, newActName: '' };
+        return { activities: st.activities.concat([name]), activity: name, addActOpen: false, newActName: '' };
+      }),
+      activityChips: s.activities.map((a) => ({
+        name: a,
+        bg: s.activity === a ? '#2e2115' : 'transparent',
+        bd: s.activity === a ? gold : dim,
+        fg: s.activity === a ? gold : mut,
+        pick: () => this.setState({ activity: a }),
+      })),
+      beanCount: s.beans.filter((b) => b.name.trim()).length,
+      beanRows,
+      openAddMenu: () => this.setState({ addSheet: 'menu' }),
+      closeAddSheet: () => this.setState({ addSheet: null }),
+      addMenuOpen: s.addSheet === 'menu', dbOpen: s.addSheet === 'db', scanOpen: s.addSheet === 'scan',
+      addManual: () => this.setState((st) => ({ addSheet: null, beans: st.beans.concat([{ name: '', origin: '', process: '', variety: '', roaster: '' }]) })),
+      openDb: () => this.setState({ addSheet: 'db' }),
+      openScan: () => this.setState({ addSheet: 'scan' }),
+      dbRows: this.DB.map((b) => ({
+        name: b.name,
+        sub: [b.origin, b.process, b.variety, b.roaster].filter(Boolean).join(' · '),
+        add: () => this.setState((st) => ({ addSheet: null, beans: st.beans.concat([{ ...b }]) })),
+      })),
+      simScan: () => this.setState((st) => ({ addSheet: null, beans: st.beans.concat([{ name: '掃描：肯特山 AB', origin: 'Kenya', process: 'Washed', variety: 'SL34', roaster: '晨光咖啡' }]) })),
+      createRoom: () => {
+        if (s.beans.filter((b) => b.name.trim()).length === 0) return;
+        this.setState({ roomCode: '7K4Q' });
+        this.enterRoom('host');
+      },
+      canCreate: s.beans.filter((b) => b.name.trim()).length > 0,
+      noBeans: s.beans.length === 0,
+      createBg: s.beans.filter((b) => b.name.trim()).length > 0 ? '#e0b877' : '#3a2a1a',
+      createFg: s.beans.filter((b) => b.name.trim()).length > 0 ? '#241a12' : '#8a6f52',
+      // room header
+      roomCode: s.roomCode,
+      modeLabel: isBlind ? '盲測' : '公開',
+      roleHost: () => this.setState({ role: 'host' }),
+      rolePart: () => this.setState({ role: 'participant' }),
+      hostTabBg: isHost ? gold : 'transparent', hostTabFg: isHost ? '#241a12' : mut, hostTabW: isHost ? 700 : 400,
+      partTabBg: !isHost ? gold : 'transparent', partTabFg: !isHost ? '#241a12' : mut, partTabW: !isHost ? 700 : 400,
+      // lobby
+      lobbyPeople, lobbyBeans, partCount: total,
+      // scoring
+      sampleKicker, sampleTitle, sampleChips, cats, ticks, scaleMin: min,
+      timerText: this.fmtTime(s.elapsed),
+      timerBd: dim, timerDot: gold, timerFg: cream,
+      defTotal: sheet.defInt,
+      defNone: () => this.updSheet((sh) => { sh.defInt = 0; return sh; }),
+      defLight: () => this.updSheet((sh) => { sh.defInt = 2; return sh; }),
+      defHeavy: () => this.updSheet((sh) => { sh.defInt = 4; return sh; }),
+      dNoneBg: sheet.defInt === 0 ? gold : 'transparent', dNoneFg: sheet.defInt === 0 ? '#241a12' : mut,
+      dLightBg: sheet.defInt === 2 ? gold : 'transparent', dLightFg: sheet.defInt === 2 ? '#241a12' : mut,
+      dHeavyBg: sheet.defInt === 4 ? '#c96f4a' : 'transparent', dHeavyFg: sheet.defInt === 4 ? '#241a12' : mut,
+      isPro: s.scoreMode === 'pro', isEasy: s.scoreMode === 'easy',
+      setPro: () => this.setState({ scoreMode: 'pro' }),
+      setEasy: () => this.setState({ scoreMode: 'easy' }),
+      proBg: s.scoreMode === 'pro' ? gold : 'transparent', proFg: s.scoreMode === 'pro' ? '#241a12' : mut, proW: s.scoreMode === 'pro' ? 700 : 400,
+      easyBg: s.scoreMode === 'easy' ? gold : 'transparent', easyFg: s.scoreMode === 'easy' ? '#241a12' : mut, easyW: s.scoreMode === 'easy' ? 700 : 400,
+      easyVal: sheet.easy ?? '80',
+      setEasyVal: (e) => { const v = e.target.value; this.updSheet((sh) => { sh.easy = v; return sh; }); },
+      easyUp: () => this.updSheet((sh) => { sh.easy = Math.min(100, (parseFloat(sh.easy) || 80) + 0.25).toFixed(2); return sh; }),
+      easyDown: () => this.updSheet((sh) => { sh.easy = Math.max(36, (parseFloat(sh.easy) || 80) - 0.25).toFixed(2); return sh; }),
+      scoreGuessChips,
+      resetAll: () => this.resetAll(),
+      notes: sheet.notes,
+      setNotes: (e) => { const v = e.target.value; this.updSheet((sh) => { sh.notes = v; return sh; }); },
+      sampleTotal: this.sheetTotal(sheet).toFixed(2),
+      isLastSample: s.sampleIdx === s.sheets.length - 1,
+      notLastSample: s.sampleIdx < s.sheets.length - 1,
+      prevSample: () => this.setState((st) => ({ sampleIdx: Math.max(0, st.sampleIdx - 1) })),
+      nextSample: () => this.setState((st) => ({ sampleIdx: Math.min(st.sheets.length - 1, st.sampleIdx + 1) })),
+      submitSheet: () => this.setState({ submitted: true }),
+      submittedCount: subCnt,
+      // guess
+      guessRows,
+      guessBtnLabel: allGuessed ? '送出猜測 ✓' : '請為每支樣本選一支豆（' + s.guesses.filter((g) => g !== null).length + '/' + s.guesses.length + '）',
+      guessBtnBg: allGuessed ? gold : '#3a2a1a', guessBtnFg: allGuessed ? '#241a12' : mut,
+      submitGuess: () => { if (allGuessed) this.setState({ guessSubmitted: true }); },
+      waitRevealHint: isBlind ? '你的猜測已送出。\n房主公佈後將顯示答案與排行榜。' : '所有評分已鎖定。\n房主公佈後將顯示每支豆的平均分。',
+      // results
+      resultRows, answerRows, leaderRows, histBars,
+      // export
+      exportOpen: s.exportOpen,
+      openExport: () => this.setState({ exportOpen: true, copied: false }),
+      closeExport: () => this.setState({ exportOpen: false }),
+      stopProp: (e) => e.stopPropagation(),
+      exportText: s.stage === 'reveal' ? this.buildExport() : '',
+      copyLabel: s.copied ? '已複製 ✓' : '複製到剪貼簿',
+      copyExport: () => {
+        navigator.clipboard.writeText(this.buildExport()).catch(() => {});
+        this.setState({ copied: true });
+        setTimeout(() => this.setState({ copied: false }), 2000);
+      },
+      // answer sheet (host sets correct answers)
+      answerSheetOpen: s.answerSheetOpen,
+      closeAnswerSheet: () => this.setState({ answerSheetOpen: false }),
+      ansRows: s.sheets.map((_, si) => ({
+        no: String(si + 1),
+        beans: s.beans.map((b, bi) => {
+          const sel = s.answerMap[si] === bi;
+          return {
+            name: b.name,
+            bg: sel ? gold : '#241a12', bd: sel ? gold : dim, fg: sel ? '#241a12' : '#c9b8a2',
+            pick: () => this.setState((st) => {
+              const m = st.answerMap.slice();
+              const prev = m.indexOf(bi);
+              if (prev !== -1 && prev !== si) m[prev] = m[si];
+              m[si] = bi;
+              return { answerMap: m };
+            }),
+          };
+        }),
+      })),
+      ansBtnLabel: '確認答案',
+      ansBtnBg: gold, ansBtnFg: '#241a12',
+      confirmAnswers: () => this.setState({ answerConfirmed: true, answerSheetOpen: false }),
+      // host bar
+      showHostBar: inRoom && isHost,
+      stageDots, hostHint, hostAction, hostActionLabel, hostActionShow,
+    };
+  }
+
+  updBeanField(i, k, v) {
+    this.setState((st) => ({ beans: st.beans.map((b, j) => j === i ? { ...b, [k]: v } : b) }));
+  }
+}
+
+</script>
+</body>
+</html>
