@@ -1,0 +1,242 @@
+:root {
+  --gold: #e0b877;
+  --gold-hi: #f0cd94;
+  --bg-page: #171009;
+  --bg-app: #241a12;
+  --bg-card: #3a2a1a;
+  --bg-card-2: #2e2115;
+  --border: #4a382a;
+  --border-dim: #3a2c1e;
+  --border-strong: #6a543e;
+  --cream: #f2ead9;
+  --muted: #b08d63;
+  --muted-2: #8a6f52;
+  --muted-3: #6a543e;
+  --sub: #c9b8a2;
+  --danger: #c96f4a;
+  --ok: #7fae6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--cream);
+  font-family: 'Noto Sans TC', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--gold);
+}
+a:hover {
+  color: var(--gold-hi);
+}
+
+::selection {
+  background: var(--gold);
+  color: #241a12;
+}
+
+input,
+textarea,
+button,
+select {
+  font-family: 'Noto Sans TC', system-ui, sans-serif;
+}
+
+button {
+  transition:
+    transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.16s ease,
+    box-shadow 0.2s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+button:disabled {
+  cursor: default !important;
+}
+
+input,
+textarea,
+select {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(224, 184, 119, 0.12);
+  outline: none;
+}
+
+.btn-outline-gold:hover {
+  background: rgba(224, 184, 119, 0.08);
+}
+.chip:hover {
+  border-color: var(--border-strong);
+}
+.link-muted:hover {
+  border-color: var(--border-strong) !important;
+  color: var(--gold) !important;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sheetUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes steam {
+  0% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-14px) scaleX(1.4);
+    opacity: 0;
+  }
+}
+@keyframes pulseDot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(224, 184, 119, 0.5);
+  }
+  55% {
+    box-shadow: 0 0 0 7px rgba(224, 184, 119, 0);
+  }
+}
+@keyframes ringSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes growBar {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes growW {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  70% {
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.anim-fadeIn {
+  animation: fadeIn 0.4s ease both;
+}
+.anim-fadeUp {
+  animation: fadeUp 0.45s ease both;
+}
+
+.rng {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  background: transparent;
+  margin: 0;
+  cursor: pointer;
+}
+.rng::-webkit-slider-runnable-track {
+  height: 4px;
+  background: transparent;
+}
+.rng::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f4d9a8, #e0b877 55%, #c8985a);
+  border: 3px solid #241a12;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(224, 184, 119, 0.35);
+  margin-top: -10px;
+  transition: transform 0.15s ease;
+}
+.rng:active::-webkit-slider-thumb {
+  transform: scale(1.25);
+}
+.rng::-moz-range-track {
+  height: 4px;
+  background: transparent;
+}
+.rng::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f4d9a8, #e0b877 55%, #c8985a);
+  border: 3px solid #241a12;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+.rng:active::-moz-range-thumb {
+  transform: scale(1.25);
+}
