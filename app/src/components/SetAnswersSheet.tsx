@@ -32,7 +32,7 @@ export function SetAnswersSheet({
       </div>
       <div style={{ fontSize: 12, color: 'var(--muted-2)', lineHeight: 1.6 }}>依實際出杯順序，指定每支樣本對應的豆子。每支豆只能對應一個樣本。</div>
       {Array.from({ length: sampleCount }, (_, sampleIdx) => (
-        <div key={sampleIdx} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 9 }}>
+        <div key={sampleIdx} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 9 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>樣本 {sampleIdx + 1}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {beans.map((b) => {
@@ -44,7 +44,7 @@ export function SetAnswersSheet({
                   style={{
                     height: 34,
                     padding: '0 13px',
-                    borderRadius: 17,
+                    borderRadius: 6,
                     fontSize: 12,
                     cursor: 'pointer',
                     background: sel ? 'var(--gold)' : 'var(--bg-app)',
@@ -64,7 +64,7 @@ export function SetAnswersSheet({
         disabled={!allAssigned}
         style={{
           height: 52,
-          borderRadius: 26,
+          borderRadius: 6,
           border: 'none',
           fontSize: 15,
           fontWeight: 700,

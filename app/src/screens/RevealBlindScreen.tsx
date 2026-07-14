@@ -37,14 +37,14 @@ export function RevealBlindScreen({
           <div style={{ fontSize: 11, letterSpacing: '.25em', color: 'var(--muted)' }}>結果公佈 · 盲測揭曉</div>
           <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 26, fontWeight: 600 }}>正確答案</div>
         </div>
-        <Btn variant="outline" onClick={() => setExportOpen(true)} style={{ height: 40, padding: '0 18px', borderRadius: 20, fontSize: 13 }}>
+        <Btn variant="outline" onClick={() => setExportOpen(true)} style={{ height: 40, padding: '0 18px', borderRadius: 6, fontSize: 13 }}>
           匯出 ↓
         </Btn>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {answerRows.map((a) => (
-          <div key={a.sample} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '13px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div key={a.sample} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '13px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
             <div
               style={{
                 width: 34,
@@ -82,7 +82,7 @@ export function RevealBlindScreen({
           return (
             <div
               key={l.participantId}
-              style={{ background: isMe ? 'var(--bg-card-2)' : 'var(--bg-card)', border: '1px solid ' + (isMe ? 'var(--gold)' : 'var(--border)'), borderRadius: 14, padding: '13px 16px', display: 'flex', alignItems: 'center', gap: 14 }}
+              style={{ background: isMe ? 'var(--bg-card-2)' : 'var(--bg-card)', border: '1px solid ' + (isMe ? 'var(--gold)' : 'var(--border)'), borderRadius: 8, padding: '13px 16px', display: 'flex', alignItems: 'center', gap: 14 }}
             >
               <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, color: l.rank === 1 ? 'var(--gold)' : 'var(--muted-2)', minWidth: 26, textAlign: 'center' }}>{l.rank}</div>
               <div style={{ fontSize: 14, fontWeight: isMe ? 700 : 400, flex: 1, color: isMe ? 'var(--gold)' : 'var(--cream)' }}>{l.name}</div>
@@ -94,7 +94,7 @@ export function RevealBlindScreen({
         })}
       </div>
 
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <div style={{ fontSize: 14, fontWeight: 700 }}>盲測累積排行榜</div>
           <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>近 {history.length + 1} 場猜對總數</div>
@@ -104,7 +104,7 @@ export function RevealBlindScreen({
           return cumRows.map((c) => {
             const isMe = c.name === snap.participants.find((p) => p.id === myParticipantId)?.name;
             return (
-              <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 6px', borderRadius: 10, background: isMe ? 'var(--bg-card-2)' : 'transparent' }}>
+              <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 6px', borderRadius: 6, background: isMe ? 'var(--bg-card-2)' : 'transparent' }}>
                 <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, color: c.rank === 1 ? 'var(--gold)' : 'var(--muted-2)', minWidth: 22, textAlign: 'center' }}>{c.rank}</div>
                 <div style={{ fontSize: 13, fontWeight: isMe ? 700 : 400, flex: 1, color: isMe ? 'var(--gold)' : 'var(--cream)' }}>{c.name}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 2 }}>
@@ -131,7 +131,7 @@ export function RevealBlindScreen({
 
       <HistoryCompare snap={snap} />
 
-      <Btn variant="ghost" full onClick={onResetAll} style={{ height: 50, borderRadius: 25, border: '1.5px solid var(--muted)', color: 'var(--gold)', fontSize: 14, marginTop: 6 }}>
+      <Btn variant="ghost" full onClick={onResetAll} style={{ height: 50, borderRadius: 6, border: '1.5px solid var(--muted)', color: 'var(--gold)', fontSize: 14, marginTop: 6 }}>
         {isHost ? '結束杯測 · 回到首頁' : '離開房間 · 回到首頁'}
       </Btn>
 

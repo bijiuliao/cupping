@@ -24,7 +24,7 @@ export function Btn({ variant = 'solid', full, style, className, children, disab
     fontSize: 15,
     fontWeight: 700,
     letterSpacing: '.06em',
-    borderRadius: 27,
+    borderRadius: 6,
     height: 54,
     width: full ? '100%' : undefined,
     padding: '0 22px',
@@ -89,7 +89,7 @@ const inputBase: React.CSSProperties = {
   height: 48,
   background: 'var(--bg-card)',
   border: '1px solid var(--border)',
-  borderRadius: 12,
+  borderRadius: 6,
   color: 'var(--cream)',
   fontSize: 15,
   padding: '0 16px',
@@ -105,7 +105,7 @@ export function TextArea({ style, ...rest }: TextareaHTMLAttributes<HTMLTextArea
   return (
     <textarea
       style={{
-        borderRadius: 12,
+        borderRadius: 6,
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',
         padding: '12px 14px',
@@ -129,7 +129,7 @@ export function SelectInput({ style, children, ...rest }: SelectHTMLAttributes<H
         height: 36,
         background: 'var(--bg-app)',
         border: '1px solid var(--border)',
-        borderRadius: 9,
+        borderRadius: 6,
         color: 'var(--sub)',
         fontSize: 12,
         padding: '0 8px',
@@ -151,7 +151,7 @@ export function Card({ style, children }: { style?: React.CSSProperties; childre
       style={{
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',
-        borderRadius: 14,
+        borderRadius: 8,
         padding: 14,
         display: 'flex',
         flexDirection: 'column',
@@ -184,7 +184,7 @@ export function Chip({
       style={{
         height: 36,
         padding: '0 14px',
-        borderRadius: 18,
+        borderRadius: 6,
         fontSize: 12,
         cursor: 'pointer',
         background: active ? (danger ? '#c96f4a' : 'var(--gold)') : 'transparent',
@@ -208,7 +208,7 @@ export function Segmented<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: 3 }}>
+    <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 3 }}>
       {options.map((o) => {
         const active = o.value === value;
         return (
@@ -218,7 +218,7 @@ export function Segmented<T extends string>({
             style={{
               height: 32,
               padding: '0 14px',
-              borderRadius: 15,
+              borderRadius: 6,
               border: 'none',
               fontSize: 12,
               cursor: 'pointer',
@@ -262,7 +262,7 @@ export function Sheet({ open, onClose, children, maxHeight }: { open: boolean; o
           overflowY: maxHeight ? 'auto' : undefined,
           background: 'linear-gradient(180deg,#2a1e13,#241a12 60px)',
           borderTop: '1px solid #5a4530',
-          borderRadius: '22px 22px 0 0',
+          borderRadius: '10px 10px 0 0',
           boxShadow: '0 -18px 50px rgba(0,0,0,.5)',
           animation: 'sheetUp .32s cubic-bezier(.2,.8,.2,1) both',
           padding: '22px 22px 34px',

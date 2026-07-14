@@ -26,13 +26,13 @@ export function ArchiveScreen({ userName, onBack }: { userName: string; onBack: 
       </div>
 
       {rows && rows.length === 0 && (
-        <div style={{ border: '1.5px dashed var(--border)', borderRadius: 14, padding: 22, textAlign: 'center', fontSize: 13, color: 'var(--muted-2)' }}>
+        <div style={{ border: '1.5px dashed var(--border)', borderRadius: 8, padding: 22, textAlign: 'center', fontSize: 13, color: 'var(--muted-2)' }}>
           {userName.trim() ? '還沒有杯測紀錄，完成一場杯測後會自動記錄在這裡' : '先在首頁輸入你的名字，才能對應到你的杯測紀錄'}
         </div>
       )}
 
       {(rows ?? []).map((ar) => (
-        <div key={ar.id} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div key={ar.id} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
             <div style={{ fontSize: 15, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ar.beanName}</div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 'none' }}>

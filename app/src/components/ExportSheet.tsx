@@ -32,7 +32,7 @@ export function ExportSheet({ snap, open, onClose }: { snap: RoomSnapshot; open:
         readOnly
         value={text}
         style={{
-          borderRadius: 12,
+          borderRadius: 6,
           background: 'var(--bg-card)',
           border: '1px solid var(--border)',
           padding: '12px 14px',
@@ -47,7 +47,7 @@ export function ExportSheet({ snap, open, onClose }: { snap: RoomSnapshot; open:
       />
       <button
         onClick={copy}
-        style={{ height: 50, borderRadius: 25, background: 'var(--gold)', color: '#241a12', border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}
+        style={{ height: 50, borderRadius: 6, background: 'var(--gold)', color: '#241a12', border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}
       >
         {copied ? '已複製 ✓' : '複製到剪貼簿'}
       </button>

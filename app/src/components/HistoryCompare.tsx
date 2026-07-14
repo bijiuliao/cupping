@@ -63,12 +63,12 @@ export function HistoryCompare({ snap, onHistoryLoaded }: { snap: RoomSnapshot; 
   }
 
   return (
-    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontSize: 14, fontWeight: 700 }}>{room.activityName} · 歷史比較</div>
         <button
           onClick={() => setAddOpen(true)}
-          style={{ height: 32, padding: '0 12px', borderRadius: 16, background: 'transparent', border: '1px solid var(--gold)', color: 'var(--gold)', fontSize: 11, cursor: 'pointer' }}
+          style={{ height: 32, padding: '0 12px', borderRadius: 6, background: 'transparent', border: '1px solid var(--gold)', color: 'var(--gold)', fontSize: 11, cursor: 'pointer' }}
         >
           ＋ 新增場次
         </button>
@@ -102,7 +102,7 @@ export function HistoryCompare({ snap, onHistoryLoaded }: { snap: RoomSnapshot; 
         })}
       </div>
       {openIdx !== null && bars[openIdx] && (
-        <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border)', borderRadius: 12, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border)', borderRadius: 8, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>
               {bars[openIdx].label} · {bars[openIdx].val.toFixed(2)}
@@ -135,7 +135,7 @@ export function HistoryCompare({ snap, onHistoryLoaded }: { snap: RoomSnapshot; 
             type="date"
             value={newDate}
             onChange={(e) => setNewDate(e.target.value)}
-            style={{ height: 46, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 11, color: 'var(--cream)', fontSize: 14, padding: '0 14px', outline: 'none', colorScheme: 'dark' }}
+            style={{ height: 46, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--cream)', fontSize: 14, padding: '0 14px', outline: 'none', colorScheme: 'dark' }}
           />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -148,7 +148,7 @@ export function HistoryCompare({ snap, onHistoryLoaded }: { snap: RoomSnapshot; 
         </div>
         <button
           onClick={confirmAdd}
-          style={{ height: 50, borderRadius: 25, background: 'var(--gold)', color: '#241a12', border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}
+          style={{ height: 50, borderRadius: 6, background: 'var(--gold)', color: '#241a12', border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}
         >
           新增場次
         </button>

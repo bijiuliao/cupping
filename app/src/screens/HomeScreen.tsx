@@ -116,7 +116,7 @@ export function HomeScreen({
               style={{
                 flex: 1,
                 height: 60,
-                borderRadius: 12,
+                borderRadius: 6,
                 background: 'var(--bg-card)',
                 border: '1px solid ' + codeBorder(i),
                 display: 'flex',
@@ -172,7 +172,7 @@ export function HomeScreen({
         full
         onClick={onGoArchive}
         className="anim-fadeUp link-muted"
-        style={{ height: 50, borderRadius: 25, animationDelay: '.34s' }}
+        style={{ height: 50, borderRadius: 6, animationDelay: '.34s' }}
       >
         杯測豆歷史資料庫
       </Btn>

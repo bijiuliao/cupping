@@ -8,7 +8,7 @@ function MenuButton({ icon, title, desc, onClick }: { icon: string; title: strin
     <button
       onClick={onClick}
       style={{
-        borderRadius: 14,
+        borderRadius: 8,
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',
         padding: 16,
@@ -64,7 +64,7 @@ export function AddBeanSheet({
               key={b.name}
               onClick={() => onPickFromDb(b)}
               style={{
-                borderRadius: 12,
+                borderRadius: 8,
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border)',
                 padding: '13px 14px',
@@ -93,7 +93,7 @@ export function AddBeanSheet({
         <div
           style={{
             border: '1.5px dashed var(--border-strong)',
-            borderRadius: 16,
+            borderRadius: 8,
             height: 200,
             display: 'flex',
             flexDirection: 'column',
@@ -113,7 +113,7 @@ export function AddBeanSheet({
           }
           style={{
             height: 50,
-            borderRadius: 25,
+            borderRadius: 6,
             background: 'var(--gold)',
             color: '#241a12',
             border: 'none',

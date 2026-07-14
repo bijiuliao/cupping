@@ -40,7 +40,7 @@ export function WaitSubmittedScreen({ snap }: { snap: RoomSnapshot }) {
         <br />
         結果將由房主統一公佈。
       </div>
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, color: 'var(--gold)' }}>
           {submittedCount(snap)}/{snap.participants.length}
         </div>

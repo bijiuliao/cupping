@@ -43,7 +43,7 @@ export function GuessScreen({ snap, myParticipantId }: { snap: RoomSnapshot; myP
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         {rows.map((r) => (
-          <div key={r.sampleIdx} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div key={r.sampleIdx} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <div style={{ fontSize: 15, fontWeight: 700 }}>樣本 {r.sampleIdx + 1}</div>
               <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>你的總分 {r.myScore.toFixed(2)}</div>
@@ -59,7 +59,7 @@ export function GuessScreen({ snap, myParticipantId }: { snap: RoomSnapshot; myP
                     style={{
                       height: 36,
                       padding: '0 14px',
-                      borderRadius: 18,
+                      borderRadius: 6,
                       fontSize: 12,
                       cursor: 'pointer',
                       background: sel ? 'var(--gold)' : 'var(--bg-app)',

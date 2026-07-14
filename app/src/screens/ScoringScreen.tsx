@@ -117,7 +117,7 @@ export function ScoringScreen({
           </div>
           <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 26, fontWeight: 600 }}>{isBlind ? '樣本 ' + (sampleIdx + 1) : bean?.name || ''}</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '8px 14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 6, padding: '8px 14px' }}>
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--gold)', animation: 'pulseDot 2.2s ease-out infinite' }} />
           <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, color: 'var(--cream)' }}>{fmtTime(elapsed)}</div>
         </div>
@@ -197,7 +197,7 @@ export function ScoringScreen({
               );
             })}
           </div>
-          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontSize: 14, fontWeight: 500 }}>
                 缺點扣分 <span style={{ fontSize: 11, color: 'var(--muted-2)' }}>Defects</span>
@@ -206,7 +206,7 @@ export function ScoringScreen({
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ fontSize: 12, color: 'var(--muted)' }}>以 1 杯計</div>
-              <div style={{ display: 'flex', background: 'var(--bg-app)', border: '1px solid var(--border)', borderRadius: 17, padding: 3 }}>
+              <div style={{ display: 'flex', background: 'var(--bg-app)', border: '1px solid var(--border)', borderRadius: 8, padding: 3 }}>
                 {[
                   { v: 0, label: '無' },
                   { v: 2, label: '輕微 −2' },
@@ -220,7 +220,7 @@ export function ScoringScreen({
                       style={{
                         height: 30,
                         padding: '0 14px',
-                        borderRadius: 14,
+                        borderRadius: 6,
                         border: 'none',
                         fontSize: 12,
                         cursor: 'pointer',
@@ -237,7 +237,7 @@ export function ScoringScreen({
           </div>
         </>
       ) : (
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <div style={{ fontSize: 14, fontWeight: 500 }}>直接輸入總分</div>
             <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>36–100</div>
@@ -264,7 +264,7 @@ export function ScoringScreen({
                 fontSize: 34,
                 background: 'var(--bg-app)',
                 border: '1.5px solid var(--gold)',
-                borderRadius: 14,
+                borderRadius: 6,
                 color: 'var(--gold)',
                 outline: 'none',
               }}
@@ -285,7 +285,7 @@ export function ScoringScreen({
           value={notes}
           onChange={(e) => changeNotes(e.target.value)}
           placeholder="柑橘、焦糖、花香…"
-          style={{ borderRadius: 12, background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '12px 14px', fontSize: 14, color: 'var(--cream)', minHeight: 64, resize: 'vertical', outline: 'none' }}
+          style={{ borderRadius: 6, background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '12px 14px', fontSize: 14, color: 'var(--cream)', minHeight: 64, resize: 'vertical', outline: 'none' }}
         />
       </div>
 
@@ -305,7 +305,7 @@ export function ScoringScreen({
                   style={{
                     height: 36,
                     padding: '0 14px',
-                    borderRadius: 18,
+                    borderRadius: 6,
                     fontSize: 12,
                     cursor: 'pointer',
                     background: sel ? 'var(--gold)' : 'var(--bg-app)',
@@ -328,7 +328,7 @@ export function ScoringScreen({
           justifyContent: 'space-between',
           background: 'radial-gradient(140% 160% at 0% 0%,#443019 0%,#3a2a1a 55%)',
           border: '1px solid var(--gold)',
-          borderRadius: 16,
+          borderRadius: 8,
           padding: '14px 18px',
           boxShadow: '0 6px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(224,184,119,.18)',
         }}
@@ -345,11 +345,11 @@ export function ScoringScreen({
             ←
           </button>
           {isLast ? (
-            <Btn variant="solid" onClick={handleSubmit} style={{ height: 46, padding: '0 22px', borderRadius: 23 }}>
+            <Btn variant="solid" onClick={handleSubmit} style={{ height: 46, padding: '0 22px', borderRadius: 6 }}>
               交卷 ✓
             </Btn>
           ) : (
-            <Btn variant="solid" onClick={() => setSampleIdx((i) => Math.min(sampleCount - 1, i + 1))} style={{ height: 46, padding: '0 22px', borderRadius: 23 }}>
+            <Btn variant="solid" onClick={() => setSampleIdx((i) => Math.min(sampleCount - 1, i + 1))} style={{ height: 46, padding: '0 22px', borderRadius: 6 }}>
               下一支 →
             </Btn>
           )}

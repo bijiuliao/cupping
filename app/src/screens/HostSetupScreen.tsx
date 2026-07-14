@@ -123,7 +123,7 @@ export function HostSetupScreen({
                 style={{
                   flex: 1,
                   padding: '14px 10px',
-                  borderRadius: 14,
+                  borderRadius: 8,
                   textAlign: 'left',
                   cursor: 'pointer',
                   background: active ? 'var(--bg-card-2)' : 'transparent',
@@ -154,7 +154,7 @@ export function HostSetupScreen({
                 style={{
                   height: 38,
                   padding: '0 16px',
-                  borderRadius: 19,
+                  borderRadius: 6,
                   fontSize: 13,
                   cursor: 'pointer',
                   background: active ? 'var(--bg-card-2)' : 'transparent',
@@ -171,7 +171,7 @@ export function HostSetupScreen({
             style={{
               height: 38,
               padding: '0 14px',
-              borderRadius: 19,
+              borderRadius: 6,
               fontSize: 13,
               cursor: 'pointer',
               background: 'transparent',
@@ -191,7 +191,7 @@ export function HostSetupScreen({
               style={{ height: 44, fontSize: 14, flex: 1, minWidth: 0 }}
               onKeyDown={(e) => e.key === 'Enter' && confirmAddActivity()}
             />
-            <Btn variant="solid" onClick={confirmAddActivity} style={{ height: 44, borderRadius: 22, fontSize: 13, flex: 'none', padding: '0 18px' }}>
+            <Btn variant="solid" onClick={confirmAddActivity} style={{ height: 44, borderRadius: 6, fontSize: 13, flex: 'none', padding: '0 18px' }}>
               新增
             </Btn>
           </div>
@@ -213,7 +213,7 @@ export function HostSetupScreen({
               height: 44,
               background: 'var(--bg-app)',
               border: '1px solid var(--border)',
-              borderRadius: 11,
+              borderRadius: 6,
               color: 'var(--cream)',
               fontSize: 13,
               padding: '0 12px',
@@ -234,7 +234,7 @@ export function HostSetupScreen({
         <div style={{ fontSize: 13, color: 'var(--muted)' }}>
           今日豆單 <span style={{ color: 'var(--muted-3)' }}>{validBeans.length} 支</span>
         </div>
-        <Btn variant="outline" onClick={() => setAddSheet('menu')} style={{ height: 36, borderRadius: 18, fontSize: 13, padding: '0 16px' }}>
+        <Btn variant="outline" onClick={() => setAddSheet('menu')} style={{ height: 36, borderRadius: 6, fontSize: 13, padding: '0 16px' }}>
           ＋ 新增
         </Btn>
       </div>
@@ -264,7 +264,7 @@ export function HostSetupScreen({
                 value={b.name}
                 onChange={(e) => updateBean(b.localId, { name: e.target.value })}
                 placeholder="豆名（必填）"
-                style={{ flex: 1, height: 38, fontSize: 14, borderRadius: 9 }}
+                style={{ flex: 1, height: 38, fontSize: 14, borderRadius: 6 }}
               />
               <button
                 onClick={() => removeBean(b.localId)}
@@ -302,7 +302,7 @@ export function HostSetupScreen({
                 value={b.roaster}
                 onChange={(e) => updateBean(b.localId, { roaster: e.target.value })}
                 placeholder="烘焙商"
-                style={{ height: 36, fontSize: 12, borderRadius: 9, padding: '0 10px' }}
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
               />
             </div>
           </Card>
@@ -310,7 +310,7 @@ export function HostSetupScreen({
       </div>
 
       {beans.length === 0 && (
-        <div style={{ border: '1.5px dashed var(--border)', borderRadius: 14, padding: 22, textAlign: 'center', fontSize: 13, color: 'var(--muted-2)' }}>
+        <div style={{ border: '1.5px dashed var(--border)', borderRadius: 8, padding: 22, textAlign: 'center', fontSize: 13, color: 'var(--muted-2)' }}>
           尚未新增豆子，點「＋ 新增」建立今日豆單
         </div>
       )}

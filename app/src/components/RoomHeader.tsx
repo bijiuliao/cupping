@@ -30,7 +30,7 @@ export function RoomHeader({ code, mode }: { code: string; mode: Mode }) {
         >
           {code}
         </div>
-        <div style={{ fontSize: 11, padding: '4px 10px', borderRadius: 10, background: 'var(--bg-card)', color: 'var(--muted)', border: '1px solid var(--border)' }}>
+        <div style={{ fontSize: 11, padding: '4px 10px', borderRadius: 6, background: 'var(--bg-card)', color: 'var(--muted)', border: '1px solid var(--border)' }}>
           {mode === 'blind' ? '盲測' : '公開'}
         </div>
       </div>
