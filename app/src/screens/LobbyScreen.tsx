@@ -23,7 +23,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
             color: 'var(--gold)',
           }}
         >
-          <span style={{ letterSpacing: '.35em', marginRight: '-.35em' }}>{room.code}</span>
+          <span style={{ letterSpacing: '.35em', marginRight: '-.35em', fontVariantNumeric: 'lining-nums' }}>{room.code}</span>
         </div>
         <div style={{ fontSize: 12, color: 'var(--muted-2)' }}>
           {activityLabel} · {room.mode === 'blind' ? '盲測' : '公開'}模式 · {beans.length} 支豆 · {sessDateLabel}
