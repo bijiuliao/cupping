@@ -20,7 +20,7 @@ export function RoomHeader({ code, mode }: { code: string; mode: Mode }) {
           style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border)',
-            borderRadius: 10,
+            borderRadius: 6,
             padding: '6px 12px',
             fontFamily: "'Cormorant Garamond',serif",
             fontSize: 18,

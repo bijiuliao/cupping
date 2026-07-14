@@ -16,7 +16,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
         <div
           style={{
             border: '1.5px dashed var(--muted)',
-            borderRadius: 14,
+            borderRadius: 6,
             padding: '14px 32px',
             fontFamily: "'Cormorant Garamond',serif",
             fontSize: 44,
@@ -44,7 +44,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
                 gap: 8,
                 background: 'var(--bg-card)',
                 border: '1px solid ' + (p.clientId === myClientId ? 'var(--gold)' : 'var(--border)'),
-                borderRadius: 20,
+                borderRadius: 6,
                 padding: '8px 14px',
               }}
             >
@@ -68,7 +68,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
                 gap: 12,
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border)',
-                borderRadius: 12,
+                borderRadius: 6,
                 padding: '12px 14px',
               }}
             >

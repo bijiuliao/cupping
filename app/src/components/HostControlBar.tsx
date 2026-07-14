@@ -28,7 +28,7 @@ export function HostControlBar({
           style={{
             background: 'var(--bg-card-2)',
             border: '1.5px solid var(--gold)',
-            borderRadius: 18,
+            borderRadius: 8,
             padding: '12px 16px',
             display: 'flex',
             alignItems: 'center',
@@ -61,7 +61,7 @@ export function HostControlBar({
               style={{
                 height: 46,
                 padding: '0 18px',
-                borderRadius: 23,
+                borderRadius: 6,
                 background: 'var(--gold)',
                 color: '#241a12',
                 border: 'none',
