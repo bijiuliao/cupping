@@ -92,6 +92,19 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
     }
   }
 
+  // Lets the host undo an accidental "開始評分" / "鎖定交卷" click. Not offered
+  // from 'reveal' — finalizeReveal's side effects (history/archive rows)
+  // already happened, and leaving is what "結束杯測" is for.
+  const showBack = isHost && (room.stage === 'scoring' || room.stage === 'locked');
+
+  async function hostBack() {
+    if (room.stage === 'scoring') {
+      await backend.setStage(roomId, 'waiting', { scoringStartedAt: null });
+    } else if (room.stage === 'locked') {
+      await backend.setStage(roomId, 'scoring');
+    }
+  }
+
   return (
     <>
       <RoomHeader code={room.code} mode={room.mode} />
@@ -104,7 +117,15 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
       {view === 'revealBlind' && <RevealBlindScreen snap={snap} myParticipantId={me.id} isHost={isHost} onResetAll={onLeaveRoom} />}
 
       {isHost && (
-        <HostControlBar stage={room.stage} hint={hostHint} actionLabel={hostActionLabel} onAction={hostAction} showAction={showAction} />
+        <HostControlBar
+          stage={room.stage}
+          hint={hostHint}
+          actionLabel={hostActionLabel}
+          onAction={hostAction}
+          showAction={showAction}
+          onBack={hostBack}
+          showBack={showBack}
+        />
       )}
       {isHost && (
         <SetAnswersSheet snap={snap} open={answerSheetOpen} onClose={() => setAnswerSheetOpen(false)} onConfirmed={() => setAnswerSheetOpen(false)} />

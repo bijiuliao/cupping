@@ -13,12 +13,16 @@ export function HostControlBar({
   actionLabel,
   onAction,
   showAction,
+  onBack,
+  showBack,
 }: {
   stage: Stage;
   hint: string;
   actionLabel: string;
   onAction: () => void;
   showAction: boolean;
+  onBack?: () => void;
+  showBack?: boolean;
 }) {
   const curIdx = STAGES.findIndex((s) => s.key === stage);
   return (
@@ -55,6 +59,25 @@ export function HostControlBar({
             </div>
             <div style={{ fontSize: 11, color: 'var(--muted)' }}>{hint}</div>
           </div>
+          {showBack && (
+            <button
+              onClick={onBack}
+              aria-label="回上一步"
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 6,
+                background: 'transparent',
+                border: '1.5px solid var(--border-strong)',
+                color: 'var(--gold)',
+                fontSize: 18,
+                cursor: 'pointer',
+                flex: 'none',
+              }}
+            >
+              ←
+            </button>
+          )}
           {showAction && (
             <button
               onClick={onAction}
