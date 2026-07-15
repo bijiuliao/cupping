@@ -479,6 +479,12 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
     },
 
     async setFinalGuess(roomId: string, participantId: string, sampleIdx: number, beanIdx: number) {
+      await supabase
+        .from('guess_entries')
+        .update({ final_guess: null })
+        .eq('participant_id', participantId)
+        .eq('final_guess', beanIdx)
+        .neq('sample_idx', sampleIdx);
       const { error } = await supabase
         .from('guess_entries')
         .upsert(

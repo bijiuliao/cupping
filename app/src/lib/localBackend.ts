@@ -291,6 +291,11 @@ export const localBackend: Backend = {
 
   async setFinalGuess(roomId: string, participantId: string, sampleIdx: number, beanIdx: number) {
     await mutate((db) => {
+      Object.values(db.guesses).forEach((g) => {
+        if (g.participantId === participantId && g.sampleIdx !== sampleIdx && g.finalGuess === beanIdx) {
+          g.finalGuess = null;
+        }
+      });
       const key = scoreKey(participantId, sampleIdx);
       const existing = db.guesses[key];
       const base: GuessEntry =

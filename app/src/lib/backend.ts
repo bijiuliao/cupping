@@ -72,6 +72,7 @@ export interface Backend {
   markSubmitted(participantId: string): Promise<void>;
 
   upsertGuessCandidates(roomId: string, participantId: string, sampleIdx: number, candidates: number[]): Promise<void>;
+  /** A bean can only be one participant's final guess for one sample at a time — swaps it away from any other sample it's currently guessed for. */
   setFinalGuess(roomId: string, participantId: string, sampleIdx: number, beanIdx: number): Promise<void>;
   autoFillFinalGuesses(roomId: string, participantId: string): Promise<void>;
   markGuessSubmitted(participantId: string): Promise<void>;
