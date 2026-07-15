@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Btn, SelectInput, Sheet, TextInput } from './ui';
-import { ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
+import { beanSub } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { hasLoffeeApiKey, searchLoffeeBeans } from '../lib/loffeeLabs';
+import { useLoffeeOptions } from '../hooks/useLoffeeOptions';
 import type { Bean, BeanCatalogEntry } from '../lib/types';
 
 function MenuButton({ icon, title, desc, onClick }: { icon: string; title: string; desc: string; onClick: () => void }) {
@@ -41,6 +42,7 @@ function BeanCatalogSheet({
   onPick: (bean: Bean) => void;
 }) {
   const backend = getBackend();
+  const { origins: ORIGINS, processes: PROCESSES, varieties: VARIETIES } = useLoffeeOptions();
   const [catalog, setCatalog] = useState<BeanCatalogEntry[] | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [draft, setDraft] = useState<Bean>(EMPTY_DRAFT);
