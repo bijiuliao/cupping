@@ -32,7 +32,7 @@ function App() {
     const backend = getBackend();
     const roomId = await backend.findRoomByCode(code);
     if (!roomId) return false;
-    await backend.ensureParticipant(roomId, clientId, userName.trim() || '你', 'participant');
+    await backend.ensureParticipant(roomId, clientId, userName.trim(), 'participant');
     sessionStorage.setItem(ROOM_ID_KEY, roomId);
     setRoute({ kind: 'room', roomId });
     return true;
@@ -40,8 +40,8 @@ function App() {
 
   async function handleCreateRoom(input: Omit<CreateRoomInput, 'hostName' | 'hostClientId'>) {
     const backend = getBackend();
-    const { roomId } = await backend.createRoom({ ...input, hostName: userName.trim() || '你', hostClientId: clientId });
-    await backend.ensureParticipant(roomId, clientId, userName.trim() || '你', 'host');
+    const { roomId } = await backend.createRoom({ ...input, hostName: userName.trim(), hostClientId: clientId });
+    await backend.ensureParticipant(roomId, clientId, userName.trim(), 'host');
     // Fire-and-forget: grow the shared bean catalog, but never block entering the room on it.
     input.beans.forEach((b) => {
       backend.upsertBeanToCatalog(b).catch(() => {});

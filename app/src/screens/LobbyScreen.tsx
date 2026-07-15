@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Btn, ScreenShell, TextInput } from '../components/ui';
+import { Btn, ComboBox, ScreenShell, TextInput } from '../components/ui';
 import { AddBeanSheet } from '../components/AddBeanSheet';
 import { ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
 import { getBackend } from '../lib/backend';
@@ -70,24 +70,24 @@ function EditableBeanRow({ bean, onRemove }: { bean: RoomBean; onRemove: () => v
         </button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        <TextInput
-          list="lobby-origin-list"
+        <ComboBox
           value={local.origin}
-          onChange={(e) => set({ origin: e.target.value })}
+          onChange={(v) => set({ origin: v })}
+          options={ORIGINS}
           placeholder="產區/國家"
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
-        <TextInput
-          list="lobby-process-list"
+        <ComboBox
           value={local.process}
-          onChange={(e) => set({ process: e.target.value })}
+          onChange={(v) => set({ process: v })}
+          options={PROCESSES}
           placeholder="處理法"
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
-        <TextInput
-          list="lobby-variety-list"
+        <ComboBox
           value={local.variety}
-          onChange={(e) => set({ variety: e.target.value })}
+          onChange={(v) => set({ variety: v })}
+          options={VARIETIES}
           placeholder="品種"
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
@@ -181,26 +181,6 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
             </Btn>
           )}
         </div>
-
-        {canEditBeans && (
-          <>
-            <datalist id="lobby-origin-list">
-              {ORIGINS.map((o) => (
-                <option key={o} value={o} />
-              ))}
-            </datalist>
-            <datalist id="lobby-process-list">
-              {PROCESSES.map((o) => (
-                <option key={o} value={o} />
-              ))}
-            </datalist>
-            <datalist id="lobby-variety-list">
-              {VARIETIES.map((o) => (
-                <option key={o} value={o} />
-              ))}
-            </datalist>
-          </>
-        )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {beans.map((b) =>

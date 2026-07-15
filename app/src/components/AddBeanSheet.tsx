@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Btn, Sheet, TextInput } from './ui';
+import { Btn, ComboBox, Sheet, TextInput } from './ui';
 import { ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { hasLoffeeProxy, searchLoffeeBeans } from '../lib/loffeeLabs';
@@ -93,40 +93,25 @@ function BeanCatalogSheet({
             placeholder="豆名（必填）"
             style={{ height: 40, fontSize: 14, borderRadius: 6 }}
           />
-          <datalist id="catalog-origin-list">
-            {ORIGINS.map((o) => (
-              <option key={o} value={o} />
-            ))}
-          </datalist>
-          <datalist id="catalog-process-list">
-            {PROCESSES.map((o) => (
-              <option key={o} value={o} />
-            ))}
-          </datalist>
-          <datalist id="catalog-variety-list">
-            {VARIETIES.map((o) => (
-              <option key={o} value={o} />
-            ))}
-          </datalist>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <TextInput
-              list="catalog-origin-list"
+            <ComboBox
               value={draft.origin}
-              onChange={(e) => setDraft((d) => ({ ...d, origin: e.target.value }))}
+              onChange={(v) => setDraft((d) => ({ ...d, origin: v }))}
+              options={ORIGINS}
               placeholder="產區/國家"
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />
-            <TextInput
-              list="catalog-process-list"
+            <ComboBox
               value={draft.process}
-              onChange={(e) => setDraft((d) => ({ ...d, process: e.target.value }))}
+              onChange={(v) => setDraft((d) => ({ ...d, process: v }))}
+              options={PROCESSES}
               placeholder="處理法"
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />
-            <TextInput
-              list="catalog-variety-list"
+            <ComboBox
               value={draft.variety}
-              onChange={(e) => setDraft((d) => ({ ...d, variety: e.target.value }))}
+              onChange={(v) => setDraft((d) => ({ ...d, variety: v }))}
+              options={VARIETIES}
               placeholder="品種"
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />

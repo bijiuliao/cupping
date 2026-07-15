@@ -90,6 +90,9 @@ select:focus {
 .chip:hover {
   border-color: var(--border-strong);
 }
+.combo-option:hover {
+  background: var(--bg-card);
+}
 .link-muted:hover {
   border-color: var(--border-strong) !important;
   color: var(--gold) !important;

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 
 export function Kicker({ children }: { children: ReactNode }) {
@@ -38,8 +39,8 @@ export function Btn({ variant = 'solid', full, style, className, children, disab
   } else if (variant === 'outline') {
     variantStyle = {
       background: 'transparent',
-      border: '1.5px solid var(--gold)',
-      color: 'var(--gold)',
+      border: '1.5px solid ' + (disabled ? 'var(--border)' : 'var(--gold)'),
+      color: disabled ? 'var(--muted-2)' : 'var(--gold)',
       fontWeight: 500,
     };
   } else if (variant === 'ghost') {
@@ -99,6 +100,78 @@ const inputBase: React.CSSProperties = {
 
 export function TextInput({ style, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return <input style={{ ...inputBase, ...style }} {...rest} />;
+}
+
+/**
+ * Text input + custom suggestion dropdown — a hand-rolled replacement for
+ * `<input list>` + `<datalist>`. iOS Safari renders native datalists as a
+ * bar above the keyboard instead of a normal dropdown, which looks and
+ * behaves inconsistently with every other input in the app; this renders
+ * identically on every platform.
+ */
+export function ComboBox({
+  value,
+  onChange,
+  options,
+  placeholder,
+  style,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: string[];
+  placeholder?: string;
+  style?: React.CSSProperties;
+}) {
+  const [open, setOpen] = useState(false);
+  const query = value.trim().toLowerCase();
+  const filtered = (query ? options.filter((o) => o.toLowerCase().includes(query)) : options).slice(0, 8);
+
+  return (
+    <div style={{ position: 'relative', minWidth: 0 }}>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        placeholder={placeholder}
+        style={{ ...inputBase, width: '100%', boxSizing: 'border-box', ...style }}
+      />
+      {open && filtered.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 4px)',
+            left: 0,
+            right: 0,
+            zIndex: 30,
+            background: 'var(--bg-card-2)',
+            border: '1px solid var(--border-strong)',
+            borderRadius: 6,
+            overflow: 'hidden',
+            boxShadow: '0 10px 30px rgba(0,0,0,.4)',
+            maxHeight: 220,
+            overflowY: 'auto',
+          }}
+        >
+          {filtered.map((o) => (
+            <div
+              key={o}
+              className="combo-option"
+              // onMouseDown (not onClick) fires before the input's onBlur closes the dropdown.
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onChange(o);
+                setOpen(false);
+              }}
+              style={{ padding: '9px 12px', fontSize: 13, color: 'var(--cream)', cursor: 'pointer' }}
+            >
+              {o}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function TextArea({ style, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {

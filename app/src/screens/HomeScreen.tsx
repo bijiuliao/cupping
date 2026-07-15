@@ -21,8 +21,10 @@ export function HomeScreen({
   const codeChar = (i: number) => code[i] || '';
   const codeBorder = (i: number) => (code.length === i ? 'var(--gold)' : 'var(--border)');
 
+  const hasName = userName.trim().length > 0;
+
   async function handleJoin() {
-    if (code.length !== 4 || joining) return;
+    if (code.length !== 4 || joining || !hasName) return;
     setJoining(true);
     setError('');
     const ok = await onJoin(code);
@@ -102,7 +104,7 @@ export function HomeScreen({
 
       <div className="anim-fadeUp" style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10, animationDelay: '.08s' }}>
         <div style={{ fontSize: 13, color: 'var(--muted)' }}>
-          你的名字 <span style={{ fontSize: 11, color: 'var(--muted-3)' }}>辨識身份 · 跨場次累積成績</span>
+          你的名字 <span style={{ fontSize: 11, color: 'var(--muted-3)' }}>必填 · 辨識身份 · 跨場次累積成績</span>
         </div>
         <TextInput value={userName} onChange={(e) => onUserNameChange(e.target.value)} placeholder="例：小魏" />
       </div>
@@ -155,7 +157,7 @@ export function HomeScreen({
           />
         </div>
         {error && <div style={{ fontSize: 12, color: 'var(--danger)', textAlign: 'center' }}>{error}</div>}
-        <Btn variant="solid" full onClick={handleJoin} disabled={code.length !== 4 || joining}>
+        <Btn variant="solid" full onClick={handleJoin} disabled={code.length !== 4 || joining || !hasName}>
           {joining ? '加入中…' : '加入房間'}
         </Btn>
       </div>
@@ -164,7 +166,7 @@ export function HomeScreen({
         <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,transparent,#3a2c1e)' }} />或
         <div style={{ flex: 1, height: 1, background: 'linear-gradient(270deg,transparent,#3a2c1e)' }} />
       </div>
-      <Btn variant="outline" full onClick={onGoSetup} className="anim-fadeUp" style={{ animationDelay: '.28s' }}>
+      <Btn variant="outline" full onClick={onGoSetup} disabled={!hasName} className="anim-fadeUp" style={{ animationDelay: '.28s' }}>
         建立房間（房主）
       </Btn>
       <Btn
