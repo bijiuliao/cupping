@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Btn, Card, Field, ScreenShell, SelectInput, TextInput } from '../components/ui';
+import { Btn, Card, Field, ScreenShell, TextInput } from '../components/ui';
 import { ORIGINS, PROCESSES, VARIETIES } from '../lib/coe';
 import type { Bean, Mode } from '../lib/types';
 import { getBackend } from '../lib/backend';
@@ -239,6 +239,21 @@ export function HostSetupScreen({
         </Btn>
       </div>
 
+      <datalist id="host-origin-list">
+        {ORIGINS.map((o) => (
+          <option key={o} value={o} />
+        ))}
+      </datalist>
+      <datalist id="host-process-list">
+        {PROCESSES.map((o) => (
+          <option key={o} value={o} />
+        ))}
+      </datalist>
+      <datalist id="host-variety-list">
+        {VARIETIES.map((o) => (
+          <option key={o} value={o} />
+        ))}
+      </datalist>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {beans.map((b, i) => (
           <Card key={b.localId}>
@@ -274,30 +289,27 @@ export function HostSetupScreen({
               </button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              <SelectInput value={b.origin} onChange={(e) => updateBean(b.localId, { origin: e.target.value })}>
-                <option value="">產區/國家</option>
-                {ORIGINS.map((o) => (
-                  <option key={o} value={o}>
-                    {o}
-                  </option>
-                ))}
-              </SelectInput>
-              <SelectInput value={b.process} onChange={(e) => updateBean(b.localId, { process: e.target.value })}>
-                <option value="">處理法</option>
-                {PROCESSES.map((o) => (
-                  <option key={o} value={o}>
-                    {o}
-                  </option>
-                ))}
-              </SelectInput>
-              <SelectInput value={b.variety} onChange={(e) => updateBean(b.localId, { variety: e.target.value })}>
-                <option value="">品種</option>
-                {VARIETIES.map((o) => (
-                  <option key={o} value={o}>
-                    {o}
-                  </option>
-                ))}
-              </SelectInput>
+              <TextInput
+                list="host-origin-list"
+                value={b.origin}
+                onChange={(e) => updateBean(b.localId, { origin: e.target.value })}
+                placeholder="產區/國家"
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+              />
+              <TextInput
+                list="host-process-list"
+                value={b.process}
+                onChange={(e) => updateBean(b.localId, { process: e.target.value })}
+                placeholder="處理法"
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+              />
+              <TextInput
+                list="host-variety-list"
+                value={b.variety}
+                onChange={(e) => updateBean(b.localId, { variety: e.target.value })}
+                placeholder="品種"
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+              />
               <TextInput
                 value={b.roaster}
                 onChange={(e) => updateBean(b.localId, { roaster: e.target.value })}

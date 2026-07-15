@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Btn, SelectInput, Sheet, TextInput } from './ui';
+import { Btn, Sheet, TextInput } from './ui';
 import { ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { hasLoffeeProxy, searchLoffeeBeans } from '../lib/loffeeLabs';
@@ -93,31 +93,43 @@ function BeanCatalogSheet({
             placeholder="豆名（必填）"
             style={{ height: 40, fontSize: 14, borderRadius: 6 }}
           />
+          <datalist id="catalog-origin-list">
+            {ORIGINS.map((o) => (
+              <option key={o} value={o} />
+            ))}
+          </datalist>
+          <datalist id="catalog-process-list">
+            {PROCESSES.map((o) => (
+              <option key={o} value={o} />
+            ))}
+          </datalist>
+          <datalist id="catalog-variety-list">
+            {VARIETIES.map((o) => (
+              <option key={o} value={o} />
+            ))}
+          </datalist>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <SelectInput value={draft.origin} onChange={(e) => setDraft((d) => ({ ...d, origin: e.target.value }))}>
-              <option value="">產區/國家</option>
-              {ORIGINS.map((o) => (
-                <option key={o} value={o}>
-                  {o}
-                </option>
-              ))}
-            </SelectInput>
-            <SelectInput value={draft.process} onChange={(e) => setDraft((d) => ({ ...d, process: e.target.value }))}>
-              <option value="">處理法</option>
-              {PROCESSES.map((o) => (
-                <option key={o} value={o}>
-                  {o}
-                </option>
-              ))}
-            </SelectInput>
-            <SelectInput value={draft.variety} onChange={(e) => setDraft((d) => ({ ...d, variety: e.target.value }))}>
-              <option value="">品種</option>
-              {VARIETIES.map((o) => (
-                <option key={o} value={o}>
-                  {o}
-                </option>
-              ))}
-            </SelectInput>
+            <TextInput
+              list="catalog-origin-list"
+              value={draft.origin}
+              onChange={(e) => setDraft((d) => ({ ...d, origin: e.target.value }))}
+              placeholder="產區/國家"
+              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+            />
+            <TextInput
+              list="catalog-process-list"
+              value={draft.process}
+              onChange={(e) => setDraft((d) => ({ ...d, process: e.target.value }))}
+              placeholder="處理法"
+              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+            />
+            <TextInput
+              list="catalog-variety-list"
+              value={draft.variety}
+              onChange={(e) => setDraft((d) => ({ ...d, variety: e.target.value }))}
+              placeholder="品種"
+              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+            />
             <TextInput
               value={draft.roaster}
               onChange={(e) => setDraft((d) => ({ ...d, roaster: e.target.value }))}
