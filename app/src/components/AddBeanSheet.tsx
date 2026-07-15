@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Btn, SelectInput, Sheet, TextInput } from './ui';
 import { beanSub } from '../lib/coe';
 import { getBackend } from '../lib/backend';
-import { hasLoffeeApiKey, searchLoffeeBeans } from '../lib/loffeeLabs';
+import { hasLoffeeProxy, searchLoffeeBeans } from '../lib/loffeeLabs';
 import { useLoffeeOptions } from '../hooks/useLoffeeOptions';
 import type { Bean, BeanCatalogEntry } from '../lib/types';
 
@@ -334,7 +334,7 @@ export function AddBeanSheet({
         <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>新增豆子</div>
         <MenuButton icon="✏️" title="手動輸入" desc="直接填寫豆名、產區、處理法等欄位" onClick={onAddManual} />
         <MenuButton icon="🗂" title="從豆單資料庫選擇" desc="共用資料庫 · 大家新增過的豆子都在這裡" onClick={onOpenDb} />
-        {hasLoffeeApiKey && (
+        {hasLoffeeProxy && (
           <MenuButton icon="🌐" title="搜尋 Loffee Labs" desc="全球烘焙商豆單資料庫" onClick={onOpenLoffee} />
         )}
         <MenuButton icon="📷" title="拍照掃描豆袋" desc="OCR 文字辨識自動填入 · 預留功能" onClick={onOpenScan} />

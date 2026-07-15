@@ -1,8 +1,22 @@
 import type { Bean } from './types';
 
-const BASE_URL = 'https://loffeelabs.com/api/v2';
+// loffeelabs.com sends no CORS headers on any endpoint, so the browser can
+// never call it directly (confirmed live: requests reach their server and
+// get a 200, but the browser blocks the response from reaching our JS). All
+// calls go through a Supabase Edge Function proxy instead — see
+// supabase/functions/loffee-proxy/index.ts for the server side and its
+// deploy instructions.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const PROXY_BASE = supabaseUrl ? `${supabaseUrl}/functions/v1/loffee-proxy` : null;
 
-export const hasLoffeeApiKey = Boolean(import.meta.env.VITE_LOFFEE_API_KEY);
+export const hasLoffeeProxy = Boolean(PROXY_BASE && supabaseAnonKey && import.meta.env.VITE_LOFFEE_PROXY_ENABLED);
+
+function proxyFetch(path: string, params: URLSearchParams): Promise<Response> {
+  return fetch(`${PROXY_BASE}${path}?${params}`, {
+    headers: { Authorization: `Bearer ${supabaseAnonKey}`, apikey: supabaseAnonKey! },
+  });
+}
 
 function mapRow(r: Record<string, unknown>): Bean {
   return {
@@ -15,29 +29,23 @@ function mapRow(r: Record<string, unknown>): Bean {
   };
 }
 
-/** Searches Loffee Labs' bean database. Throws a Chinese, user-facing message on failure. */
+/** Searches Loffee Labs' bean database (via the Supabase proxy). Throws a Chinese, user-facing message on failure. */
 export async function searchLoffeeBeans(query: string, limit = 20): Promise<Bean[]> {
-  const apiKey = import.meta.env.VITE_LOFFEE_API_KEY;
-  if (!apiKey) throw new Error('尚未設定 Loffee Labs API key');
+  if (!PROXY_BASE) throw new Error('尚未設定 Loffee Labs 代理（需要先設定 Supabase）');
 
   const params = new URLSearchParams({
     search: query,
     limit: String(limit),
     fields: 'roaster,roast-name,origin,process,variety,producer',
-    api_key: apiKey,
   });
 
   let res: Response;
   try {
-    // Query-param auth (rather than an Authorization header) avoids a CORS
-    // preflight, which is what the docs' "browser testing" method is for —
-    // this is a browser client, not a backend, so that's the method that works.
-    res = await fetch(`${BASE_URL}/beans?${params}`);
+    res = await proxyFetch('/beans', params);
   } catch {
-    throw new Error('無法連線到 Loffee Labs，請檢查網路連線');
+    throw new Error('無法連線到 Loffee Labs 代理，請檢查網路連線');
   }
 
-  if (res.status === 401) throw new Error('Loffee Labs API key 無效或未授權');
   if (res.status === 429) throw new Error('已超過 Loffee Labs 查詢額度或頻率限制，請稍後再試');
   if (!res.ok) throw new Error('Loffee Labs 查詢失敗（狀態碼 ' + res.status + '）');
 
@@ -51,11 +59,12 @@ export async function searchLoffeeBeans(query: string, limit = 20): Promise<Bean
   return (rows as Record<string, unknown>[]).map(mapRow).filter((b) => b.name.trim());
 }
 
-// ---- public, unauthenticated lookup-list endpoints (no API key required) --------
+// ---- Loffee Labs' public lookup lists (still routed through the proxy — they have no CORS either) --------
 
 async function fetchFlatList(endpoint: string): Promise<string[]> {
+  if (!PROXY_BASE) return [];
   try {
-    const res = await fetch(`${BASE_URL}/${endpoint}?flat=true`);
+    const res = await proxyFetch(`/${endpoint}`, new URLSearchParams({ flat: 'true' }));
     if (!res.ok) return [];
     const data: unknown = await res.json();
     const rows = Array.isArray(data) ? data : ((data as { data?: unknown[] })?.data ?? []);
