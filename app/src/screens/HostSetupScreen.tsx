@@ -305,6 +305,12 @@ export function HostSetupScreen({
                 placeholder="烘焙商"
                 style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
               />
+              <TextInput
+                value={b.producer}
+                onChange={(e) => updateBean(b.localId, { producer: e.target.value })}
+                placeholder="生產者"
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+              />
             </div>
           </Card>
         ))}
@@ -323,7 +329,7 @@ export function HostSetupScreen({
       <AddBeanSheet
         state={addSheet}
         onClose={() => setAddSheet(null)}
-        onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '' })}
+        onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '', producer: '' })}
         onOpenDb={() => setAddSheet('db')}
         onOpenScan={() => setAddSheet('scan')}
         onOpenLoffee={() => setAddSheet('loffee')}

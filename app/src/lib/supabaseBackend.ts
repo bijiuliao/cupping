@@ -60,6 +60,7 @@ function mapBean(r: any): RoomBean {
     process: r.process ?? '',
     variety: r.variety ?? '',
     roaster: r.roaster ?? '',
+    producer: r.producer ?? '',
   };
 }
 
@@ -131,6 +132,7 @@ function mapBeanCatalog(r: any): BeanCatalogEntry {
     process: r.process ?? '',
     variety: r.variety ?? '',
     roaster: r.roaster ?? '',
+    producer: r.producer ?? '',
   };
 }
 
@@ -204,6 +206,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         process: b.process,
         variety: b.variety,
         roaster: b.roaster,
+        producer: b.producer,
       }));
       if (beanRows.length) {
         const { error } = await supabase.from('room_beans').insert(beanRows);
@@ -529,6 +532,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
           process: bean.process,
           variety: bean.variety,
           roaster: bean.roaster,
+          producer: bean.producer,
         },
         { onConflict: 'name' },
       );

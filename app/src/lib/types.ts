@@ -22,6 +22,7 @@ export interface Bean {
   process: string;
   variety: string;
   roaster: string;
+  producer: string;
 }
 
 export interface RoomBean extends Bean {

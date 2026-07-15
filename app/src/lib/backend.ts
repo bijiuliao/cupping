@@ -20,7 +20,7 @@ export interface CreateRoomInput {
   sessionDate: string | null; // ISO
   hostName: string;
   hostClientId: string;
-  beans: { name: string; origin: string; process: string; variety: string; roaster: string }[];
+  beans: { name: string; origin: string; process: string; variety: string; roaster: string; producer: string }[];
 }
 
 export interface ScorePatch {

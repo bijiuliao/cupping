@@ -11,6 +11,7 @@ function mapRow(r: Record<string, unknown>): Bean {
     process: String(r.process ?? ''),
     variety: String(r.variety ?? ''),
     roaster: String(r.roaster ?? ''),
+    producer: String(r.producer ?? ''),
   };
 }
 
@@ -22,7 +23,7 @@ export async function searchLoffeeBeans(query: string, limit = 20): Promise<Bean
   const params = new URLSearchParams({
     search: query,
     limit: String(limit),
-    fields: 'roaster,roast-name,origin,process,variety',
+    fields: 'roaster,roast-name,origin,process,variety,producer',
   });
 
   let res: Response;
