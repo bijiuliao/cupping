@@ -120,7 +120,7 @@ export function HistoryCompare({ snap, onHistoryLoaded }: { snap: RoomSnapshot; 
       )}
       <div style={{ fontSize: 10, color: 'var(--muted-3)' }}>點長條看該場豆單</div>
 
-      <Sheet open={addOpen} onClose={() => setAddOpen(false)}>
+      <Sheet open={addOpen} onClose={() => setAddOpen(false)} maxHeight="85vh">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>新增歷史場次</div>
           <div style={{ fontSize: 11, color: 'var(--muted-3)' }}>補登過去場次</div>

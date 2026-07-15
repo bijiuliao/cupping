@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 
 export function Kicker({ children }: { children: ReactNode }) {
@@ -124,7 +125,9 @@ export function ComboBox({
 }) {
   const [open, setOpen] = useState(false);
   const query = value.trim().toLowerCase();
-  const filtered = (query ? options.filter((o) => o.toLowerCase().includes(query)) : options).slice(0, 8);
+  // No cap here — the dropdown below scrolls (maxHeight + overflowY: auto),
+  // so capping the list just made results past the first few unreachable.
+  const filtered = query ? options.filter((o) => o.toLowerCase().includes(query)) : options;
 
   return (
     <div style={{ position: 'relative', minWidth: 0 }}>
@@ -147,9 +150,9 @@ export function ComboBox({
             background: 'var(--bg-card-2)',
             border: '1px solid var(--border-strong)',
             borderRadius: 6,
-            overflow: 'hidden',
             boxShadow: '0 10px 30px rgba(0,0,0,.4)',
             maxHeight: 220,
+            overflowX: 'hidden',
             overflowY: 'auto',
           }}
         >
@@ -310,7 +313,16 @@ export function Segmented<T extends string>({
 
 export function Sheet({ open, onClose, children, maxHeight }: { open: boolean; onClose: () => void; children: ReactNode; maxHeight?: string }) {
   if (!open) return null;
-  return (
+  // Rendered via portal straight into <body> — every screen wrapper uses a
+  // CSS `animation` that targets `transform` (the fade-up entrance), which
+  // makes browsers treat it as a containing block for `position: fixed`
+  // descendants for as long as that animation class is applied (i.e.
+  // permanently, since the class is never removed). Left un-ported, a
+  // sheet's fixed backdrop gets trapped inside that screen's box instead of
+  // the viewport, so its z-index only competes with siblings *inside* that
+  // box — not against page-level fixed elements like the bottom control
+  // bar, which could then render on top of the sheet and block its buttons.
+  return createPortal(
     <div
       onClick={onClose}
       style={{
@@ -347,7 +359,8 @@ export function Sheet({ open, onClose, children, maxHeight }: { open: boolean; o
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

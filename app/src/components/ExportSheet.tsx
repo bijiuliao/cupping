@@ -18,7 +18,7 @@ export function ExportSheet({ snap, open, onClose }: { snap: RoomSnapshot; open:
   }
 
   return (
-    <Sheet open={open} onClose={onClose}>
+    <Sheet open={open} onClose={onClose} maxHeight="85vh">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>匯出結果</div>
         <button

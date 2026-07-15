@@ -149,7 +149,7 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
         <SetAnswersSheet snap={snap} open={answerSheetOpen} onClose={() => setAnswerSheetOpen(false)} onConfirmed={() => setAnswerSheetOpen(false)} />
       )}
       {isHost && (
-        <Sheet open={closeRoomOpen} onClose={() => setCloseRoomOpen(false)}>
+        <Sheet open={closeRoomOpen} onClose={() => setCloseRoomOpen(false)} maxHeight="85vh">
           <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>關閉房間？</div>
           <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
             所有人都會被移出這個房間，房間代碼 {room.code} 立即失效，已輸入的豆單與評分將全部刪除，無法復原。

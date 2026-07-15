@@ -325,7 +325,7 @@ export function AddBeanSheet({
 }) {
   return (
     <>
-      <Sheet open={state === 'menu'} onClose={onClose}>
+      <Sheet open={state === 'menu'} onClose={onClose} maxHeight="85vh">
         <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>新增豆子</div>
         <MenuButton icon="✏️" title="手動輸入" desc="直接填寫豆名、產區、處理法等欄位" onClick={onAddManual} />
         <MenuButton icon="🗂" title="從豆單資料庫選擇" desc="共用資料庫 · 大家新增過的豆子都在這裡" onClick={onOpenDb} />
@@ -339,7 +339,7 @@ export function AddBeanSheet({
 
       <LoffeeSearchSheet open={state === 'loffee'} onClose={onClose} onPick={onPickFromDb} />
 
-      <Sheet open={state === 'scan'} onClose={onClose}>
+      <Sheet open={state === 'scan'} onClose={onClose} maxHeight="85vh">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>拍照掃描豆袋</div>
           <div style={{ fontSize: 11, color: 'var(--muted-3)' }}>預留功能</div>
