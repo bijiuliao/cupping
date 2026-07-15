@@ -110,6 +110,24 @@ export const localBackend: Backend = {
     });
   },
 
+  async closeRoom(roomId: string) {
+    await mutate((db) => {
+      delete db.rooms[roomId];
+      Object.keys(db.beans).forEach((id) => {
+        if (db.beans[id].roomId === roomId) delete db.beans[id];
+      });
+      Object.keys(db.participants).forEach((id) => {
+        if (db.participants[id].roomId === roomId) delete db.participants[id];
+      });
+      Object.keys(db.scores).forEach((key) => {
+        if (db.scores[key].roomId === roomId) delete db.scores[key];
+      });
+      Object.keys(db.guesses).forEach((key) => {
+        if (db.guesses[key].roomId === roomId) delete db.guesses[key];
+      });
+    });
+  },
+
   async assignAnswer(roomId: string, sampleIdx: number, beanIdx: number) {
     await mutate((db) => {
       const beans = Object.values(db.beans).filter((b) => b.roomId === roomId);

@@ -53,6 +53,9 @@ export interface Backend {
 
   setStage(roomId: string, stage: Stage, extra?: { scoringStartedAt?: string | null }): Promise<void>;
 
+  /** Deletes the room and everything under it (beans, participants, scores, guesses). Irreversible. */
+  closeRoom(roomId: string): Promise<void>;
+
   /** Assign sample slot `sampleIdx` (0-based) to the bean with entry-order `beanIdx` (1-based). Swaps if taken. */
   assignAnswer(roomId: string, sampleIdx: number, beanIdx: number): Promise<void>;
   confirmAnswers(roomId: string): Promise<void>;

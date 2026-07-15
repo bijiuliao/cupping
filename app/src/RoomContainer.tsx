@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { RoomHeader } from './components/RoomHeader';
 import { HostControlBar } from './components/HostControlBar';
 import { SetAnswersSheet } from './components/SetAnswersSheet';
+import { Sheet } from './components/ui';
 import { LobbyScreen } from './screens/LobbyScreen';
 import { ScoringScreen } from './screens/ScoringScreen';
 import { WaitSubmittedScreen, WaitRevealScreen } from './screens/WaitScreens';
@@ -18,6 +19,8 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
   const backend = getBackend();
   const snap = useRoomSnapshot(roomId);
   const [answerSheetOpen, setAnswerSheetOpen] = useState(false);
+  const [closeRoomOpen, setCloseRoomOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     if (snap === null) onLeaveRoom();
@@ -105,9 +108,24 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
     }
   }
 
+  // Only before 公佈 — finalizeReveal's history/archive rows reference this
+  // room by id without cascading, so closing after that point would need
+  // those cleaned up first. "結束杯測" is the exit once results are out.
+  const showCloseRoom = isHost && room.stage !== 'reveal';
+
+  async function handleCloseRoom() {
+    setClosing(true);
+    try {
+      await backend.closeRoom(roomId);
+      onLeaveRoom();
+    } finally {
+      setClosing(false);
+    }
+  }
+
   return (
     <>
-      <RoomHeader code={room.code} mode={room.mode} />
+      <RoomHeader code={room.code} mode={room.mode} showCloseRoom={showCloseRoom} onCloseRoom={() => setCloseRoomOpen(true)} />
       {view === 'lobby' && <LobbyScreen snap={snap} myClientId={clientId} />}
       {view === 'scoring' && <ScoringScreen snap={snap} myParticipantId={me.id} />}
       {view === 'waitSub' && <WaitSubmittedScreen snap={snap} />}
@@ -129,6 +147,37 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
       )}
       {isHost && (
         <SetAnswersSheet snap={snap} open={answerSheetOpen} onClose={() => setAnswerSheetOpen(false)} onConfirmed={() => setAnswerSheetOpen(false)} />
+      )}
+      {isHost && (
+        <Sheet open={closeRoomOpen} onClose={() => setCloseRoomOpen(false)}>
+          <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>關閉房間？</div>
+          <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+            所有人都會被移出這個房間，房間代碼 {room.code} 立即失效，已輸入的豆單與評分將全部刪除，無法復原。
+          </div>
+          <button
+            onClick={handleCloseRoom}
+            disabled={closing}
+            style={{
+              height: 50,
+              borderRadius: 6,
+              background: '#c96f4a',
+              color: '#241a12',
+              border: 'none',
+              fontSize: 15,
+              fontWeight: 700,
+              cursor: closing ? 'default' : 'pointer',
+              opacity: closing ? 0.6 : 1,
+            }}
+          >
+            {closing ? '關閉中…' : '確認關閉房間'}
+          </button>
+          <button
+            onClick={() => setCloseRoomOpen(false)}
+            style={{ height: 44, borderRadius: 6, background: 'transparent', border: '1px solid var(--border)', color: 'var(--muted)', fontSize: 14, cursor: 'pointer' }}
+          >
+            取消
+          </button>
+        </Sheet>
       )}
     </>
   );

@@ -1,6 +1,16 @@
 import type { Mode } from '../lib/types';
 
-export function RoomHeader({ code, mode }: { code: string; mode: Mode }) {
+export function RoomHeader({
+  code,
+  mode,
+  showCloseRoom,
+  onCloseRoom,
+}: {
+  code: string;
+  mode: Mode;
+  showCloseRoom?: boolean;
+  onCloseRoom?: () => void;
+}) {
   return (
     <div
       style={{
@@ -34,6 +44,22 @@ export function RoomHeader({ code, mode }: { code: string; mode: Mode }) {
           {mode === 'blind' ? '盲測' : '公開'}
         </div>
       </div>
+      {showCloseRoom && (
+        <button
+          onClick={onCloseRoom}
+          style={{
+            fontSize: 11,
+            padding: '6px 10px',
+            borderRadius: 6,
+            background: 'transparent',
+            color: 'var(--danger)',
+            border: '1px solid var(--danger)',
+            cursor: 'pointer',
+          }}
+        >
+          關閉房間
+        </button>
+      )}
     </div>
   );
 }

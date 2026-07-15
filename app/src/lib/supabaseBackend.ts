@@ -264,6 +264,14 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
       if (error) throw error;
     },
 
+    async closeRoom(roomId: string) {
+      // room_beans/participants/score_entries/guess_entries all cascade-delete
+      // via their room_id FK; history_sessions/bean_history don't reference
+      // this row until finalizeReveal, which never runs before this is called.
+      const { error } = await supabase.from('rooms').delete().eq('id', roomId);
+      if (error) throw error;
+    },
+
     async assignAnswer(roomId: string, sampleIdx: number, beanIdx: number) {
       const { data } = await supabase.from('room_beans').select('*').eq('room_id', roomId);
       const beans = (data ?? []).map(mapBean);
