@@ -1,4 +1,6 @@
 import type {
+  Bean,
+  BeanCatalogEntry,
   BeanHistoryEntry,
   CatKey,
   HistorySession,
@@ -74,6 +76,11 @@ export interface Backend {
 
   listBeanHistory(participantName: string): Promise<BeanHistoryEntry[]>;
   appendBeanHistory(entries: Omit<BeanHistoryEntry, 'id'>[]): Promise<void>;
+
+  /** Shared, cross-room bean catalog ("豆單資料庫"). Upsert is by-name (idempotent). */
+  listBeanCatalog(): Promise<BeanCatalogEntry[]>;
+  upsertBeanToCatalog(bean: Bean): Promise<void>;
+  removeBeanFromCatalog(id: string): Promise<void>;
 }
 
 export const usingSupabase = Boolean(

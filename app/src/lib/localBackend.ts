@@ -305,4 +305,26 @@ export const localBackend: Backend = {
       entries.forEach((e) => db.beanHistory.push({ id: uid(), ...e }));
     });
   },
+
+  async listBeanCatalog() {
+    return Object.values(getDB().beanCatalog).sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant'));
+  },
+
+  async upsertBeanToCatalog(bean) {
+    await mutate((db) => {
+      const existing = Object.values(db.beanCatalog).find((b) => b.name === bean.name);
+      if (existing) {
+        Object.assign(existing, bean);
+      } else {
+        const id = uid();
+        db.beanCatalog[id] = { id, ...bean };
+      }
+    });
+  },
+
+  async removeBeanFromCatalog(id: string) {
+    await mutate((db) => {
+      delete db.beanCatalog[id];
+    });
+  },
 };

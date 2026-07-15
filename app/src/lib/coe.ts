@@ -80,18 +80,6 @@ export const VARIETIES = [
   'Typica',
 ];
 
-/** Demo bean-list "database" — stands in for the future bean-database API. */
-export const BEAN_DB: Bean[] = [
-  { name: '西達摩 古吉 花魁', origin: 'Ethiopia', process: 'Natural', variety: 'Heirloom (Ethiopia)', roaster: '山丘烘焙' },
-  { name: '哥斯大黎加 音樂家', origin: 'Costa Rica', process: 'Honey (Red)', variety: 'Catuai', roaster: '晨光咖啡' },
-  { name: '盧安達 女性計畫', origin: 'Rwanda', process: 'Washed', variety: 'Bourbon', roaster: '選豆室' },
-  { name: '宏都拉斯 荔枝蘭', origin: 'Honduras', process: 'Washed', variety: 'Pacas', roaster: '巷口自烘' },
-  { name: '葉門 摩卡 瑪塔莉', origin: 'Yemen', process: 'Natural', variety: 'Typica', roaster: '選豆室' },
-  { name: '祕魯 有機', origin: 'Peru', process: 'Washed', variety: 'Typica', roaster: '晨光咖啡' },
-  { name: '阿里山 郵政', origin: 'Taiwan', process: 'Honey (Yellow)', variety: 'Geisha', roaster: '山丘烘焙' },
-  { name: '巴西 皇后莊園', origin: 'Brazil', process: 'Natural', variety: 'Mundo Novo', roaster: '巷口自烘' },
-];
-
 export function scaleMin(baseScale: '4–8' | '0–8' = '4–8') {
   return baseScale === '0–8' ? 0 : 4;
 }

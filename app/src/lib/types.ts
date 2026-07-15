@@ -89,6 +89,10 @@ export interface HistorySession {
   roomId: string | null;
 }
 
+export interface BeanCatalogEntry extends Bean {
+  id: string;
+}
+
 export interface BeanHistoryEntry {
   id: string;
   participantName: string;

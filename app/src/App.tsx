@@ -42,6 +42,10 @@ function App() {
     const backend = getBackend();
     const { roomId } = await backend.createRoom({ ...input, hostName: userName.trim() || '你', hostClientId: clientId });
     await backend.ensureParticipant(roomId, clientId, userName.trim() || '你', 'host');
+    // Fire-and-forget: grow the shared bean catalog, but never block entering the room on it.
+    input.beans.forEach((b) => {
+      backend.upsertBeanToCatalog(b).catch(() => {});
+    });
     sessionStorage.setItem(ROOM_ID_KEY, roomId);
     setRoute({ kind: 'room', roomId });
   }

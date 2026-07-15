@@ -1,7 +1,8 @@
-import { Sheet } from './ui';
-import { BEAN_DB } from '../lib/coe';
-import { beanSub } from '../lib/coe';
-import type { Bean } from '../lib/types';
+import { useEffect, useState } from 'react';
+import { Btn, SelectInput, Sheet, TextInput } from './ui';
+import { ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
+import { getBackend } from '../lib/backend';
+import type { Bean, BeanCatalogEntry } from '../lib/types';
 
 function MenuButton({ icon, title, desc, onClick }: { icon: string; title: string; desc: string; onClick: () => void }) {
   return (
@@ -27,6 +28,167 @@ function MenuButton({ icon, title, desc, onClick }: { icon: string; title: strin
   );
 }
 
+const EMPTY_DRAFT: Bean = { name: '', origin: '', process: '', variety: '', roaster: '' };
+
+function BeanCatalogSheet({
+  open,
+  onClose,
+  onPick,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onPick: (bean: Bean) => void;
+}) {
+  const backend = getBackend();
+  const [catalog, setCatalog] = useState<BeanCatalogEntry[] | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const [draft, setDraft] = useState<Bean>(EMPTY_DRAFT);
+  const [saving, setSaving] = useState(false);
+
+  function refresh() {
+    backend.listBeanCatalog().then(setCatalog);
+  }
+
+  useEffect(() => {
+    if (open) refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  async function confirmAdd() {
+    const name = draft.name.trim();
+    if (!name) return;
+    setSaving(true);
+    try {
+      await backend.upsertBeanToCatalog({ ...draft, name });
+      setDraft(EMPTY_DRAFT);
+      setAddOpen(false);
+      refresh();
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function remove(id: string) {
+    await backend.removeBeanFromCatalog(id);
+    refresh();
+  }
+
+  return (
+    <Sheet open={open} onClose={onClose} maxHeight="80vh">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>豆單資料庫</div>
+        <div style={{ fontSize: 11, color: 'var(--muted-3)' }}>共用 · 大家新增的豆子都會累積在這裡</div>
+      </div>
+
+      <Btn variant="outline" onClick={() => setAddOpen((v) => !v)} style={{ height: 38, borderRadius: 6, fontSize: 13 }}>
+        {addOpen ? '取消新增' : '＋ 新增豆子到資料庫'}
+      </Btn>
+
+      {addOpen && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <TextInput
+            value={draft.name}
+            onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
+            placeholder="豆名（必填）"
+            style={{ height: 40, fontSize: 14, borderRadius: 6 }}
+          />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <SelectInput value={draft.origin} onChange={(e) => setDraft((d) => ({ ...d, origin: e.target.value }))}>
+              <option value="">產區/國家</option>
+              {ORIGINS.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </SelectInput>
+            <SelectInput value={draft.process} onChange={(e) => setDraft((d) => ({ ...d, process: e.target.value }))}>
+              <option value="">處理法</option>
+              {PROCESSES.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </SelectInput>
+            <SelectInput value={draft.variety} onChange={(e) => setDraft((d) => ({ ...d, variety: e.target.value }))}>
+              <option value="">品種</option>
+              {VARIETIES.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </SelectInput>
+            <TextInput
+              value={draft.roaster}
+              onChange={(e) => setDraft((d) => ({ ...d, roaster: e.target.value }))}
+              placeholder="烘焙商"
+              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+            />
+          </div>
+          <Btn variant="solid" onClick={confirmAdd} disabled={!draft.name.trim() || saving} style={{ height: 40, fontSize: 13 }}>
+            {saving ? '儲存中…' : '儲存到資料庫'}
+          </Btn>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {catalog === null && <div style={{ fontSize: 12, color: 'var(--muted-2)', textAlign: 'center', padding: '20px 0' }}>載入中…</div>}
+        {catalog !== null && catalog.length === 0 && (
+          <div style={{ fontSize: 12, color: 'var(--muted-2)', textAlign: 'center', padding: '20px 0', lineHeight: 1.7 }}>
+            資料庫還沒有豆子。
+            <br />
+            手動新增一支，或建立房間輸入豆子後會自動存進來。
+          </div>
+        )}
+        {(catalog ?? []).map((b) => (
+          <div
+            key={b.id}
+            style={{
+              borderRadius: 8,
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              padding: '13px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+            }}
+          >
+            <button
+              onClick={() => onPick(b)}
+              style={{
+                background: 'none',
+                border: 'none',
+                textAlign: 'left',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                flex: 1,
+                minWidth: 0,
+                padding: 0,
+              }}
+            >
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--cream)' }}>{b.name}</div>
+              <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{beanSub(b)}</div>
+            </button>
+            <button
+              onClick={() => onPick(b)}
+              style={{ background: 'none', border: 'none', color: 'var(--gold)', fontSize: 18, cursor: 'pointer', flex: 'none', padding: 0 }}
+            >
+              ＋
+            </button>
+            <button
+              onClick={() => remove(b.id)}
+              style={{ background: 'none', border: 'none', color: 'var(--muted-2)', fontSize: 14, cursor: 'pointer', flex: 'none', padding: 0 }}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
+    </Sheet>
+  );
+}
+
 export function AddBeanSheet({
   state,
   onClose,
@@ -49,41 +211,11 @@ export function AddBeanSheet({
       <Sheet open={state === 'menu'} onClose={onClose}>
         <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>新增豆子</div>
         <MenuButton icon="✏️" title="手動輸入" desc="直接填寫豆名、產區、處理法等欄位" onClick={onAddManual} />
-        <MenuButton icon="🗂" title="從豆單資料庫選擇" desc="下拉選擇資料庫豆單 · 預留 API 串接" onClick={onOpenDb} />
+        <MenuButton icon="🗂" title="從豆單資料庫選擇" desc="共用資料庫 · 大家新增過的豆子都在這裡" onClick={onOpenDb} />
         <MenuButton icon="📷" title="拍照掃描豆袋" desc="OCR 文字辨識自動填入 · 預留功能" onClick={onOpenScan} />
       </Sheet>
 
-      <Sheet open={state === 'db'} onClose={onClose} maxHeight="70vh">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-          <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>豆單資料庫</div>
-          <div style={{ fontSize: 11, color: 'var(--muted-3)' }}>示意資料 · 預留 API 串接</div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {BEAN_DB.map((b) => (
-            <button
-              key={b.name}
-              onClick={() => onPickFromDb(b)}
-              style={{
-                borderRadius: 8,
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border)',
-                padding: '13px 14px',
-                textAlign: 'left',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--cream)' }}>{b.name}</div>
-                <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{beanSub(b)}</div>
-              </div>
-              <div style={{ color: 'var(--gold)', fontSize: 18 }}>＋</div>
-            </button>
-          ))}
-        </div>
-      </Sheet>
+      <BeanCatalogSheet open={state === 'db'} onClose={onClose} onPick={onPickFromDb} />
 
       <Sheet open={state === 'scan'} onClose={onClose}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>

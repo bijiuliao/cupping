@@ -162,6 +162,24 @@ create table if not exists bean_history (
 create index if not exists bean_history_participant_idx on bean_history (participant_name);
 
 -- ---------------------------------------------------------------------------
+-- Bean catalog ("豆單資料庫") — shared, cross-room list of beans people have
+-- cupped before. Grows automatically whenever a host creates a room (each
+-- valid bean is upserted by name), and can also be curated directly (add/
+-- remove) from the "從豆單資料庫選擇" sheet.
+-- ---------------------------------------------------------------------------
+create table if not exists bean_catalog (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  origin text not null default '',
+  process text not null default '',
+  variety text not null default '',
+  roaster text not null default '',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists bean_catalog_name_idx on bean_catalog (name);
+
+-- ---------------------------------------------------------------------------
 -- Row Level Security — permissive (no auth in this app; anyone with the
 -- publishable anon key can read/write). See note at top of file.
 -- ---------------------------------------------------------------------------
@@ -173,12 +191,13 @@ alter table score_entries enable row level security;
 alter table guess_entries enable row level security;
 alter table history_sessions enable row level security;
 alter table bean_history enable row level security;
+alter table bean_catalog enable row level security;
 
 do $$
 declare
   t text;
 begin
-  foreach t in array array['activities','rooms','room_beans','participants','score_entries','guess_entries','history_sessions','bean_history']
+  foreach t in array array['activities','rooms','room_beans','participants','score_entries','guess_entries','history_sessions','bean_history','bean_catalog']
   loop
     execute format('drop policy if exists "public_all_%1$s" on %1$s', t);
     execute format(
@@ -187,6 +206,17 @@ begin
     );
   end loop;
 end $$;
+
+-- ---------------------------------------------------------------------------
+-- Table-level grants — newer Supabase projects revoke default anon/
+-- authenticated privileges on the public schema, which makes every write
+-- fail with 42501 (insufficient_privilege) even though the RLS policies
+-- above allow it. Re-running this is harmless.
+-- ---------------------------------------------------------------------------
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to anon, authenticated;
+grant usage, select on all sequences in schema public to anon, authenticated;
+alter default privileges in schema public grant select, insert, update, delete on tables to anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Realtime — broadcast row changes so every device in a room stays in sync.

@@ -1,5 +1,6 @@
 import { DEFAULT_ACTIVITY } from './coe';
 import type {
+  BeanCatalogEntry,
   BeanHistoryEntry,
   GuessEntry,
   HistorySession,
@@ -18,6 +19,7 @@ export interface LocalDB {
   activities: string[];
   historySessions: HistorySession[];
   beanHistory: BeanHistoryEntry[];
+  beanCatalog: Record<string, BeanCatalogEntry>;
 }
 
 const KEY = 'cupping.localdb.v1';
@@ -32,6 +34,7 @@ function emptyDB(): LocalDB {
     activities: [DEFAULT_ACTIVITY],
     historySessions: [],
     beanHistory: [],
+    beanCatalog: {},
   };
 }
 

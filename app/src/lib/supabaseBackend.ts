@@ -2,6 +2,8 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Backend, CreateRoomInput, ScorePatch } from './backend';
 import { CATS, beanSub, sheetTotal } from './coe';
 import type {
+  Bean,
+  BeanCatalogEntry,
   BeanHistoryEntry,
   CatKey,
   GuessEntry,
@@ -118,6 +120,17 @@ function mapHistorySession(r: any): HistorySession {
     beans: r.beans ?? [],
     guessTally: r.guess_tally ?? {},
     roomId: r.room_id,
+  };
+}
+
+function mapBeanCatalog(r: any): BeanCatalogEntry {
+  return {
+    id: r.id,
+    name: r.name,
+    origin: r.origin ?? '',
+    process: r.process ?? '',
+    variety: r.variety ?? '',
+    roaster: r.roaster ?? '',
   };
 }
 
@@ -500,6 +513,30 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
           session_date: e.sessionDate,
         })),
       );
+      if (error) throw error;
+    },
+
+    async listBeanCatalog() {
+      const { data } = await supabase.from('bean_catalog').select('*').order('name');
+      return (data ?? []).map(mapBeanCatalog);
+    },
+
+    async upsertBeanToCatalog(bean: Bean) {
+      const { error } = await supabase.from('bean_catalog').upsert(
+        {
+          name: bean.name,
+          origin: bean.origin,
+          process: bean.process,
+          variety: bean.variety,
+          roaster: bean.roaster,
+        },
+        { onConflict: 'name' },
+      );
+      if (error) throw error;
+    },
+
+    async removeBeanFromCatalog(id: string) {
+      const { error } = await supabase.from('bean_catalog').delete().eq('id', id);
       if (error) throw error;
     },
   };
