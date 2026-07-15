@@ -38,7 +38,7 @@ export function HostSetupScreen({
     return d.toISOString().slice(0, 16);
   });
   const [beans, setBeans] = useState<DraftBean[]>([]);
-  const [addSheet, setAddSheet] = useState<null | 'menu' | 'db' | 'scan'>(null);
+  const [addSheet, setAddSheet] = useState<null | 'menu' | 'db' | 'scan' | 'loffee'>(null);
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
@@ -325,6 +325,7 @@ export function HostSetupScreen({
         onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '' })}
         onOpenDb={() => setAddSheet('db')}
         onOpenScan={() => setAddSheet('scan')}
+        onOpenLoffee={() => setAddSheet('loffee')}
         onPickFromDb={addBean}
         onScanResult={addBean}
       />

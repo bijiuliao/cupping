@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Btn, SelectInput, Sheet, TextInput } from './ui';
 import { ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
 import { getBackend } from '../lib/backend';
+import { hasLoffeeApiKey, searchLoffeeBeans } from '../lib/loffeeLabs';
 import type { Bean, BeanCatalogEntry } from '../lib/types';
 
 function MenuButton({ icon, title, desc, onClick }: { icon: string; title: string; desc: string; onClick: () => void }) {
@@ -189,20 +190,133 @@ function BeanCatalogSheet({
   );
 }
 
+function LoffeeSearchSheet({
+  open,
+  onClose,
+  onPick,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onPick: (bean: Bean) => void;
+}) {
+  const backend = getBackend();
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<Bean[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!open) {
+      setQuery('');
+      setResults(null);
+      setError('');
+    }
+  }, [open]);
+
+  async function runSearch() {
+    if (!query.trim() || loading) return;
+    setLoading(true);
+    setError('');
+    try {
+      setResults(await searchLoffeeBeans(query.trim()));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '查詢失敗');
+      setResults(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function pick(bean: Bean) {
+    backend.upsertBeanToCatalog(bean).catch(() => {});
+    onPick(bean);
+  }
+
+  return (
+    <Sheet open={open} onClose={onClose} maxHeight="80vh">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>搜尋 Loffee Labs</div>
+        <div style={{ fontSize: 11, color: 'var(--muted-3)' }}>全球烘焙商豆單資料庫</div>
+      </div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <TextInput
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && runSearch()}
+          placeholder="搜尋豆名、產區、烘焙商…"
+          style={{ height: 44, fontSize: 14, flex: 1, minWidth: 0 }}
+        />
+        <Btn variant="solid" onClick={runSearch} disabled={!query.trim() || loading} style={{ height: 44, fontSize: 13, flex: 'none', padding: '0 18px' }}>
+          {loading ? '搜尋中…' : '搜尋'}
+        </Btn>
+      </div>
+
+      {error && <div style={{ fontSize: 12, color: 'var(--danger)' }}>{error}</div>}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {results !== null && results.length === 0 && !error && (
+          <div style={{ fontSize: 12, color: 'var(--muted-2)', textAlign: 'center', padding: '20px 0' }}>沒有找到符合的豆子</div>
+        )}
+        {(results ?? []).map((b, i) => (
+          <div
+            key={i}
+            style={{
+              borderRadius: 8,
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              padding: '13px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+            }}
+          >
+            <button
+              onClick={() => pick(b)}
+              style={{
+                background: 'none',
+                border: 'none',
+                textAlign: 'left',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                flex: 1,
+                minWidth: 0,
+                padding: 0,
+              }}
+            >
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--cream)' }}>{b.name || '（無名稱）'}</div>
+              <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{beanSub(b)}</div>
+            </button>
+            <button
+              onClick={() => pick(b)}
+              style={{ background: 'none', border: 'none', color: 'var(--gold)', fontSize: 18, cursor: 'pointer', flex: 'none', padding: 0 }}
+            >
+              ＋
+            </button>
+          </div>
+        ))}
+      </div>
+    </Sheet>
+  );
+}
+
 export function AddBeanSheet({
   state,
   onClose,
   onAddManual,
   onOpenDb,
   onOpenScan,
+  onOpenLoffee,
   onPickFromDb,
   onScanResult,
 }: {
-  state: null | 'menu' | 'db' | 'scan';
+  state: null | 'menu' | 'db' | 'scan' | 'loffee';
   onClose: () => void;
   onAddManual: () => void;
   onOpenDb: () => void;
   onOpenScan: () => void;
+  onOpenLoffee: () => void;
   onPickFromDb: (bean: Bean) => void;
   onScanResult: (bean: Bean) => void;
 }) {
@@ -212,10 +326,15 @@ export function AddBeanSheet({
         <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>新增豆子</div>
         <MenuButton icon="✏️" title="手動輸入" desc="直接填寫豆名、產區、處理法等欄位" onClick={onAddManual} />
         <MenuButton icon="🗂" title="從豆單資料庫選擇" desc="共用資料庫 · 大家新增過的豆子都在這裡" onClick={onOpenDb} />
+        {hasLoffeeApiKey && (
+          <MenuButton icon="🌐" title="搜尋 Loffee Labs" desc="全球烘焙商豆單資料庫" onClick={onOpenLoffee} />
+        )}
         <MenuButton icon="📷" title="拍照掃描豆袋" desc="OCR 文字辨識自動填入 · 預留功能" onClick={onOpenScan} />
       </Sheet>
 
       <BeanCatalogSheet open={state === 'db'} onClose={onClose} onPick={onPickFromDb} />
+
+      <LoffeeSearchSheet open={state === 'loffee'} onClose={onClose} onPick={onPickFromDb} />
 
       <Sheet open={state === 'scan'} onClose={onClose}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
