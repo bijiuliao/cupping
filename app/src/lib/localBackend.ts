@@ -129,6 +129,35 @@ export const localBackend: Backend = {
     });
   },
 
+  async addRoomBean(roomId: string, bean) {
+    await mutate((db) => {
+      const room = db.rooms[roomId];
+      const existing = Object.values(db.beans).filter((b) => b.roomId === roomId);
+      const nextIdx = existing.length > 0 ? Math.max(...existing.map((b) => b.idx)) + 1 : 1;
+      const id = uid();
+      db.beans[id] = {
+        id,
+        roomId,
+        idx: nextIdx,
+        sampleIdx: room?.mode === 'open' ? nextIdx - 1 : null,
+        ...bean,
+      };
+    });
+  },
+
+  async updateRoomBean(beanId: string, patch) {
+    await mutate((db) => {
+      const bean = db.beans[beanId];
+      if (bean) Object.assign(bean, patch);
+    });
+  },
+
+  async removeRoomBean(beanId: string) {
+    await mutate((db) => {
+      delete db.beans[beanId];
+    });
+  },
+
   async finalizeReveal(roomId: string) {
     const db = getDB();
     const room = db.rooms[roomId];

@@ -57,6 +57,11 @@ export interface Backend {
   assignAnswer(roomId: string, sampleIdx: number, beanIdx: number): Promise<void>;
   confirmAnswers(roomId: string): Promise<void>;
 
+  /** Add/edit/remove a bean on an existing room's sheet — only meaningful while stage is 'waiting'. */
+  addRoomBean(roomId: string, bean: Bean): Promise<void>;
+  updateRoomBean(beanId: string, patch: Partial<Bean>): Promise<void>;
+  removeRoomBean(beanId: string): Promise<void>;
+
   /** Idempotent: computes averages, records this session into history + everyone's bean archive. */
   finalizeReveal(roomId: string): Promise<void>;
 

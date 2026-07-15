@@ -282,6 +282,44 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
       if (error) throw error;
     },
 
+    async addRoomBean(roomId: string, bean: Bean) {
+      const [{ data: lastRows }, { data: roomRow }] = await Promise.all([
+        supabase.from('room_beans').select('idx').eq('room_id', roomId).order('idx', { ascending: false }).limit(1),
+        supabase.from('rooms').select('mode').eq('id', roomId).maybeSingle(),
+      ]);
+      const nextIdx = lastRows && lastRows.length > 0 ? lastRows[0].idx + 1 : 1;
+      const isOpen = roomRow?.mode === 'open';
+      const { error } = await supabase.from('room_beans').insert({
+        room_id: roomId,
+        idx: nextIdx,
+        sample_idx: isOpen ? nextIdx - 1 : null,
+        name: bean.name,
+        origin: bean.origin,
+        process: bean.process,
+        variety: bean.variety,
+        roaster: bean.roaster,
+        producer: bean.producer,
+      });
+      if (error) throw error;
+    },
+
+    async updateRoomBean(beanId: string, patch: Partial<Bean>) {
+      const dbPatch: Record<string, unknown> = {};
+      if (patch.name !== undefined) dbPatch.name = patch.name;
+      if (patch.origin !== undefined) dbPatch.origin = patch.origin;
+      if (patch.process !== undefined) dbPatch.process = patch.process;
+      if (patch.variety !== undefined) dbPatch.variety = patch.variety;
+      if (patch.roaster !== undefined) dbPatch.roaster = patch.roaster;
+      if (patch.producer !== undefined) dbPatch.producer = patch.producer;
+      const { error } = await supabase.from('room_beans').update(dbPatch).eq('id', beanId);
+      if (error) throw error;
+    },
+
+    async removeRoomBean(beanId: string) {
+      const { error } = await supabase.from('room_beans').delete().eq('id', beanId);
+      if (error) throw error;
+    },
+
     async finalizeReveal(roomId: string) {
       // Atomic claim so we only ever compute + write this once, even if
       // multiple clients race to trigger it.
