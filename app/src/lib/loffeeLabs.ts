@@ -24,13 +24,15 @@ export async function searchLoffeeBeans(query: string, limit = 20): Promise<Bean
     search: query,
     limit: String(limit),
     fields: 'roaster,roast-name,origin,process,variety,producer',
+    api_key: apiKey,
   });
 
   let res: Response;
   try {
-    res = await fetch(`${BASE_URL}/beans?${params}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
+    // Query-param auth (rather than an Authorization header) avoids a CORS
+    // preflight, which is what the docs' "browser testing" method is for —
+    // this is a browser client, not a backend, so that's the method that works.
+    res = await fetch(`${BASE_URL}/beans?${params}`);
   } catch {
     throw new Error('無法連線到 Loffee Labs，請檢查網路連線');
   }
