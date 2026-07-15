@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Btn, Card, Field, ScreenShell, SelectInput, TextInput } from '../components/ui';
+import { ORIGINS, PROCESSES, VARIETIES } from '../lib/coe';
 import type { Bean, Mode } from '../lib/types';
 import { getBackend } from '../lib/backend';
 import { AddBeanSheet } from '../components/AddBeanSheet';
-import { useLoffeeOptions } from '../hooks/useLoffeeOptions';
 
 export interface DraftBean extends Bean {
   localId: string;
@@ -26,7 +26,6 @@ export function HostSetupScreen({
     beans: Bean[];
   }) => Promise<void>;
 }) {
-  const { origins: ORIGINS, processes: PROCESSES, varieties: VARIETIES } = useLoffeeOptions();
   const [mode, setMode] = useState<Mode>('blind');
   const [activities, setActivities] = useState<string[]>([]);
   const [activity, setActivity] = useState('');
