@@ -333,11 +333,24 @@ export const localBackend: Backend = {
       const key = scoreKey(participantId, sampleIdx);
       const existing = db.leaderboardGuesses[key];
       const base: LeaderboardGuessEntry =
-        existing ?? { id: uid(), roomId, participantId, sampleIdx, originGuess: '', processGuess: '', varietyGuess: '', elevationGuess: '' };
+        existing ?? {
+          id: uid(),
+          roomId,
+          participantId,
+          sampleIdx,
+          areaGuess: '',
+          originGuess: '',
+          processGuess: '',
+          varietyGuess: '',
+          elevationGuess: '',
+          decafGuess: '',
+        };
+      if (patch.areaGuess !== undefined) base.areaGuess = patch.areaGuess;
       if (patch.originGuess !== undefined) base.originGuess = patch.originGuess;
       if (patch.processGuess !== undefined) base.processGuess = patch.processGuess;
       if (patch.varietyGuess !== undefined) base.varietyGuess = patch.varietyGuess;
       if (patch.elevationGuess !== undefined) base.elevationGuess = patch.elevationGuess;
+      if (patch.decafGuess !== undefined) base.decafGuess = patch.decafGuess;
       db.leaderboardGuesses[key] = base;
     });
   },

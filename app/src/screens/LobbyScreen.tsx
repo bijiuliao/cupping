@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
-import { Btn, ComboBox, ScreenShell, TextInput } from '../components/ui';
+import { Btn, ComboBox, ScreenShell, SelectInput, TextInput } from '../components/ui';
 import { AddBeanSheet } from '../components/AddBeanSheet';
-import { ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
+import { AREAS, ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 import type { Bean, RoomBean, RoomSnapshot } from '../lib/types';
@@ -71,10 +71,17 @@ function EditableBeanRow({ bean, onRemove }: { bean: RoomBean; onRemove: () => v
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <ComboBox
+          value={local.area}
+          onChange={(v) => set({ area: v })}
+          options={AREAS}
+          placeholder="產區大洲 Area"
+          style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+        />
+        <ComboBox
           value={local.origin}
           onChange={(v) => set({ origin: v })}
           options={ORIGINS}
-          placeholder="產區/國家"
+          placeholder="國家 Country"
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
         <ComboBox
@@ -92,6 +99,20 @@ function EditableBeanRow({ bean, onRemove }: { bean: RoomBean; onRemove: () => v
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
         <TextInput
+          value={local.elevation}
+          onChange={(e) => set({ elevation: e.target.value })}
+          placeholder="海拔（公尺）"
+          style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+        />
+        <SelectInput
+          value={local.decaf ? 'yes' : 'no'}
+          onChange={(e) => set({ decaf: e.target.value === 'yes' })}
+          style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px', width: '100%' }}
+        >
+          <option value="no">低咖啡因：否</option>
+          <option value="yes">低咖啡因：是</option>
+        </SelectInput>
+        <TextInput
           value={local.roaster}
           onChange={(e) => set({ roaster: e.target.value })}
           placeholder="烘焙商"
@@ -101,12 +122,6 @@ function EditableBeanRow({ bean, onRemove }: { bean: RoomBean; onRemove: () => v
           value={local.producer}
           onChange={(e) => set({ producer: e.target.value })}
           placeholder="生產者"
-          style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-        />
-        <TextInput
-          value={local.elevation}
-          onChange={(e) => set({ elevation: e.target.value })}
-          placeholder="海拔（公尺）"
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
       </div>
@@ -244,7 +259,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
         <AddBeanSheet
           state={addSheet}
           onClose={() => setAddSheet(null)}
-          onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '' })}
+          onAddManual={() => addBean({ name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false })}
           onOpenDb={() => setAddSheet('db')}
           onOpenScan={() => setAddSheet('scan')}
           onOpenLoffee={() => setAddSheet('loffee')}

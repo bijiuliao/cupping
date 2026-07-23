@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Btn, ComboBox, Sheet, TextInput } from './ui';
-import { ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
+import { Btn, ComboBox, SelectInput, Sheet, TextInput } from './ui';
+import { AREAS, ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { hasLoffeeProxy, searchLoffeeBeans } from '../lib/loffeeLabs';
 import type { Bean, BeanCatalogEntry } from '../lib/types';
@@ -29,7 +29,7 @@ function MenuButton({ icon, title, desc, onClick }: { icon: string; title: strin
   );
 }
 
-const EMPTY_DRAFT: Bean = { name: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '' };
+const EMPTY_DRAFT: Bean = { name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false };
 
 function BeanCatalogSheet({
   open,
@@ -95,10 +95,17 @@ function BeanCatalogSheet({
           />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             <ComboBox
+              value={draft.area}
+              onChange={(v) => setDraft((d) => ({ ...d, area: v }))}
+              options={AREAS}
+              placeholder="產區大洲 Area"
+              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+            />
+            <ComboBox
               value={draft.origin}
               onChange={(v) => setDraft((d) => ({ ...d, origin: v }))}
               options={ORIGINS}
-              placeholder="產區/國家"
+              placeholder="國家 Country"
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />
             <ComboBox
@@ -116,6 +123,20 @@ function BeanCatalogSheet({
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />
             <TextInput
+              value={draft.elevation}
+              onChange={(e) => setDraft((d) => ({ ...d, elevation: e.target.value }))}
+              placeholder="海拔（公尺）"
+              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+            />
+            <SelectInput
+              value={draft.decaf ? 'yes' : 'no'}
+              onChange={(e) => setDraft((d) => ({ ...d, decaf: e.target.value === 'yes' }))}
+              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px', width: '100%' }}
+            >
+              <option value="no">低咖啡因：否</option>
+              <option value="yes">低咖啡因：是</option>
+            </SelectInput>
+            <TextInput
               value={draft.roaster}
               onChange={(e) => setDraft((d) => ({ ...d, roaster: e.target.value }))}
               placeholder="烘焙商"
@@ -125,12 +146,6 @@ function BeanCatalogSheet({
               value={draft.producer}
               onChange={(e) => setDraft((d) => ({ ...d, producer: e.target.value }))}
               placeholder="生產者"
-              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-            />
-            <TextInput
-              value={draft.elevation}
-              onChange={(e) => setDraft((d) => ({ ...d, elevation: e.target.value }))}
-              placeholder="海拔（公尺）"
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />
           </div>
@@ -369,7 +384,7 @@ export function AddBeanSheet({
         </div>
         <button
           onClick={() =>
-            onScanResult({ name: '掃描：肯特山 AB', origin: 'Kenya', process: 'Washed', variety: 'SL34', roaster: '晨光咖啡', producer: '', elevation: '' })
+            onScanResult({ name: '掃描：肯特山 AB', area: 'Africa', origin: 'Kenya', process: 'Washed', variety: 'SL34', roaster: '晨光咖啡', producer: '', elevation: '', decaf: false })
           }
           style={{
             height: 50,

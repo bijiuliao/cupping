@@ -18,12 +18,14 @@ export type CatKey = (typeof CAT_KEYS)[number];
 
 export interface Bean {
   name: string;
+  area: string; // continent/region-level, e.g. "Africa" — separate from origin ("Country", e.g. "Ethiopia")
   origin: string;
   process: string;
   variety: string;
   roaster: string;
   producer: string;
   elevation: string;
+  decaf: boolean;
 }
 
 export interface RoomBean extends Bean {
@@ -79,16 +81,23 @@ export interface GuessEntry {
   finalGuess: number | null; // bean idx
 }
 
-/** LEADERBOARD mode only — per-attribute blind guesses for one sample, scored independently (partial credit), unlike GuessEntry's all-or-nothing bean pick. */
+/**
+ * LEADERBOARD mode only — per-attribute blind guesses for one sample, scored
+ * independently (partial credit), unlike GuessEntry's all-or-nothing bean pick.
+ * elevationGuess/decafGuess are bucketed choices ('above'|'below', 'yes'|'no'),
+ * not free text — matches leaderboard.coffee's tasting-card categories.
+ */
 export interface LeaderboardGuessEntry {
   id: string;
   roomId: string;
   participantId: string;
   sampleIdx: number;
-  originGuess: string;
+  areaGuess: string;
+  originGuess: string; // "Country"
   processGuess: string;
   varietyGuess: string;
-  elevationGuess: string;
+  elevationGuess: string; // '' | 'above' | 'below' (relative to 1600m)
+  decafGuess: string; // '' | 'yes' | 'no'
 }
 
 export interface HistorySession {

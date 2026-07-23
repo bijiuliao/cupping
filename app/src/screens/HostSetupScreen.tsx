@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Btn, Card, ComboBox, Field, ScreenShell, TextInput } from '../components/ui';
-import { ORIGINS, PROCESSES, VARIETIES } from '../lib/coe';
+import { Btn, Card, ComboBox, Field, ScreenShell, SelectInput, TextInput } from '../components/ui';
+import { AREAS, ORIGINS, PROCESSES, VARIETIES } from '../lib/coe';
 import type { Bean, Mode } from '../lib/types';
 import { getBackend } from '../lib/backend';
 import { AddBeanSheet } from '../components/AddBeanSheet';
@@ -276,10 +276,17 @@ export function HostSetupScreen({
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <ComboBox
+                value={b.area}
+                onChange={(v) => updateBean(b.localId, { area: v })}
+                options={AREAS}
+                placeholder="產區大洲 Area"
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+              />
+              <ComboBox
                 value={b.origin}
                 onChange={(v) => updateBean(b.localId, { origin: v })}
                 options={ORIGINS}
-                placeholder="產區/國家"
+                placeholder="國家 Country"
                 style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
               />
               <ComboBox
@@ -297,6 +304,20 @@ export function HostSetupScreen({
                 style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
               />
               <TextInput
+                value={b.elevation}
+                onChange={(e) => updateBean(b.localId, { elevation: e.target.value })}
+                placeholder="海拔（公尺）"
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+              />
+              <SelectInput
+                value={b.decaf ? 'yes' : 'no'}
+                onChange={(e) => updateBean(b.localId, { decaf: e.target.value === 'yes' })}
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px', width: '100%' }}
+              >
+                <option value="no">低咖啡因：否</option>
+                <option value="yes">低咖啡因：是</option>
+              </SelectInput>
+              <TextInput
                 value={b.roaster}
                 onChange={(e) => updateBean(b.localId, { roaster: e.target.value })}
                 placeholder="烘焙商"
@@ -306,12 +327,6 @@ export function HostSetupScreen({
                 value={b.producer}
                 onChange={(e) => updateBean(b.localId, { producer: e.target.value })}
                 placeholder="生產者"
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-              />
-              <TextInput
-                value={b.elevation}
-                onChange={(e) => updateBean(b.localId, { elevation: e.target.value })}
-                placeholder="海拔（公尺）"
                 style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
               />
             </div>
@@ -332,7 +347,7 @@ export function HostSetupScreen({
       <AddBeanSheet
         state={addSheet}
         onClose={() => setAddSheet(null)}
-        onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '' })}
+        onAddManual={() => addBean({ name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false })}
         onOpenDb={() => setAddSheet('db')}
         onOpenScan={() => setAddSheet('scan')}
         onOpenLoffee={() => setAddSheet('loffee')}

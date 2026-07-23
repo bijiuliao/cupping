@@ -147,12 +147,16 @@ export function catValues(s: ScoreEntry | undefined) {
 
 // ---------------------------------------------------------------------------
 // LEADERBOARD mode — per-attribute blind guessing, scored independently
-// (partial credit), modeled after leaderboard.coffee's real scoring weights
-// (area/country/process/variety/elevation/decaf). We only track origin,
-// process, variety and elevation (the fields this app's Bean actually has).
+// (partial credit), matching leaderboard.coffee's real tasting-card
+// categories and point weights: Area 1, Country 2, Process 2, Varietal(s) 2,
+// Altitude 1, Decaf 1 — 9 points per sample.
 // ---------------------------------------------------------------------------
-const LB_WEIGHTS = { origin: 2, process: 2, variety: 2, elevation: 1 };
-export const LB_MAX_PER_SAMPLE = LB_WEIGHTS.origin + LB_WEIGHTS.process + LB_WEIGHTS.variety + LB_WEIGHTS.elevation;
+const LB_WEIGHTS = { area: 1, origin: 2, process: 2, variety: 2, elevation: 1, decaf: 1 };
+export const LB_MAX_PER_SAMPLE =
+  LB_WEIGHTS.area + LB_WEIGHTS.origin + LB_WEIGHTS.process + LB_WEIGHTS.variety + LB_WEIGHTS.elevation + LB_WEIGHTS.decaf;
+
+/** The altitude bucket real players guess, per leaderboard.coffee's "Above 1600m" style categories. */
+export const ELEVATION_THRESHOLD_M = 1600;
 
 function lbNorm(s: string) {
   return s.trim().toLowerCase();
@@ -163,32 +167,45 @@ function lbTextMatch(guess: string, actual: string): boolean {
   return lbNorm(guess) === lbNorm(actual);
 }
 
-const ELEVATION_TOLERANCE_M = 100;
-
 function parseElevationMeters(s: string): number | null {
   const m = s.match(/\d+(\.\d+)?/);
   return m ? parseFloat(m[0]) : null;
 }
 
-/** Elevation is free-typed, so an exact string match is too strict — credit any guess within ±100m. */
-function lbElevationMatch(guess: string, actual: string): boolean {
-  const g = parseElevationMeters(guess);
-  const a = parseElevationMeters(actual);
-  if (g === null || a === null) return false;
-  return Math.abs(g - a) <= ELEVATION_TOLERANCE_M;
+export type ElevationBucket = 'above' | 'below' | null;
+
+/** Buckets a bean's free-typed elevation ("2000-2200") relative to the 1600m line players actually guess against. */
+export function elevationBucket(elevation: string): ElevationBucket {
+  const m = parseElevationMeters(elevation);
+  if (m === null) return null;
+  return m >= ELEVATION_THRESHOLD_M ? 'above' : 'below';
+}
+
+function lbBucketMatch(guess: string, actualBucket: ElevationBucket): boolean {
+  if (!guess || actualBucket === null) return false;
+  return guess === actualBucket;
+}
+
+function lbDecafMatch(guess: string, actual: boolean): boolean {
+  if (guess !== 'yes' && guess !== 'no') return false;
+  return (guess === 'yes') === actual;
 }
 
 export interface LeaderboardSampleDetail {
   sampleIdx: number;
   bean: RoomBean;
+  areaGuess: string;
   originGuess: string;
   processGuess: string;
   varietyGuess: string;
   elevationGuess: string;
+  decafGuess: string;
+  areaCorrect: boolean;
   originCorrect: boolean;
   processCorrect: boolean;
   varietyCorrect: boolean;
   elevationCorrect: boolean;
+  decafCorrect: boolean;
   points: number;
 }
 
@@ -200,30 +217,40 @@ export function leaderboardSampleDetails(snap: RoomSnapshot, participantId: stri
     .map((bean) => {
       const sampleIdx = bean.sampleIdx as number;
       const g = leaderboardGuessFor(snap, participantId, sampleIdx);
+      const areaGuess = g?.areaGuess ?? '';
       const originGuess = g?.originGuess ?? '';
       const processGuess = g?.processGuess ?? '';
       const varietyGuess = g?.varietyGuess ?? '';
       const elevationGuess = g?.elevationGuess ?? '';
+      const decafGuess = g?.decafGuess ?? '';
+      const areaCorrect = lbTextMatch(areaGuess, bean.area);
       const originCorrect = lbTextMatch(originGuess, bean.origin);
       const processCorrect = lbTextMatch(processGuess, bean.process);
       const varietyCorrect = lbTextMatch(varietyGuess, bean.variety);
-      const elevationCorrect = lbElevationMatch(elevationGuess, bean.elevation);
+      const elevationCorrect = lbBucketMatch(elevationGuess, elevationBucket(bean.elevation));
+      const decafCorrect = lbDecafMatch(decafGuess, bean.decaf);
       const points =
+        (areaCorrect ? LB_WEIGHTS.area : 0) +
         (originCorrect ? LB_WEIGHTS.origin : 0) +
         (processCorrect ? LB_WEIGHTS.process : 0) +
         (varietyCorrect ? LB_WEIGHTS.variety : 0) +
-        (elevationCorrect ? LB_WEIGHTS.elevation : 0);
+        (elevationCorrect ? LB_WEIGHTS.elevation : 0) +
+        (decafCorrect ? LB_WEIGHTS.decaf : 0);
       return {
         sampleIdx,
         bean,
+        areaGuess,
         originGuess,
         processGuess,
         varietyGuess,
         elevationGuess,
+        decafGuess,
+        areaCorrect,
         originCorrect,
         processCorrect,
         varietyCorrect,
         elevationCorrect,
+        decafCorrect,
         points,
       };
     });

@@ -13,6 +13,20 @@ export const CATS: { key: CatKey; label: string; en: string }[] = [
 
 export const DEFAULT_ACTIVITY = '咖啡社杯測';
 
+// Continent/region-level options for LEADERBOARD mode's "Area" category —
+// distinct from ORIGINS below, which is country/region-level ("Country").
+// Curated by hand (leaderboard.coffee's tasting cards use a short fixed list
+// like this, unlike the long free-text-friendly ORIGINS list).
+export const AREAS = [
+  'Africa',
+  'Asia',
+  'Caribbean',
+  'Central America',
+  'North America',
+  'Oceania',
+  'South America',
+];
+
 // Origin/process/variety options, seeded from Loffee Labs' public /origins,
 // /processes, /varieties lookup lists (https://loffeelabs.com) merged with
 // this project's original curated set. Static snapshot, not live-fetched —
@@ -568,7 +582,9 @@ export function sheetTotal(vals: Record<CatKey, number>, defInt: number, scoreMo
 }
 
 export function beanSub(b: Bean) {
-  return [b.origin, b.process, b.variety, b.elevation, b.producer, b.roaster].filter(Boolean).join(' · ');
+  return [b.area, b.origin, b.process, b.variety, b.elevation, b.decaf ? '低咖啡因' : '', b.producer, b.roaster]
+    .filter(Boolean)
+    .join(' · ');
 }
 
 export function fmtTime(sec: number) {

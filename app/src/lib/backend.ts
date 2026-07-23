@@ -33,10 +33,12 @@ export interface ScorePatch {
 
 /** LEADERBOARD mode — partial patch of one sample's per-attribute guess (each field guessed/scored independently). */
 export interface LeaderboardGuessPatch {
+  areaGuess?: string;
   originGuess?: string;
   processGuess?: string;
   varietyGuess?: string;
   elevationGuess?: string;
+  decafGuess?: string;
 }
 
 /**

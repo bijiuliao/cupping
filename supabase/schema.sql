@@ -58,17 +58,21 @@ create table if not exists room_beans (
   idx int not null,
   sample_idx int,
   name text not null,
+  area text not null default '',
   origin text not null default '',
   process text not null default '',
   variety text not null default '',
   roaster text not null default '',
   producer text not null default '',
   elevation text not null default '',
+  decaf boolean not null default false,
   unique (room_id, idx)
 );
 
 alter table room_beans add column if not exists producer text not null default '';
 alter table room_beans add column if not exists elevation text not null default '';
+alter table room_beans add column if not exists area text not null default '';
+alter table room_beans add column if not exists decaf boolean not null default false;
 
 create index if not exists room_beans_room_id_idx on room_beans (room_id);
 
@@ -136,21 +140,28 @@ create index if not exists guess_entries_room_id_idx on guess_entries (room_id);
 
 -- ---------------------------------------------------------------------------
 -- Leaderboard-mode guess entries — one row per participant per sample, with
--- each attribute (origin/process/variety/elevation) guessed and later scored
--- independently for partial credit, unlike guess_entries' all-or-nothing
--- whole-bean pick.
+-- each attribute (area/country/process/variety/elevation/decaf) guessed and
+-- later scored independently for partial credit, unlike guess_entries'
+-- all-or-nothing whole-bean pick. Mirrors leaderboard.coffee's tasting-card
+-- categories; elevation_guess/decaf_guess are bucketed choices
+-- ('above'/'below', 'yes'/'no'), not free text.
 -- ---------------------------------------------------------------------------
 create table if not exists leaderboard_guesses (
   id uuid primary key default gen_random_uuid(),
   room_id uuid not null references rooms(id) on delete cascade,
   participant_id uuid not null references participants(id) on delete cascade,
   sample_idx int not null,
+  area_guess text not null default '',
   origin_guess text not null default '',
   process_guess text not null default '',
   variety_guess text not null default '',
   elevation_guess text not null default '',
+  decaf_guess text not null default '',
   unique (participant_id, sample_idx)
 );
+
+alter table leaderboard_guesses add column if not exists area_guess text not null default '';
+alter table leaderboard_guesses add column if not exists decaf_guess text not null default '';
 
 create index if not exists leaderboard_guesses_room_id_idx on leaderboard_guesses (room_id);
 
@@ -201,17 +212,21 @@ create index if not exists bean_history_participant_idx on bean_history (partici
 create table if not exists bean_catalog (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
+  area text not null default '',
   origin text not null default '',
   process text not null default '',
   variety text not null default '',
   roaster text not null default '',
   producer text not null default '',
   elevation text not null default '',
+  decaf boolean not null default false,
   created_at timestamptz not null default now()
 );
 
 alter table bean_catalog add column if not exists producer text not null default '';
 alter table bean_catalog add column if not exists elevation text not null default '';
+alter table bean_catalog add column if not exists area text not null default '';
+alter table bean_catalog add column if not exists decaf boolean not null default false;
 
 create index if not exists bean_catalog_name_idx on bean_catalog (name);
 

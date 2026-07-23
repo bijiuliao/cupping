@@ -57,12 +57,14 @@ function mapBean(r: any): RoomBean {
     idx: r.idx,
     sampleIdx: r.sample_idx,
     name: r.name,
+    area: r.area ?? '',
     origin: r.origin ?? '',
     process: r.process ?? '',
     variety: r.variety ?? '',
     roaster: r.roaster ?? '',
     producer: r.producer ?? '',
     elevation: r.elevation ?? '',
+    decaf: Boolean(r.decaf),
   };
 }
 
@@ -119,10 +121,12 @@ function mapLeaderboardGuess(r: any): LeaderboardGuessEntry {
     roomId: r.room_id,
     participantId: r.participant_id,
     sampleIdx: r.sample_idx,
+    areaGuess: r.area_guess ?? '',
     originGuess: r.origin_guess ?? '',
     processGuess: r.process_guess ?? '',
     varietyGuess: r.variety_guess ?? '',
     elevationGuess: r.elevation_guess ?? '',
+    decafGuess: r.decaf_guess ?? '',
   };
 }
 
@@ -143,12 +147,14 @@ function mapBeanCatalog(r: any): BeanCatalogEntry {
   return {
     id: r.id,
     name: r.name,
+    area: r.area ?? '',
     origin: r.origin ?? '',
     process: r.process ?? '',
     variety: r.variety ?? '',
     roaster: r.roaster ?? '',
     producer: r.producer ?? '',
     elevation: r.elevation ?? '',
+    decaf: Boolean(r.decaf),
   };
 }
 
@@ -220,12 +226,14 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         idx: i + 1,
         sample_idx: input.mode === 'open' ? i : null,
         name: b.name,
+        area: b.area,
         origin: b.origin,
         process: b.process,
         variety: b.variety,
         roaster: b.roaster,
         producer: b.producer,
         elevation: b.elevation,
+        decaf: b.decaf,
       }));
       if (beanRows.length) {
         const { error } = await supabase.from('room_beans').insert(beanRows);
@@ -322,12 +330,14 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         idx: nextIdx,
         sample_idx: isOpen ? nextIdx - 1 : null,
         name: bean.name,
+        area: bean.area,
         origin: bean.origin,
         process: bean.process,
         variety: bean.variety,
         roaster: bean.roaster,
         producer: bean.producer,
         elevation: bean.elevation,
+        decaf: bean.decaf,
       });
       if (error) throw error;
     },
@@ -335,12 +345,14 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
     async updateRoomBean(beanId: string, patch: Partial<Bean>) {
       const dbPatch: Record<string, unknown> = {};
       if (patch.name !== undefined) dbPatch.name = patch.name;
+      if (patch.area !== undefined) dbPatch.area = patch.area;
       if (patch.origin !== undefined) dbPatch.origin = patch.origin;
       if (patch.process !== undefined) dbPatch.process = patch.process;
       if (patch.variety !== undefined) dbPatch.variety = patch.variety;
       if (patch.roaster !== undefined) dbPatch.roaster = patch.roaster;
       if (patch.producer !== undefined) dbPatch.producer = patch.producer;
       if (patch.elevation !== undefined) dbPatch.elevation = patch.elevation;
+      if (patch.decaf !== undefined) dbPatch.decaf = patch.decaf;
       const { error } = await supabase.from('room_beans').update(dbPatch).eq('id', beanId);
       if (error) throw error;
     },
@@ -547,16 +559,18 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         .maybeSingle();
       const base = existingRow
         ? mapLeaderboardGuess(existingRow)
-        : { originGuess: '', processGuess: '', varietyGuess: '', elevationGuess: '' };
+        : { areaGuess: '', originGuess: '', processGuess: '', varietyGuess: '', elevationGuess: '', decafGuess: '' };
       const { error } = await supabase.from('leaderboard_guesses').upsert(
         {
           room_id: roomId,
           participant_id: participantId,
           sample_idx: sampleIdx,
+          area_guess: patch.areaGuess ?? base.areaGuess,
           origin_guess: patch.originGuess ?? base.originGuess,
           process_guess: patch.processGuess ?? base.processGuess,
           variety_guess: patch.varietyGuess ?? base.varietyGuess,
           elevation_guess: patch.elevationGuess ?? base.elevationGuess,
+          decaf_guess: patch.decafGuess ?? base.decafGuess,
         },
         { onConflict: 'participant_id,sample_idx' },
       );
@@ -627,12 +641,14 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
       const { error } = await supabase.from('bean_catalog').upsert(
         {
           name: bean.name,
+          area: bean.area,
           origin: bean.origin,
           process: bean.process,
           variety: bean.variety,
           roaster: bean.roaster,
           producer: bean.producer,
           elevation: bean.elevation,
+          decaf: bean.decaf,
         },
         { onConflict: 'name' },
       );

@@ -3,11 +3,23 @@ import { Btn } from '../components/ui';
 import { ExportSheet } from '../components/ExportSheet';
 import { HistoryCompare } from '../components/HistoryCompare';
 import { beanSub } from '../lib/coe';
-import { LB_MAX_PER_SAMPLE, computeLeaderboardRankRows, leaderboardSampleDetails } from '../lib/selectors';
+import { ELEVATION_THRESHOLD_M, LB_MAX_PER_SAMPLE, computeLeaderboardRankRows, leaderboardSampleDetails } from '../lib/selectors';
 import type { RoomSnapshot } from '../lib/types';
 
 function Mark({ ok }: { ok: boolean }) {
   return <span style={{ color: ok ? '#7fae6b' : 'var(--danger)' }}>{ok ? '✓' : '✗'}</span>;
+}
+
+function elevationGuessLabel(g: string) {
+  if (g === 'above') return `${ELEVATION_THRESHOLD_M}m 以上`;
+  if (g === 'below') return `${ELEVATION_THRESHOLD_M}m 以下`;
+  return '（未答）';
+}
+
+function decafGuessLabel(g: string) {
+  if (g === 'yes') return '是';
+  if (g === 'no') return '否';
+  return '（未答）';
 }
 
 export function RevealLeaderboardScreen({
@@ -82,16 +94,22 @@ export function RevealLeaderboardScreen({
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 11, color: 'var(--muted)' }}>
               <div>
-                <Mark ok={d.originCorrect} /> 產區：你猜 {d.originGuess || '（未答）'}
+                <Mark ok={d.areaCorrect} /> Area：你猜 {d.areaGuess || '（未答）'}
               </div>
               <div>
-                <Mark ok={d.processCorrect} /> 處理法：你猜 {d.processGuess || '（未答）'}
+                <Mark ok={d.originCorrect} /> Country：你猜 {d.originGuess || '（未答）'}
               </div>
               <div>
-                <Mark ok={d.varietyCorrect} /> 品種：你猜 {d.varietyGuess || '（未答）'}
+                <Mark ok={d.processCorrect} /> Process：你猜 {d.processGuess || '（未答）'}
               </div>
               <div>
-                <Mark ok={d.elevationCorrect} /> 海拔：你猜 {d.elevationGuess || '（未答）'}
+                <Mark ok={d.varietyCorrect} /> Varietal(s)：你猜 {d.varietyGuess || '（未答）'}
+              </div>
+              <div>
+                <Mark ok={d.elevationCorrect} /> Altitude：你猜 {elevationGuessLabel(d.elevationGuess)}
+              </div>
+              <div>
+                <Mark ok={d.decafCorrect} /> Decaf：你猜 {decafGuessLabel(d.decafGuess)}
               </div>
             </div>
           </div>

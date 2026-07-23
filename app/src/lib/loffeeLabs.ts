@@ -21,12 +21,14 @@ function proxyFetch(path: string, params: URLSearchParams): Promise<Response> {
 function mapRow(r: Record<string, unknown>): Bean {
   return {
     name: String(r['roast-name'] ?? ''),
+    area: String(r.area ?? ''),
     origin: String(r.origin ?? ''),
     process: String(r.process ?? ''),
     variety: String(r.variety ?? ''),
     roaster: String(r.roaster ?? ''),
     producer: String(r.producer ?? ''),
     elevation: String(r.elevation ?? ''),
+    decaf: false,
   };
 }
 
