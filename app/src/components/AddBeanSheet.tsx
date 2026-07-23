@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Btn, ComboBox, SelectInput, Sheet, TextInput } from './ui';
-import { AREAS, ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
+import { AREAS, PROCESSES, VARIETIES, beanSub, countriesForArea } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { hasLoffeeProxy, searchLoffeeBeans } from '../lib/loffeeLabs';
 import type { Bean, BeanCatalogEntry } from '../lib/types';
@@ -96,7 +96,12 @@ function BeanCatalogSheet({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             <ComboBox
               value={draft.area}
-              onChange={(v) => setDraft((d) => ({ ...d, area: v }))}
+              onChange={(v) =>
+                setDraft((d) => {
+                  const validCountries = countriesForArea(v);
+                  return { ...d, area: v, origin: validCountries.includes(d.origin) ? d.origin : '' };
+                })
+              }
               options={AREAS}
               placeholder="產區大洲 Area"
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
@@ -104,7 +109,7 @@ function BeanCatalogSheet({
             <ComboBox
               value={draft.origin}
               onChange={(v) => setDraft((d) => ({ ...d, origin: v }))}
-              options={ORIGINS}
+              options={countriesForArea(draft.area)}
               placeholder="國家 Country"
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />

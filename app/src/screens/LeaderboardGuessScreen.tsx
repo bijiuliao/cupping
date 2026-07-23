@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { Btn, ComboBox, Segmented } from '../components/ui';
 import { getBackend } from '../lib/backend';
 import type { LeaderboardGuessPatch } from '../lib/backend';
-import { AREAS, ORIGINS, PROCESSES, VARIETIES } from '../lib/coe';
+import { AREAS, PROCESSES, VARIETIES, countriesForArea } from '../lib/coe';
 import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 import { ELEVATION_THRESHOLD_M, LB_MAX_PER_SAMPLE, leaderboardGuessFor, totalOf, scoreFor } from '../lib/selectors';
 import type { RoomSnapshot } from '../lib/types';
@@ -55,7 +55,10 @@ function SampleGuessCard({
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <ComboBox
           value={local.areaGuess}
-          onChange={(v) => set({ areaGuess: v })}
+          onChange={(v) => {
+            const validCountries = countriesForArea(v);
+            set({ areaGuess: v, originGuess: validCountries.includes(local.originGuess) ? local.originGuess : '' });
+          }}
           options={AREAS}
           placeholder="猜大洲 Area"
           style={{ height: 38, fontSize: 13, borderRadius: 6, padding: '0 10px' }}
@@ -63,7 +66,7 @@ function SampleGuessCard({
         <ComboBox
           value={local.originGuess}
           onChange={(v) => set({ originGuess: v })}
-          options={ORIGINS}
+          options={countriesForArea(local.areaGuess)}
           placeholder="猜國家 Country"
           style={{ height: 38, fontSize: 13, borderRadius: 6, padding: '0 10px' }}
         />

@@ -62,8 +62,9 @@ export async function searchLoffeeBeans(query: string, limit = 20): Promise<Bean
   return (rows as Record<string, unknown>[]).map(mapRow).filter((b) => b.name.trim());
 }
 
-// Loffee Labs' /origins, /processes, /varieties lookup lists are a static
-// snapshot merged into coe.ts's ORIGINS/PROCESSES/VARIETIES instead of being
+// Loffee Labs' /origins, /varieties lookup lists (and originally /processes,
+// before PROCESSES was simplified to 3 fixed categories) are a static
+// snapshot merged into coe.ts's COUNTRIES_BY_AREA/VARIETIES instead of being
 // fetched live — they change rarely, and this avoids needing the proxy
-// deployed just to power the manual bean-entry dropdowns. Re-sync by
-// re-running the curl commands in coe.ts's comment and re-merging by hand.
+// deployed just to power the manual bean-entry dropdowns. Re-sync VARIETIES
+// by re-running the curl commands in coe.ts's comment and re-merging by hand.

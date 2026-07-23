@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Btn, Card, ComboBox, Field, ScreenShell, SelectInput, TextInput } from '../components/ui';
-import { AREAS, ORIGINS, PROCESSES, VARIETIES } from '../lib/coe';
+import { AREAS, PROCESSES, VARIETIES, countriesForArea } from '../lib/coe';
 import type { Bean, Mode } from '../lib/types';
 import { getBackend } from '../lib/backend';
 import { AddBeanSheet } from '../components/AddBeanSheet';
@@ -277,7 +277,10 @@ export function HostSetupScreen({
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <ComboBox
                 value={b.area}
-                onChange={(v) => updateBean(b.localId, { area: v })}
+                onChange={(v) => {
+                  const validCountries = countriesForArea(v);
+                  updateBean(b.localId, { area: v, origin: validCountries.includes(b.origin) ? b.origin : '' });
+                }}
                 options={AREAS}
                 placeholder="產區大洲 Area"
                 style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
@@ -285,7 +288,7 @@ export function HostSetupScreen({
               <ComboBox
                 value={b.origin}
                 onChange={(v) => updateBean(b.localId, { origin: v })}
-                options={ORIGINS}
+                options={countriesForArea(b.area)}
                 placeholder="國家 Country"
                 style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
               />

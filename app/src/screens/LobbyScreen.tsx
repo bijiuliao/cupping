@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Btn, ComboBox, ScreenShell, SelectInput, TextInput } from '../components/ui';
 import { AddBeanSheet } from '../components/AddBeanSheet';
-import { AREAS, ORIGINS, PROCESSES, VARIETIES, beanSub } from '../lib/coe';
+import { AREAS, PROCESSES, VARIETIES, beanSub, countriesForArea } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 import type { Bean, RoomBean, RoomSnapshot } from '../lib/types';
@@ -72,7 +72,10 @@ function EditableBeanRow({ bean, onRemove }: { bean: RoomBean; onRemove: () => v
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <ComboBox
           value={local.area}
-          onChange={(v) => set({ area: v })}
+          onChange={(v) => {
+            const validCountries = countriesForArea(v);
+            set({ area: v, origin: validCountries.includes(local.origin) ? local.origin : '' });
+          }}
           options={AREAS}
           placeholder="產區大洲 Area"
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
@@ -80,7 +83,7 @@ function EditableBeanRow({ bean, onRemove }: { bean: RoomBean; onRemove: () => v
         <ComboBox
           value={local.origin}
           onChange={(v) => set({ origin: v })}
-          options={ORIGINS}
+          options={countriesForArea(local.area)}
           placeholder="國家 Country"
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
