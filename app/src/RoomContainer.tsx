@@ -7,8 +7,10 @@ import { LobbyScreen } from './screens/LobbyScreen';
 import { ScoringScreen } from './screens/ScoringScreen';
 import { WaitSubmittedScreen, WaitRevealScreen } from './screens/WaitScreens';
 import { GuessScreen } from './screens/GuessScreen';
+import { LeaderboardGuessScreen } from './screens/LeaderboardGuessScreen';
 import { RevealOpenScreen } from './screens/RevealOpenScreen';
 import { RevealBlindScreen } from './screens/RevealBlindScreen';
+import { RevealLeaderboardScreen } from './screens/RevealLeaderboardScreen';
 import { useRoomSnapshot } from './hooks/useRoomSnapshot';
 import { getBackend } from './lib/backend';
 import { findParticipant, submittedCount } from './lib/selectors';
@@ -49,12 +51,16 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
   const isHost = me.role === 'host';
   const { room } = snap;
   const isBlind = room.mode === 'blind';
+  // 'leaderboard' mode also hides sample identity and needs a guess step before
+  // reveal (per-attribute guessing instead of picking the whole bean) — only
+  // 'open' mode skips both.
+  const needsGuessStep = room.mode !== 'open';
 
-  let view: 'lobby' | 'scoring' | 'waitSub' | 'guess' | 'waitReveal' | 'revealOpen' | 'revealBlind';
+  let view: 'lobby' | 'scoring' | 'waitSub' | 'guess' | 'waitReveal' | 'revealOpen' | 'revealBlind' | 'revealLeaderboard';
   if (room.stage === 'waiting') view = 'lobby';
   else if (room.stage === 'scoring') view = me.submittedAt ? 'waitSub' : 'scoring';
-  else if (room.stage === 'locked') view = isBlind ? (me.guessSubmittedAt ? 'waitReveal' : 'guess') : 'waitReveal';
-  else view = isBlind ? 'revealBlind' : 'revealOpen';
+  else if (room.stage === 'locked') view = needsGuessStep ? (me.guessSubmittedAt ? 'waitReveal' : 'guess') : 'waitReveal';
+  else view = isBlind ? 'revealBlind' : room.mode === 'leaderboard' ? 'revealLeaderboard' : 'revealOpen';
 
   const subCnt = submittedCount(snap);
   const total = snap.participants.length;
@@ -68,12 +74,12 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
     hostActionLabel = '鎖定交卷 🔒';
     hostHint = '已交卷 ' + subCnt + '/' + total + ' · 已計時 ' + fmtTime(elapsed);
   } else if (room.stage === 'locked') {
-    if (isBlind && !room.answerConfirmed) {
+    if (needsGuessStep && !room.answerConfirmed) {
       hostActionLabel = '設定正確答案 🔑';
       hostHint = '公佈前請先設定各樣本對應的豆子';
     } else {
       hostActionLabel = '公佈結果 📣';
-      hostHint = isBlind ? '答案已設定，等待大家猜豆' : '交卷已鎖定，可公佈結果';
+      hostHint = needsGuessStep ? '答案已設定，等待大家猜豆' : '交卷已鎖定，可公佈結果';
     }
   } else {
     showAction = false;
@@ -86,7 +92,7 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
     } else if (room.stage === 'scoring') {
       await backend.setStage(roomId, 'locked');
     } else if (room.stage === 'locked') {
-      if (isBlind && !room.answerConfirmed) {
+      if (needsGuessStep && !room.answerConfirmed) {
         setAnswerSheetOpen(true);
       } else {
         await backend.setStage(roomId, 'reveal');
@@ -129,10 +135,12 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
       {view === 'lobby' && <LobbyScreen snap={snap} myClientId={clientId} />}
       {view === 'scoring' && <ScoringScreen snap={snap} myParticipantId={me.id} />}
       {view === 'waitSub' && <WaitSubmittedScreen snap={snap} />}
-      {view === 'guess' && <GuessScreen snap={snap} myParticipantId={me.id} />}
+      {view === 'guess' && room.mode === 'leaderboard' && <LeaderboardGuessScreen snap={snap} myParticipantId={me.id} />}
+      {view === 'guess' && room.mode !== 'leaderboard' && <GuessScreen snap={snap} myParticipantId={me.id} />}
       {view === 'waitReveal' && <WaitRevealScreen mode={room.mode} />}
       {view === 'revealOpen' && <RevealOpenScreen snap={snap} myParticipantId={me.id} isHost={isHost} onResetAll={onLeaveRoom} />}
       {view === 'revealBlind' && <RevealBlindScreen snap={snap} myParticipantId={me.id} isHost={isHost} onResetAll={onLeaveRoom} />}
+      {view === 'revealLeaderboard' && <RevealLeaderboardScreen snap={snap} myParticipantId={me.id} isHost={isHost} onResetAll={onLeaveRoom} />}
 
       {isHost && (
         <HostControlBar

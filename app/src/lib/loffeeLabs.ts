@@ -26,6 +26,7 @@ function mapRow(r: Record<string, unknown>): Bean {
     variety: String(r.variety ?? ''),
     roaster: String(r.roaster ?? ''),
     producer: String(r.producer ?? ''),
+    elevation: String(r.elevation ?? ''),
   };
 }
 

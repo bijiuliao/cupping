@@ -113,6 +113,7 @@ export function HostSetupScreen({
             [
               { key: 'blind' as Mode, title: '盲測', desc: '只看編號，公佈後猜豆排行' },
               { key: 'open' as Mode, title: '公開', desc: '顯示豆名，公佈平均與自評' },
+              { key: 'leaderboard' as Mode, title: '排行榜', desc: '猜產區/處理法/品種/海拔，逐項計分排名' },
             ] as const
           ).map((m) => {
             const active = mode === m.key;
@@ -307,6 +308,12 @@ export function HostSetupScreen({
                 placeholder="生產者"
                 style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
               />
+              <TextInput
+                value={b.elevation}
+                onChange={(e) => updateBean(b.localId, { elevation: e.target.value })}
+                placeholder="海拔（公尺）"
+                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+              />
             </div>
           </Card>
         ))}
@@ -325,7 +332,7 @@ export function HostSetupScreen({
       <AddBeanSheet
         state={addSheet}
         onClose={() => setAddSheet(null)}
-        onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '', producer: '' })}
+        onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '' })}
         onOpenDb={() => setAddSheet('db')}
         onOpenScan={() => setAddSheet('scan')}
         onOpenLoffee={() => setAddSheet('loffee')}

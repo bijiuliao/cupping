@@ -90,7 +90,7 @@ export function ScoringScreen({
     persist({ notes: v });
   }
 
-  const isBlind = room.mode === 'blind';
+  const isBlind = room.mode !== 'open';
   const bean = beans.find((b) => b.sampleIdx === sampleIdx);
   const min = scaleMin();
   const total = sheetTotal(vals, defInt, scoreMode, easyScore);
@@ -113,7 +113,9 @@ export function ScoringScreen({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <div style={{ fontSize: 11, letterSpacing: '.25em', color: 'var(--muted)' }}>
-            {isBlind ? '盲測 · ' + (sampleIdx + 1) + ' / ' + sampleCount : '公開 · ' + (sampleIdx + 1) + ' / ' + sampleCount + '（' + [bean?.origin, bean?.process].filter(Boolean).join(' · ') + '）'}
+            {isBlind
+              ? (room.mode === 'leaderboard' ? '排行榜' : '盲測') + ' · ' + (sampleIdx + 1) + ' / ' + sampleCount
+              : '公開 · ' + (sampleIdx + 1) + ' / ' + sampleCount + '（' + [bean?.origin, bean?.process].filter(Boolean).join(' · ') + '）'}
           </div>
           <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 26, fontWeight: 600 }}>{isBlind ? '樣本 ' + (sampleIdx + 1) : bean?.name || ''}</div>
         </div>
@@ -289,7 +291,7 @@ export function ScoringScreen({
         />
       </div>
 
-      {isBlind && (
+      {room.mode === 'blind' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <div style={{ fontSize: 13, color: 'var(--muted)' }}>我猜這支是</div>

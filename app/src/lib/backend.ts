@@ -20,7 +20,7 @@ export interface CreateRoomInput {
   sessionDate: string | null; // ISO
   hostName: string;
   hostClientId: string;
-  beans: { name: string; origin: string; process: string; variety: string; roaster: string; producer: string }[];
+  beans: Bean[];
 }
 
 export interface ScorePatch {
@@ -29,6 +29,14 @@ export interface ScorePatch {
   defInt?: number;
   easyScore?: number;
   notes?: string;
+}
+
+/** LEADERBOARD mode — partial patch of one sample's per-attribute guess (each field guessed/scored independently). */
+export interface LeaderboardGuessPatch {
+  originGuess?: string;
+  processGuess?: string;
+  varietyGuess?: string;
+  elevationGuess?: string;
 }
 
 /**
@@ -76,6 +84,9 @@ export interface Backend {
   setFinalGuess(roomId: string, participantId: string, sampleIdx: number, beanIdx: number): Promise<void>;
   autoFillFinalGuesses(roomId: string, participantId: string): Promise<void>;
   markGuessSubmitted(participantId: string): Promise<void>;
+
+  /** LEADERBOARD mode — upsert one sample's per-attribute guess (merges with any existing patch). */
+  upsertLeaderboardGuess(roomId: string, participantId: string, sampleIdx: number, patch: LeaderboardGuessPatch): Promise<void>;
 
   listActivities(): Promise<string[]>;
   addActivity(name: string): Promise<void>;

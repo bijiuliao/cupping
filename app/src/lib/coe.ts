@@ -568,7 +568,7 @@ export function sheetTotal(vals: Record<CatKey, number>, defInt: number, scoreMo
 }
 
 export function beanSub(b: Bean) {
-  return [b.origin, b.process, b.variety, b.producer, b.roaster].filter(Boolean).join(' · ');
+  return [b.origin, b.process, b.variety, b.elevation, b.producer, b.roaster].filter(Boolean).join(' · ');
 }
 
 export function fmtTime(sec: number) {

@@ -4,6 +4,7 @@ import type {
   BeanHistoryEntry,
   GuessEntry,
   HistorySession,
+  LeaderboardGuessEntry,
   Participant,
   Room,
   RoomBean,
@@ -16,6 +17,7 @@ export interface LocalDB {
   participants: Record<string, Participant>;
   scores: Record<string, ScoreEntry>; // key: participantId::sampleIdx
   guesses: Record<string, GuessEntry>; // key: participantId::sampleIdx
+  leaderboardGuesses: Record<string, LeaderboardGuessEntry>; // key: participantId::sampleIdx
   activities: string[];
   historySessions: HistorySession[];
   beanHistory: BeanHistoryEntry[];
@@ -31,6 +33,7 @@ function emptyDB(): LocalDB {
     participants: {},
     scores: {},
     guesses: {},
+    leaderboardGuesses: {},
     activities: [DEFAULT_ACTIVITY],
     historySessions: [],
     beanHistory: [],

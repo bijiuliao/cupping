@@ -41,7 +41,7 @@ export function RoomHeader({
           {code}
         </div>
         <div style={{ fontSize: 11, padding: '4px 10px', borderRadius: 6, background: 'var(--bg-card)', color: 'var(--muted)', border: '1px solid var(--border)' }}>
-          {mode === 'blind' ? '盲測' : '公開'}
+          {mode === 'blind' ? '盲測' : mode === 'leaderboard' ? '排行榜' : '公開'}
         </div>
       </div>
       {showCloseRoom && (

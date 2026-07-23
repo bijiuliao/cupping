@@ -1,4 +1,4 @@
-export type Mode = 'blind' | 'open';
+export type Mode = 'blind' | 'open' | 'leaderboard';
 export type Stage = 'waiting' | 'scoring' | 'locked' | 'reveal';
 export type Role = 'host' | 'participant';
 export type ScoreMode = 'pro' | 'easy';
@@ -23,6 +23,7 @@ export interface Bean {
   variety: string;
   roaster: string;
   producer: string;
+  elevation: string;
 }
 
 export interface RoomBean extends Bean {
@@ -78,6 +79,18 @@ export interface GuessEntry {
   finalGuess: number | null; // bean idx
 }
 
+/** LEADERBOARD mode only — per-attribute blind guesses for one sample, scored independently (partial credit), unlike GuessEntry's all-or-nothing bean pick. */
+export interface LeaderboardGuessEntry {
+  id: string;
+  roomId: string;
+  participantId: string;
+  sampleIdx: number;
+  originGuess: string;
+  processGuess: string;
+  varietyGuess: string;
+  elevationGuess: string;
+}
+
 export interface HistorySession {
   id: string;
   activityName: string;
@@ -116,4 +129,5 @@ export interface RoomSnapshot {
   participants: Participant[];
   scores: ScoreEntry[];
   guesses: GuessEntry[];
+  leaderboardGuesses: LeaderboardGuessEntry[];
 }

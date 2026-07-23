@@ -1,7 +1,7 @@
 import { fmtTime } from '../lib/coe';
 import { submittedCount } from '../lib/selectors';
 import { useElapsedSeconds } from '../hooks/useRoomSnapshot';
-import type { RoomSnapshot } from '../lib/types';
+import type { Mode, RoomSnapshot } from '../lib/types';
 
 const centerShell: React.CSSProperties = {
   padding: '60px 32px 140px',
@@ -51,7 +51,7 @@ export function WaitSubmittedScreen({ snap }: { snap: RoomSnapshot }) {
   );
 }
 
-export function WaitRevealScreen({ mode }: { mode: 'blind' | 'open' }) {
+export function WaitRevealScreen({ mode }: { mode: Mode }) {
   return (
     <div className="anim-fadeUp" style={centerShell}>
       <div
@@ -72,7 +72,7 @@ export function WaitRevealScreen({ mode }: { mode: 'blind' | 'open' }) {
       </div>
       <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 26, fontWeight: 600 }}>等待房主公佈結果</div>
       <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
-        {mode === 'blind' ? (
+        {mode !== 'open' ? (
           <>
             你的猜測已送出。
             <br />

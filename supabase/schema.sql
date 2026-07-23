@@ -25,7 +25,7 @@ insert into activities (name) values ('咖啡社杯測')
 create table if not exists rooms (
   id uuid primary key default gen_random_uuid(),
   code text not null unique,
-  mode text not null check (mode in ('blind', 'open')),
+  mode text not null check (mode in ('blind', 'open', 'leaderboard')),
   activity_id uuid references activities(id),
   activity_name text not null,
   subtitle text not null default '',
@@ -37,6 +37,12 @@ create table if not exists rooms (
   archived_done boolean not null default false,
   created_at timestamptz not null default now()
 );
+
+-- Re-running against an existing project whose rooms table predates the
+-- 'leaderboard' mode: the inline check above only applies on table creation,
+-- so widen it explicitly (drop + recreate is safe — it doesn't touch data).
+alter table rooms drop constraint if exists rooms_mode_check;
+alter table rooms add constraint rooms_mode_check check (mode in ('blind', 'open', 'leaderboard'));
 
 -- ---------------------------------------------------------------------------
 -- Beans in a room's cupping sheet ("豆單")
@@ -57,10 +63,12 @@ create table if not exists room_beans (
   variety text not null default '',
   roaster text not null default '',
   producer text not null default '',
+  elevation text not null default '',
   unique (room_id, idx)
 );
 
 alter table room_beans add column if not exists producer text not null default '';
+alter table room_beans add column if not exists elevation text not null default '';
 
 create index if not exists room_beans_room_id_idx on room_beans (room_id);
 
@@ -127,6 +135,26 @@ create table if not exists guess_entries (
 create index if not exists guess_entries_room_id_idx on guess_entries (room_id);
 
 -- ---------------------------------------------------------------------------
+-- Leaderboard-mode guess entries — one row per participant per sample, with
+-- each attribute (origin/process/variety/elevation) guessed and later scored
+-- independently for partial credit, unlike guess_entries' all-or-nothing
+-- whole-bean pick.
+-- ---------------------------------------------------------------------------
+create table if not exists leaderboard_guesses (
+  id uuid primary key default gen_random_uuid(),
+  room_id uuid not null references rooms(id) on delete cascade,
+  participant_id uuid not null references participants(id) on delete cascade,
+  sample_idx int not null,
+  origin_guess text not null default '',
+  process_guess text not null default '',
+  variety_guess text not null default '',
+  elevation_guess text not null default '',
+  unique (participant_id, sample_idx)
+);
+
+create index if not exists leaderboard_guesses_room_id_idx on leaderboard_guesses (room_id);
+
+-- ---------------------------------------------------------------------------
 -- Cross-session comparison bars ("歷史比較") per activity.
 -- ---------------------------------------------------------------------------
 create table if not exists history_sessions (
@@ -178,10 +206,12 @@ create table if not exists bean_catalog (
   variety text not null default '',
   roaster text not null default '',
   producer text not null default '',
+  elevation text not null default '',
   created_at timestamptz not null default now()
 );
 
 alter table bean_catalog add column if not exists producer text not null default '';
+alter table bean_catalog add column if not exists elevation text not null default '';
 
 create index if not exists bean_catalog_name_idx on bean_catalog (name);
 
@@ -195,6 +225,7 @@ alter table room_beans enable row level security;
 alter table participants enable row level security;
 alter table score_entries enable row level security;
 alter table guess_entries enable row level security;
+alter table leaderboard_guesses enable row level security;
 alter table history_sessions enable row level security;
 alter table bean_history enable row level security;
 alter table bean_catalog enable row level security;
@@ -203,7 +234,7 @@ do $$
 declare
   t text;
 begin
-  foreach t in array array['activities','rooms','room_beans','participants','score_entries','guess_entries','history_sessions','bean_history','bean_catalog']
+  foreach t in array array['activities','rooms','room_beans','participants','score_entries','guess_entries','leaderboard_guesses','history_sessions','bean_history','bean_catalog']
   loop
     execute format('drop policy if exists "public_all_%1$s" on %1$s', t);
     execute format(
@@ -232,7 +263,7 @@ do $$
 declare
   t text;
 begin
-  foreach t in array array['rooms','room_beans','participants','score_entries','guess_entries','history_sessions','bean_history']
+  foreach t in array array['rooms','room_beans','participants','score_entries','guess_entries','leaderboard_guesses','history_sessions','bean_history']
   loop
     if not exists (
       select 1 from pg_publication_tables

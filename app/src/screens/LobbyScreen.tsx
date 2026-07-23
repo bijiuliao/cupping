@@ -103,6 +103,12 @@ function EditableBeanRow({ bean, onRemove }: { bean: RoomBean; onRemove: () => v
           placeholder="生產者"
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
+        <TextInput
+          value={local.elevation}
+          onChange={(e) => set({ elevation: e.target.value })}
+          placeholder="海拔（公尺）"
+          style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+        />
       </div>
     </div>
   );
@@ -142,7 +148,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
           <span style={{ letterSpacing: '.35em', marginRight: '-.35em', fontVariantNumeric: 'lining-nums' }}>{room.code}</span>
         </div>
         <div style={{ fontSize: 12, color: 'var(--muted-2)' }}>
-          {activityLabel} · {room.mode === 'blind' ? '盲測' : '公開'}模式 · {beans.length} 支豆 · {sessDateLabel}
+          {activityLabel} · {room.mode === 'blind' ? '盲測' : room.mode === 'leaderboard' ? '排行榜' : '公開'}模式 · {beans.length} 支豆 · {sessDateLabel}
         </div>
       </div>
 
@@ -229,13 +235,16 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
         {room.mode === 'blind' && (
           <div style={{ fontSize: 11, color: 'var(--muted-2)', textAlign: 'center' }}>盲測模式：評分時只會看到樣本編號，順序已打亂</div>
         )}
+        {room.mode === 'leaderboard' && (
+          <div style={{ fontSize: 11, color: 'var(--muted-2)', textAlign: 'center' }}>排行榜模式：評分時只會看到樣本編號，公佈前要逐項猜產區/處理法/品種/海拔</div>
+        )}
       </div>
 
       {canEditBeans && (
         <AddBeanSheet
           state={addSheet}
           onClose={() => setAddSheet(null)}
-          onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '', producer: '' })}
+          onAddManual={() => addBean({ name: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '' })}
           onOpenDb={() => setAddSheet('db')}
           onOpenScan={() => setAddSheet('scan')}
           onOpenLoffee={() => setAddSheet('loffee')}

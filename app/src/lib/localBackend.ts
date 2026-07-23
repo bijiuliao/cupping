@@ -1,7 +1,7 @@
-import type { Backend, CreateRoomInput, ScorePatch } from './backend';
+import type { Backend, CreateRoomInput, LeaderboardGuessPatch, ScorePatch } from './backend';
 import { CATS, beanSub, sheetTotal } from './coe';
 import { getDB, mutate, onChange, scoreKey, uid } from './localStore';
-import type { CatKey, GuessEntry, Role, RoomSnapshot, ScoreEntry, Stage } from './types';
+import type { CatKey, GuessEntry, LeaderboardGuessEntry, Role, RoomSnapshot, ScoreEntry, Stage } from './types';
 
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no O/0/I/1 ambiguity
 
@@ -29,7 +29,8 @@ function buildSnapshot(roomId: string): RoomSnapshot | null {
     .sort((a, b) => a.joinedAt.localeCompare(b.joinedAt));
   const scores = Object.values(db.scores).filter((s) => s.roomId === roomId);
   const guesses = Object.values(db.guesses).filter((g) => g.roomId === roomId);
-  return { room, beans, participants, scores, guesses };
+  const leaderboardGuesses = Object.values(db.leaderboardGuesses).filter((g) => g.roomId === roomId);
+  return { room, beans, participants, scores, guesses, leaderboardGuesses };
 }
 
 export const localBackend: Backend = {
@@ -124,6 +125,9 @@ export const localBackend: Backend = {
       });
       Object.keys(db.guesses).forEach((key) => {
         if (db.guesses[key].roomId === roomId) delete db.guesses[key];
+      });
+      Object.keys(db.leaderboardGuesses).forEach((key) => {
+        if (db.leaderboardGuesses[key].roomId === roomId) delete db.leaderboardGuesses[key];
       });
     });
   },
@@ -321,6 +325,20 @@ export const localBackend: Backend = {
     await mutate((db) => {
       const p = db.participants[participantId];
       if (p) p.guessSubmittedAt = new Date().toISOString();
+    });
+  },
+
+  async upsertLeaderboardGuess(roomId: string, participantId: string, sampleIdx: number, patch: LeaderboardGuessPatch) {
+    await mutate((db) => {
+      const key = scoreKey(participantId, sampleIdx);
+      const existing = db.leaderboardGuesses[key];
+      const base: LeaderboardGuessEntry =
+        existing ?? { id: uid(), roomId, participantId, sampleIdx, originGuess: '', processGuess: '', varietyGuess: '', elevationGuess: '' };
+      if (patch.originGuess !== undefined) base.originGuess = patch.originGuess;
+      if (patch.processGuess !== undefined) base.processGuess = patch.processGuess;
+      if (patch.varietyGuess !== undefined) base.varietyGuess = patch.varietyGuess;
+      if (patch.elevationGuess !== undefined) base.elevationGuess = patch.elevationGuess;
+      db.leaderboardGuesses[key] = base;
     });
   },
 

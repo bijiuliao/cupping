@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Backend, CreateRoomInput, ScorePatch } from './backend';
+import type { Backend, CreateRoomInput, LeaderboardGuessPatch, ScorePatch } from './backend';
 import { CATS, beanSub, sheetTotal } from './coe';
 import type {
   Bean,
@@ -8,6 +8,7 @@ import type {
   CatKey,
   GuessEntry,
   HistorySession,
+  LeaderboardGuessEntry,
   Participant,
   Role,
   Room,
@@ -61,6 +62,7 @@ function mapBean(r: any): RoomBean {
     variety: r.variety ?? '',
     roaster: r.roaster ?? '',
     producer: r.producer ?? '',
+    elevation: r.elevation ?? '',
   };
 }
 
@@ -111,6 +113,19 @@ function mapGuess(r: any): GuessEntry {
   };
 }
 
+function mapLeaderboardGuess(r: any): LeaderboardGuessEntry {
+  return {
+    id: r.id,
+    roomId: r.room_id,
+    participantId: r.participant_id,
+    sampleIdx: r.sample_idx,
+    originGuess: r.origin_guess ?? '',
+    processGuess: r.process_guess ?? '',
+    varietyGuess: r.variety_guess ?? '',
+    elevationGuess: r.elevation_guess ?? '',
+  };
+}
+
 function mapHistorySession(r: any): HistorySession {
   return {
     id: r.id,
@@ -133,6 +148,7 @@ function mapBeanCatalog(r: any): BeanCatalogEntry {
     variety: r.variety ?? '',
     roaster: r.roaster ?? '',
     producer: r.producer ?? '',
+    elevation: r.elevation ?? '',
   };
 }
 
@@ -154,11 +170,12 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
   async function fetchSnapshot(roomId: string): Promise<RoomSnapshot | null> {
     const { data: roomRow } = await supabase.from('rooms').select('*').eq('id', roomId).maybeSingle();
     if (!roomRow) return null;
-    const [beansRes, partsRes, scoresRes, guessesRes] = await Promise.all([
+    const [beansRes, partsRes, scoresRes, guessesRes, lbGuessesRes] = await Promise.all([
       supabase.from('room_beans').select('*').eq('room_id', roomId).order('idx'),
       supabase.from('participants').select('*').eq('room_id', roomId).order('joined_at'),
       supabase.from('score_entries').select('*').eq('room_id', roomId),
       supabase.from('guess_entries').select('*').eq('room_id', roomId),
+      supabase.from('leaderboard_guesses').select('*').eq('room_id', roomId),
     ]);
     return {
       room: mapRoom(roomRow),
@@ -166,6 +183,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
       participants: (partsRes.data ?? []).map(mapParticipant),
       scores: (scoresRes.data ?? []).map(mapScore),
       guesses: (guessesRes.data ?? []).map(mapGuess),
+      leaderboardGuesses: (lbGuessesRes.data ?? []).map(mapLeaderboardGuess),
     };
   }
 
@@ -207,6 +225,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         variety: b.variety,
         roaster: b.roaster,
         producer: b.producer,
+        elevation: b.elevation,
       }));
       if (beanRows.length) {
         const { error } = await supabase.from('room_beans').insert(beanRows);
@@ -250,6 +269,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         .on('postgres_changes', { event: '*', schema: 'public', table: 'participants', filter: `room_id=eq.${roomId}` }, refresh)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'score_entries', filter: `room_id=eq.${roomId}` }, refresh)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'guess_entries', filter: `room_id=eq.${roomId}` }, refresh)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard_guesses', filter: `room_id=eq.${roomId}` }, refresh)
         .subscribe();
       return () => {
         cancelled = true;
@@ -307,6 +327,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         variety: bean.variety,
         roaster: bean.roaster,
         producer: bean.producer,
+        elevation: bean.elevation,
       });
       if (error) throw error;
     },
@@ -319,6 +340,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
       if (patch.variety !== undefined) dbPatch.variety = patch.variety;
       if (patch.roaster !== undefined) dbPatch.roaster = patch.roaster;
       if (patch.producer !== undefined) dbPatch.producer = patch.producer;
+      if (patch.elevation !== undefined) dbPatch.elevation = patch.elevation;
       const { error } = await supabase.from('room_beans').update(dbPatch).eq('id', beanId);
       if (error) throw error;
     },
@@ -516,6 +538,31 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
       if (error) throw error;
     },
 
+    async upsertLeaderboardGuess(roomId: string, participantId: string, sampleIdx: number, patch: LeaderboardGuessPatch) {
+      const { data: existingRow } = await supabase
+        .from('leaderboard_guesses')
+        .select('*')
+        .eq('participant_id', participantId)
+        .eq('sample_idx', sampleIdx)
+        .maybeSingle();
+      const base = existingRow
+        ? mapLeaderboardGuess(existingRow)
+        : { originGuess: '', processGuess: '', varietyGuess: '', elevationGuess: '' };
+      const { error } = await supabase.from('leaderboard_guesses').upsert(
+        {
+          room_id: roomId,
+          participant_id: participantId,
+          sample_idx: sampleIdx,
+          origin_guess: patch.originGuess ?? base.originGuess,
+          process_guess: patch.processGuess ?? base.processGuess,
+          variety_guess: patch.varietyGuess ?? base.varietyGuess,
+          elevation_guess: patch.elevationGuess ?? base.elevationGuess,
+        },
+        { onConflict: 'participant_id,sample_idx' },
+      );
+      if (error) throw error;
+    },
+
     async listActivities() {
       const { data } = await supabase.from('activities').select('name').order('name');
       return (data ?? []).map((r) => r.name as string);
@@ -585,6 +632,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
           variety: bean.variety,
           roaster: bean.roaster,
           producer: bean.producer,
+          elevation: bean.elevation,
         },
         { onConflict: 'name' },
       );

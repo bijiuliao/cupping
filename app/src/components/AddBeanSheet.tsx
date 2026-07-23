@@ -29,7 +29,7 @@ function MenuButton({ icon, title, desc, onClick }: { icon: string; title: strin
   );
 }
 
-const EMPTY_DRAFT: Bean = { name: '', origin: '', process: '', variety: '', roaster: '', producer: '' };
+const EMPTY_DRAFT: Bean = { name: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '' };
 
 function BeanCatalogSheet({
   open,
@@ -125,6 +125,12 @@ function BeanCatalogSheet({
               value={draft.producer}
               onChange={(e) => setDraft((d) => ({ ...d, producer: e.target.value }))}
               placeholder="生產者"
+              style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+            />
+            <TextInput
+              value={draft.elevation}
+              onChange={(e) => setDraft((d) => ({ ...d, elevation: e.target.value }))}
+              placeholder="海拔（公尺）"
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />
           </div>
@@ -363,7 +369,7 @@ export function AddBeanSheet({
         </div>
         <button
           onClick={() =>
-            onScanResult({ name: '掃描：肯特山 AB', origin: 'Kenya', process: 'Washed', variety: 'SL34', roaster: '晨光咖啡', producer: '' })
+            onScanResult({ name: '掃描：肯特山 AB', origin: 'Kenya', process: 'Washed', variety: 'SL34', roaster: '晨光咖啡', producer: '', elevation: '' })
           }
           style={{
             height: 50,
