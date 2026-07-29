@@ -65,6 +65,7 @@ function mapBean(r: any): RoomBean {
     producer: r.producer ?? '',
     elevation: r.elevation ?? '',
     decaf: Boolean(r.decaf),
+    flavorNotes: r.flavor_notes ?? '',
   };
 }
 
@@ -155,6 +156,7 @@ function mapBeanCatalog(r: any): BeanCatalogEntry {
     producer: r.producer ?? '',
     elevation: r.elevation ?? '',
     decaf: Boolean(r.decaf),
+    flavorNotes: r.flavor_notes ?? '',
   };
 }
 
@@ -234,6 +236,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         producer: b.producer,
         elevation: b.elevation,
         decaf: b.decaf,
+        flavor_notes: b.flavorNotes,
       }));
       if (beanRows.length) {
         const { error } = await supabase.from('room_beans').insert(beanRows);
@@ -338,6 +341,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         producer: bean.producer,
         elevation: bean.elevation,
         decaf: bean.decaf,
+        flavor_notes: bean.flavorNotes,
       });
       if (error) throw error;
     },
@@ -353,6 +357,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
       if (patch.producer !== undefined) dbPatch.producer = patch.producer;
       if (patch.elevation !== undefined) dbPatch.elevation = patch.elevation;
       if (patch.decaf !== undefined) dbPatch.decaf = patch.decaf;
+      if (patch.flavorNotes !== undefined) dbPatch.flavor_notes = patch.flavorNotes;
       const { error } = await supabase.from('room_beans').update(dbPatch).eq('id', beanId);
       if (error) throw error;
     },
@@ -649,6 +654,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
           producer: bean.producer,
           elevation: bean.elevation,
           decaf: bean.decaf,
+          flavor_notes: bean.flavorNotes,
         },
         { onConflict: 'name' },
       );

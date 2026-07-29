@@ -26,6 +26,7 @@ export interface Bean {
   producer: string;
   elevation: string;
   decaf: boolean;
+  flavorNotes: string; // roaster/producer's own tasting-note description, shown in 'open' mode's bean-info card
 }
 
 export interface RoomBean extends Bean {

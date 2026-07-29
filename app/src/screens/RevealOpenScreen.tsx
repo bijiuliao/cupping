@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Btn } from '../components/ui';
 import { ExportSheet } from '../components/ExportSheet';
 import { HistoryCompare } from '../components/HistoryCompare';
-import { computeResultRows } from '../lib/selectors';
+import { computeResultRows, scoreBreakdownFor } from '../lib/selectors';
 import type { RoomSnapshot } from '../lib/types';
 
 export function RevealOpenScreen({
@@ -32,25 +32,39 @@ export function RevealOpenScreen({
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {rows.map((r) => (
-          <div
-            key={r.bean.id}
-            style={{ background: 'var(--bg-card)', border: '1px solid ' + (r.rank === 1 ? 'var(--gold)' : 'var(--border)'), borderRadius: 8, padding: 16, display: 'flex', alignItems: 'center', gap: 14 }}
-          >
-            <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 26, color: r.rank === 1 ? 'var(--gold)' : 'var(--muted-2)', minWidth: 30, textAlign: 'center' }}>{r.rank}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.bean.name}</div>
-              <div style={{ fontSize: 11, color: 'var(--muted-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.sub}</div>
-              <div style={{ fontSize: 11, color: 'var(--muted)' }}>
-                你打 {r.mine.toFixed(2)} 分（{r.diff}）
+        {rows.map((r) => {
+          const breakdown = scoreBreakdownFor(snap, r.bean.sampleIdx as number);
+          return (
+            <div
+              key={r.bean.id}
+              style={{ background: 'var(--bg-card)', border: '1px solid ' + (r.rank === 1 ? 'var(--gold)' : 'var(--border)'), borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 26, color: r.rank === 1 ? 'var(--gold)' : 'var(--muted-2)', minWidth: 30, textAlign: 'center' }}>{r.rank}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.bean.name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--muted-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.sub}</div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>
+                    你打 {r.mine.toFixed(2)} 分（{r.diff}）
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <div style={{ fontSize: 10, letterSpacing: '.2em', color: 'var(--muted-2)' }}>平均</div>
+                  <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 32, lineHeight: 1, color: 'var(--gold)' }}>{r.avg.toFixed(2)}</div>
+                </div>
               </div>
+              {breakdown.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 10px', borderTop: '1px solid var(--border)', paddingTop: 8, fontSize: 11, color: 'var(--muted-2)' }}>
+                  {breakdown.map((b) => (
+                    <span key={b.participantId}>
+                      {b.name} <span style={{ color: 'var(--sub)' }}>{b.score.toFixed(2)}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <div style={{ fontSize: 10, letterSpacing: '.2em', color: 'var(--muted-2)' }}>平均</div>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 32, lineHeight: 1, color: 'var(--gold)' }}>{r.avg.toFixed(2)}</div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <HistoryCompare snap={snap} />

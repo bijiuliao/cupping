@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Btn, ComboBox, SelectInput, Sheet, TextInput } from './ui';
+import { Btn, ComboBox, SelectInput, Sheet, TextArea, TextInput } from './ui';
 import { AREAS, PROCESSES, VARIETIES, beanSub, countriesForArea } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { hasLoffeeProxy, searchLoffeeBeans } from '../lib/loffeeLabs';
@@ -29,7 +29,7 @@ function MenuButton({ icon, title, desc, onClick }: { icon: string; title: strin
   );
 }
 
-const EMPTY_DRAFT: Bean = { name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false };
+const EMPTY_DRAFT: Bean = { name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false, flavorNotes: '' };
 
 function BeanCatalogSheet({
   open,
@@ -154,6 +154,12 @@ function BeanCatalogSheet({
               style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
             />
           </div>
+          <TextArea
+            value={draft.flavorNotes}
+            onChange={(e) => setDraft((d) => ({ ...d, flavorNotes: e.target.value }))}
+            placeholder="風味敘述（例：柑橘、蜂蜜、烏龍茶感）"
+            style={{ minHeight: 44, fontSize: 12, padding: '8px 10px' }}
+          />
           <Btn variant="solid" onClick={confirmAdd} disabled={!draft.name.trim() || saving} style={{ height: 40, fontSize: 13 }}>
             {saving ? '儲存中…' : '儲存到資料庫'}
           </Btn>
@@ -389,7 +395,18 @@ export function AddBeanSheet({
         </div>
         <button
           onClick={() =>
-            onScanResult({ name: '掃描：肯特山 AB', area: 'Africa', origin: 'Kenya', process: 'Washed', variety: 'SL34', roaster: '晨光咖啡', producer: '', elevation: '', decaf: false })
+            onScanResult({
+              name: '掃描：肯特山 AB',
+              area: 'Africa',
+              origin: 'Kenya',
+              process: 'Washed',
+              variety: 'SL34',
+              roaster: '晨光咖啡',
+              producer: '',
+              elevation: '',
+              decaf: false,
+              flavorNotes: '',
+            })
           }
           style={{
             height: 50,

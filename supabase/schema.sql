@@ -66,6 +66,7 @@ create table if not exists room_beans (
   producer text not null default '',
   elevation text not null default '',
   decaf boolean not null default false,
+  flavor_notes text not null default '',
   unique (room_id, idx)
 );
 
@@ -73,6 +74,7 @@ alter table room_beans add column if not exists producer text not null default '
 alter table room_beans add column if not exists elevation text not null default '';
 alter table room_beans add column if not exists area text not null default '';
 alter table room_beans add column if not exists decaf boolean not null default false;
+alter table room_beans add column if not exists flavor_notes text not null default '';
 
 create index if not exists room_beans_room_id_idx on room_beans (room_id);
 
@@ -220,6 +222,7 @@ create table if not exists bean_catalog (
   producer text not null default '',
   elevation text not null default '',
   decaf boolean not null default false,
+  flavor_notes text not null default '',
   created_at timestamptz not null default now()
 );
 
@@ -227,6 +230,7 @@ alter table bean_catalog add column if not exists producer text not null default
 alter table bean_catalog add column if not exists elevation text not null default '';
 alter table bean_catalog add column if not exists area text not null default '';
 alter table bean_catalog add column if not exists decaf boolean not null default false;
+alter table bean_catalog add column if not exists flavor_notes text not null default '';
 
 create index if not exists bean_catalog_name_idx on bean_catalog (name);
 

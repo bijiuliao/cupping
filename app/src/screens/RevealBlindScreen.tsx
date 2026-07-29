@@ -3,7 +3,7 @@ import { Btn } from '../components/ui';
 import { ExportSheet } from '../components/ExportSheet';
 import { HistoryCompare } from '../components/HistoryCompare';
 import { getBackend } from '../lib/backend';
-import { computeAnswerRows, computeCumulativeRows, computeLeaderRows } from '../lib/selectors';
+import { computeAnswerRows, computeCumulativeRows, computeLeaderRows, scoreBreakdownFor } from '../lib/selectors';
 import type { HistorySession, RoomSnapshot } from '../lib/types';
 
 export function RevealBlindScreen({
@@ -43,36 +43,50 @@ export function RevealBlindScreen({
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {answerRows.map((a) => (
-          <div key={a.sample} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '13px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: '50%',
-                background: 'var(--bg-app)',
-                border: '1px solid var(--border-strong)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 13,
-                color: 'var(--gold)',
-                flex: 'none',
-              }}
-            >
-              {a.sample}
+        {answerRows.map((a) => {
+          const breakdown = scoreBreakdownFor(snap, a.sample - 1);
+          return (
+            <div key={a.sample} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '13px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: '50%',
+                    background: 'var(--bg-app)',
+                    border: '1px solid var(--border-strong)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 13,
+                    color: 'var(--gold)',
+                    flex: 'none',
+                  }}
+                >
+                  {a.sample}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.bean.name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{a.myGuessName === null ? '你未作答' : '你猜：' + a.myGuessName}</div>
+                </div>
+                <div style={{ fontSize: 16, color: a.correct ? '#7fae6b' : 'var(--danger)' }}>{a.correct ? '✓' : '✗'}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <div style={{ fontSize: 10, color: 'var(--muted-2)' }}>平均</div>
+                  <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, lineHeight: 1, color: 'var(--gold)' }}>{a.avg.toFixed(2)}</div>
+                </div>
+              </div>
+              {breakdown.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 10px', borderTop: '1px solid var(--border)', paddingTop: 8, fontSize: 11, color: 'var(--muted-2)' }}>
+                  {breakdown.map((b) => (
+                    <span key={b.participantId}>
+                      {b.name} <span style={{ color: 'var(--sub)' }}>{b.score.toFixed(2)}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.bean.name}</div>
-              <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{a.myGuessName === null ? '你未作答' : '你猜：' + a.myGuessName}</div>
-            </div>
-            <div style={{ fontSize: 16, color: a.correct ? '#7fae6b' : 'var(--danger)' }}>{a.correct ? '✓' : '✗'}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <div style={{ fontSize: 10, color: 'var(--muted-2)' }}>平均</div>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, lineHeight: 1, color: 'var(--gold)' }}>{a.avg.toFixed(2)}</div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

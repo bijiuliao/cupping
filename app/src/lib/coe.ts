@@ -13,6 +13,33 @@ export const CATS: { key: CatKey; label: string; en: string }[] = [
 
 export const DEFAULT_ACTIVITY = '咖啡社杯測';
 
+// Common cupping flavor descriptors, shown as quick-tap chips on the scoring
+// screen's notes field — most sessions' notes cluster around the same handful
+// of words, so tapping beats typing them out each time. Free typing still
+// works for anything not covered here.
+export const FLAVOR_TAGS = [
+  '柑橘',
+  '莓果',
+  '花香',
+  '茉莉',
+  '桂花',
+  '蜂蜜',
+  '焦糖',
+  '楓糖',
+  '堅果',
+  '巧克力',
+  '可可',
+  '熱帶水果',
+  '葡萄',
+  '蘋果',
+  '檸檬',
+  '烏梅',
+  '紅茶',
+  '香料',
+  '奶油',
+  '麥芽',
+];
+
 // Continent/region-level options for LEADERBOARD mode's "Area" category —
 // distinct from ORIGINS below, which is country/region-level ("Country").
 // Curated by hand (leaderboard.coffee's tasting cards use a short fixed list

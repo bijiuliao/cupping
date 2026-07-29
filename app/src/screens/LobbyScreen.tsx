@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Btn, ComboBox, ScreenShell, SelectInput, TextInput } from '../components/ui';
+import { Btn, ComboBox, ScreenShell, SelectInput, TextArea, TextInput } from '../components/ui';
 import { AddBeanSheet } from '../components/AddBeanSheet';
 import { AREAS, PROCESSES, VARIETIES, beanSub, countriesForArea } from '../lib/coe';
 import { getBackend } from '../lib/backend';
@@ -128,6 +128,12 @@ function EditableBeanRow({ bean, onRemove }: { bean: RoomBean; onRemove: () => v
           style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
         />
       </div>
+      <TextArea
+        value={local.flavorNotes}
+        onChange={(e) => set({ flavorNotes: e.target.value })}
+        placeholder="風味敘述（例：柑橘、蜂蜜、烏龍茶感）"
+        style={{ minHeight: 44, fontSize: 12, padding: '8px 10px' }}
+      />
     </div>
   );
 }
@@ -262,7 +268,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
         <AddBeanSheet
           state={addSheet}
           onClose={() => setAddSheet(null)}
-          onAddManual={() => addBean({ name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false })}
+          onAddManual={() => addBean({ name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false, flavorNotes: '' })}
           onOpenDb={() => setAddSheet('db')}
           onOpenScan={() => setAddSheet('scan')}
           onOpenLoffee={() => setAddSheet('loffee')}

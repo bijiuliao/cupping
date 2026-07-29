@@ -3,7 +3,7 @@ import { Btn } from '../components/ui';
 import { ExportSheet } from '../components/ExportSheet';
 import { HistoryCompare } from '../components/HistoryCompare';
 import { beanSub } from '../lib/coe';
-import { ELEVATION_THRESHOLD_M, LB_MAX_PER_SAMPLE, computeLeaderboardRankRows, leaderboardSampleDetails } from '../lib/selectors';
+import { ELEVATION_THRESHOLD_M, LB_MAX_PER_SAMPLE, computeLeaderboardRankRows, leaderboardSampleDetails, sampleAverage, scoreBreakdownFor } from '../lib/selectors';
 import type { RoomSnapshot } from '../lib/types';
 
 function Mark({ ok }: { ok: boolean }) {
@@ -61,59 +61,76 @@ export function RevealLeaderboardScreen({
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {details.map((d) => (
-          <div key={d.sampleIdx} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '13px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: '50%',
-                  background: 'var(--bg-app)',
-                  border: '1px solid var(--border-strong)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 13,
-                  color: 'var(--gold)',
-                  flex: 'none',
-                }}
-              >
-                {d.sampleIdx + 1}
+        {details.map((d) => {
+          const avg = sampleAverage(snap, d.sampleIdx);
+          const breakdown = scoreBreakdownFor(snap, d.sampleIdx);
+          return (
+            <div key={d.sampleIdx} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '13px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: '50%',
+                    background: 'var(--bg-app)',
+                    border: '1px solid var(--border-strong)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 13,
+                    color: 'var(--gold)',
+                    flex: 'none',
+                  }}
+                >
+                  {d.sampleIdx + 1}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.bean.name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--muted-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{beanSub(d.bean)}</div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <div style={{ fontSize: 10, color: 'var(--muted-2)' }}>杯測平均</div>
+                  <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, lineHeight: 1, color: 'var(--gold)' }}>{avg === null ? '—' : avg.toFixed(2)}</div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <div style={{ fontSize: 10, color: 'var(--muted-2)' }}>猜測得分</div>
+                  <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, lineHeight: 1, color: 'var(--gold)' }}>
+                    {d.points}/{LB_MAX_PER_SAMPLE}
+                  </div>
+                </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.bean.name}</div>
-                <div style={{ fontSize: 11, color: 'var(--muted-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{beanSub(d.bean)}</div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                <div style={{ fontSize: 10, color: 'var(--muted-2)' }}>本樣本得分</div>
-                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, lineHeight: 1, color: 'var(--gold)' }}>
-                  {d.points}/{LB_MAX_PER_SAMPLE}
+              {breakdown.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 10px', fontSize: 11, color: 'var(--muted-2)' }}>
+                  {breakdown.map((b) => (
+                    <span key={b.participantId}>
+                      {b.name} <span style={{ color: 'var(--sub)' }}>{b.score.toFixed(2)}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 11, color: 'var(--muted)', borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+                <div>
+                  <Mark ok={d.areaCorrect} /> Area：你猜 {d.areaGuess || '（未答）'}
+                </div>
+                <div>
+                  <Mark ok={d.originCorrect} /> Country：你猜 {d.originGuess || '（未答）'}
+                </div>
+                <div>
+                  <Mark ok={d.processCorrect} /> Process：你猜 {d.processGuess || '（未答）'}
+                </div>
+                <div>
+                  <Mark ok={d.varietyCorrect} /> Varietal(s)：你猜 {d.varietyGuess || '（未答）'}
+                </div>
+                <div>
+                  <Mark ok={d.elevationCorrect} /> Altitude：你猜 {elevationGuessLabel(d.elevationGuess)}
+                </div>
+                <div>
+                  <Mark ok={d.decafCorrect} /> Decaf：你猜 {decafGuessLabel(d.decafGuess)}
                 </div>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 11, color: 'var(--muted)' }}>
-              <div>
-                <Mark ok={d.areaCorrect} /> Area：你猜 {d.areaGuess || '（未答）'}
-              </div>
-              <div>
-                <Mark ok={d.originCorrect} /> Country：你猜 {d.originGuess || '（未答）'}
-              </div>
-              <div>
-                <Mark ok={d.processCorrect} /> Process：你猜 {d.processGuess || '（未答）'}
-              </div>
-              <div>
-                <Mark ok={d.varietyCorrect} /> Varietal(s)：你猜 {d.varietyGuess || '（未答）'}
-              </div>
-              <div>
-                <Mark ok={d.elevationCorrect} /> Altitude：你猜 {elevationGuessLabel(d.elevationGuess)}
-              </div>
-              <div>
-                <Mark ok={d.decafCorrect} /> Decaf：你猜 {decafGuessLabel(d.decafGuess)}
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

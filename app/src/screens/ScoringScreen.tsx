@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Btn, Segmented } from '../components/ui';
+import { Btn, Chip, Segmented } from '../components/ui';
 import { getBackend } from '../lib/backend';
-import { CATS, fmtTime, scaleMin, sheetTotal } from '../lib/coe';
+import { CATS, FLAVOR_TAGS, fmtTime, scaleMin, sheetTotal } from '../lib/coe';
 import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 import { useElapsedSeconds } from '../hooks/useRoomSnapshot';
 import { scoreFor, guessFor } from '../lib/selectors';
-import type { CatKey, RoomSnapshot, ScoreMode } from '../lib/types';
+import type { CatKey, RoomBean, RoomSnapshot, ScoreMode } from '../lib/types';
 
 const DEFAULT_VALS: Record<CatKey, number> = {
   clean: 6,
@@ -17,6 +17,66 @@ const DEFAULT_VALS: Record<CatKey, number> = {
   balance: 6,
   overall: 6,
 };
+
+/** 'open' mode only — bean identity is already visible there, so a full detail
+ * card doesn't leak anything the way it would in blind/leaderboard modes. */
+function BeanInfoCard({ bean }: { bean: RoomBean }) {
+  const [open, setOpen] = useState(false);
+  const details: [string, string][] = (
+    [
+      ['Area', bean.area],
+      ['Country', bean.origin],
+      ['Process', bean.process],
+      ['Varietal(s)', bean.variety],
+      ['Altitude', bean.elevation],
+      ['Decaf', bean.decaf ? '是' : '否'],
+      ['Roaster', bean.roaster],
+      ['Producer', bean.producer],
+    ] as [string, string][]
+  ).filter(([, v]) => v);
+
+  return (
+    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 14px',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          textAlign: 'left',
+        }}
+      >
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--cream)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          🌱 {bean.name}
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--gold)', flex: 'none', marginLeft: 8 }}>{open ? '收起 ▴' : '豆子資訊 ▾'}</div>
+      </button>
+      {open && (
+        <div style={{ padding: '0 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+            {details.map(([label, v]) => (
+              <div key={label}>
+                <span style={{ color: 'var(--muted-2)' }}>{label}：</span>
+                {v}
+              </div>
+            ))}
+          </div>
+          {bean.flavorNotes && (
+            <div style={{ fontSize: 12, color: 'var(--sub)', lineHeight: 1.6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+              <span style={{ color: 'var(--muted-2)' }}>風味敘述：</span>
+              {bean.flavorNotes}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function ScoringScreen({
   snap,
@@ -90,6 +150,12 @@ export function ScoringScreen({
     persist({ notes: v });
   }
 
+  function toggleFlavorTag(tag: string) {
+    const parts = notes.split('、').map((s) => s.trim()).filter(Boolean);
+    const next = parts.includes(tag) ? parts.filter((p) => p !== tag) : parts.concat([tag]);
+    changeNotes(next.join('、'));
+  }
+
   const isBlind = room.mode !== 'open';
   const bean = beans.find((b) => b.sampleIdx === sampleIdx);
   const min = scaleMin();
@@ -110,6 +176,7 @@ export function ScoringScreen({
 
   return (
     <div className="anim-fadeUp" style={{ padding: '20px 22px 150px', display: 'flex', flexDirection: 'column', gap: 18, flex: 1 }}>
+      {!isBlind && bean && <BeanInfoCard bean={bean} />}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <div style={{ fontSize: 11, letterSpacing: '.25em', color: 'var(--muted)' }}>
@@ -283,10 +350,20 @@ export function ScoringScreen({
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ fontSize: 13, color: 'var(--muted)' }}>風味備註</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {FLAVOR_TAGS.map((tag) => {
+            const active = notes.split('、').map((s) => s.trim()).includes(tag);
+            return (
+              <Chip key={tag} active={active} onClick={() => toggleFlavorTag(tag)} style={{ height: 30, padding: '0 12px', fontSize: 11 }}>
+                {tag}
+              </Chip>
+            );
+          })}
+        </div>
         <textarea
           value={notes}
           onChange={(e) => changeNotes(e.target.value)}
-          placeholder="柑橘、焦糖、花香…"
+          placeholder="點選常見字卡，或手動輸入…"
           style={{ borderRadius: 6, background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '12px 14px', fontSize: 14, color: 'var(--cream)', minHeight: 64, resize: 'vertical', outline: 'none' }}
         />
       </div>

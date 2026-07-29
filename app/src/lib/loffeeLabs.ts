@@ -29,6 +29,10 @@ function mapRow(r: Record<string, unknown>): Bean {
     producer: String(r.producer ?? ''),
     elevation: String(r.elevation ?? ''),
     decaf: false,
+    // Field name isn't confirmed against Loffee Labs' actual schema (their
+    // docs are behind a 403 for unauthenticated fetches) — try the likely
+    // kebab-case candidates and fall back to empty rather than guess wrong silently.
+    flavorNotes: String(r['flavor-notes'] ?? r['tasting-notes'] ?? r['flavor'] ?? r['notes'] ?? ''),
   };
 }
 
@@ -39,7 +43,7 @@ export async function searchLoffeeBeans(query: string, limit = 20): Promise<Bean
   const params = new URLSearchParams({
     search: query,
     limit: String(limit),
-    fields: 'roaster,roast-name,origin,process,variety,producer',
+    fields: 'roaster,roast-name,origin,process,variety,producer,flavor-notes',
   });
 
   let res: Response;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Btn, Card, ComboBox, Field, ScreenShell, SelectInput, TextInput } from '../components/ui';
+import { Btn, Card, ComboBox, Field, ScreenShell, SelectInput, TextArea, TextInput } from '../components/ui';
 import { AREAS, PROCESSES, VARIETIES, countriesForArea } from '../lib/coe';
 import type { Bean, Mode } from '../lib/types';
 import { getBackend } from '../lib/backend';
@@ -333,6 +333,12 @@ export function HostSetupScreen({
                 style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
               />
             </div>
+            <TextArea
+              value={b.flavorNotes}
+              onChange={(e) => updateBean(b.localId, { flavorNotes: e.target.value })}
+              placeholder="風味敘述（例：柑橘、蜂蜜、烏龍茶感）"
+              style={{ minHeight: 44, fontSize: 12, padding: '8px 10px' }}
+            />
           </Card>
         ))}
       </div>
@@ -350,7 +356,7 @@ export function HostSetupScreen({
       <AddBeanSheet
         state={addSheet}
         onClose={() => setAddSheet(null)}
-        onAddManual={() => addBean({ name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false })}
+        onAddManual={() => addBean({ name: '', area: '', origin: '', process: '', variety: '', roaster: '', producer: '', elevation: '', decaf: false, flavorNotes: '' })}
         onOpenDb={() => setAddSheet('db')}
         onOpenScan={() => setAddSheet('scan')}
         onOpenLoffee={() => setAddSheet('loffee')}

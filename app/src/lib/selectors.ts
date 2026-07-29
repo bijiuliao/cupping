@@ -33,6 +33,24 @@ export function sampleAverage(snap: RoomSnapshot, sampleIdx: number): number | n
   return entries.reduce((sum, e) => sum + totalOf(e), 0) / entries.length;
 }
 
+export interface ScoreBreakdownEntry {
+  participantId: string;
+  name: string;
+  score: number;
+}
+
+/** Every participant's individual score for one sample, highest first — shown alongside the average on reveal screens. */
+export function scoreBreakdownFor(snap: RoomSnapshot, sampleIdx: number): ScoreBreakdownEntry[] {
+  return snap.scores
+    .filter((s) => s.sampleIdx === sampleIdx)
+    .map((s) => ({
+      participantId: s.participantId,
+      name: snap.participants.find((p) => p.id === s.participantId)?.name ?? '?',
+      score: totalOf(s),
+    }))
+    .sort((a, b) => b.score - a.score);
+}
+
 export function submittedCount(snap: RoomSnapshot): number {
   return snap.participants.filter((p) => p.submittedAt).length;
 }
