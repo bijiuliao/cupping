@@ -18,11 +18,8 @@ const DEFAULT_VALS: Record<CatKey, number> = {
   overall: 6,
 };
 
-/** 'open' mode only — bean identity is already visible there, so a full detail
- * card doesn't leak anything the way it would in blind/leaderboard modes. */
-function BeanInfoCard({ bean }: { bean: RoomBean }) {
-  const [open, setOpen] = useState(false);
-  const details: [string, string][] = (
+function beanDetailRows(bean: RoomBean): [string, string][] {
+  return (
     [
       ['Area', bean.area],
       ['Country', bean.origin],
@@ -34,7 +31,33 @@ function BeanInfoCard({ bean }: { bean: RoomBean }) {
       ['Producer', bean.producer],
     ] as [string, string][]
   ).filter(([, v]) => v);
+}
 
+function BeanDetailGrid({ bean }: { bean: RoomBean }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+        {beanDetailRows(bean).map(([label, v]) => (
+          <div key={label}>
+            <span style={{ color: 'var(--muted-2)' }}>{label}：</span>
+            {v}
+          </div>
+        ))}
+      </div>
+      {bean.flavorNotes && (
+        <div style={{ fontSize: 12, color: 'var(--sub)', lineHeight: 1.6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+          <span style={{ color: 'var(--muted-2)' }}>風味敘述：</span>
+          {bean.flavorNotes}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** 'open' mode only — bean identity is already visible there, so a full detail
+ * card for the current sample doesn't leak anything new. */
+function BeanInfoCard({ bean }: { bean: RoomBean }) {
+  const [open, setOpen] = useState(false);
   return (
     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
       <button
@@ -56,22 +79,49 @@ function BeanInfoCard({ bean }: { bean: RoomBean }) {
         </div>
         <div style={{ fontSize: 11, color: 'var(--gold)', flex: 'none', marginLeft: 8 }}>{open ? '收起 ▴' : '豆子資訊 ▾'}</div>
       </button>
+      {open && <div style={{ padding: '0 14px 14px' }}><BeanDetailGrid bean={bean} /></div>}
+    </div>
+  );
+}
+
+/**
+ * 'blind' mode only — shows every bean's full info as a reference sheet,
+ * same spirit as the existing "我猜這支是" candidate picker which already
+ * lists every bean name. What it deliberately does NOT do is tie any of
+ * this to the current sample — that mapping is the whole guessing game.
+ * (leaderboard mode skips this: per-attribute guessing is exactly what this
+ * reference sheet would trivially hand you the answers to.)
+ */
+function BeanReferenceListCard({ beans }: { beans: RoomBean[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 14px',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          textAlign: 'left',
+        }}
+      >
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--cream)' }}>🌱 豆單參考</div>
+        <div style={{ fontSize: 11, color: 'var(--gold)', flex: 'none', marginLeft: 8 }}>{open ? '收起 ▴' : '今日豆單 ▾'}</div>
+      </button>
       {open && (
-        <div style={{ padding: '0 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
-            {details.map(([label, v]) => (
-              <div key={label}>
-                <span style={{ color: 'var(--muted-2)' }}>{label}：</span>
-                {v}
-              </div>
-            ))}
-          </div>
-          {bean.flavorNotes && (
-            <div style={{ fontSize: 12, color: 'var(--sub)', lineHeight: 1.6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
-              <span style={{ color: 'var(--muted-2)' }}>風味敘述：</span>
-              {bean.flavorNotes}
+        <div style={{ padding: '0 14px 14px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ fontSize: 10, color: 'var(--muted-3)' }}>只列出候選豆子本身的資訊，不會透露對應到哪支樣本</div>
+          {beans.map((b) => (
+            <div key={b.id} style={{ display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--cream)' }}>{b.name}</div>
+              <BeanDetailGrid bean={b} />
             </div>
-          )}
+          ))}
         </div>
       )}
     </div>
@@ -176,7 +226,8 @@ export function ScoringScreen({
 
   return (
     <div className="anim-fadeUp" style={{ padding: '20px 22px 150px', display: 'flex', flexDirection: 'column', gap: 18, flex: 1 }}>
-      {!isBlind && bean && <BeanInfoCard bean={bean} />}
+      {room.mode === 'open' && bean && <BeanInfoCard bean={bean} />}
+      {room.mode === 'blind' && <BeanReferenceListCard beans={beans} />}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <div style={{ fontSize: 11, letterSpacing: '.25em', color: 'var(--muted)' }}>
