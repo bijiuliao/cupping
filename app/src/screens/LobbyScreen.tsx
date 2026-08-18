@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Btn, ComboBox, ScreenShell, SelectInput, TextArea, TextInput } from '../components/ui';
 import { AddBeanSheet } from '../components/AddBeanSheet';
-import { AREAS, PROCESSES, VARIETIES, beanSub, countriesForArea } from '../lib/coe';
+import { AREAS, PROCESSES, VARIETIES, beanSub, countriesForArea, modeLabel } from '../lib/coe';
 import { getBackend } from '../lib/backend';
 import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 import type { Bean, RoomBean, RoomSnapshot } from '../lib/types';
@@ -143,7 +143,9 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
   const { room, beans, participants } = snap;
   const [addSheet, setAddSheet] = useState<null | 'menu' | 'db' | 'scan' | 'loffee'>(null);
   const isHost = participants.find((p) => p.clientId === myClientId)?.role === 'host';
-  const canEditBeans = isHost && room.stage === 'waiting';
+  // 'competition' beans are auto-numbered placeholders — the per-bean edit UI
+  // (origin/process/variety/…) doesn't apply, so there's nothing to edit here.
+  const canEditBeans = isHost && room.stage === 'waiting' && room.mode !== 'competition';
 
   const sessDateLabel = room.sessionDate
     ? new Date(room.sessionDate).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(/\//g, '/')
@@ -172,7 +174,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
           <span style={{ letterSpacing: '.35em', marginRight: '-.35em', fontVariantNumeric: 'lining-nums' }}>{room.code}</span>
         </div>
         <div style={{ fontSize: 12, color: 'var(--muted-2)' }}>
-          {activityLabel} · {room.mode === 'blind' ? '盲測' : room.mode === 'leaderboard' ? '排行榜' : '公開'}模式 · {beans.length} 支豆 · {sessDateLabel}
+          {activityLabel} · {modeLabel(room.mode)}模式 · {beans.length} 支豆 · {sessDateLabel}
         </div>
       </div>
 
@@ -261,6 +263,9 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
         )}
         {room.mode === 'leaderboard' && (
           <div style={{ fontSize: 11, color: 'var(--muted-2)', textAlign: 'center' }}>排行榜模式：評分時只會看到樣本編號，公佈前要逐項猜產區/處理法/品種/海拔</div>
+        )}
+        {room.mode === 'competition' && (
+          <div style={{ fontSize: 11, color: 'var(--muted-2)', textAlign: 'center' }}>競賽模式：樣本已自動編號，無需也無法編輯豆子資訊</div>
         )}
       </div>
 

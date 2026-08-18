@@ -25,7 +25,7 @@ insert into activities (name) values ('咖啡社杯測')
 create table if not exists rooms (
   id uuid primary key default gen_random_uuid(),
   code text not null unique,
-  mode text not null check (mode in ('blind', 'open', 'leaderboard')),
+  mode text not null check (mode in ('blind', 'open', 'leaderboard', 'competition')),
   activity_id uuid references activities(id),
   activity_name text not null,
   subtitle text not null default '',
@@ -39,10 +39,11 @@ create table if not exists rooms (
 );
 
 -- Re-running against an existing project whose rooms table predates the
--- 'leaderboard' mode: the inline check above only applies on table creation,
--- so widen it explicitly (drop + recreate is safe — it doesn't touch data).
+-- 'leaderboard'/'competition' modes: the inline check above only applies on
+-- table creation, so widen it explicitly (drop + recreate is safe — it
+-- doesn't touch data).
 alter table rooms drop constraint if exists rooms_mode_check;
-alter table rooms add constraint rooms_mode_check check (mode in ('blind', 'open', 'leaderboard'));
+alter table rooms add constraint rooms_mode_check check (mode in ('blind', 'open', 'leaderboard', 'competition'));
 
 -- ---------------------------------------------------------------------------
 -- Beans in a room's cupping sheet ("豆單")

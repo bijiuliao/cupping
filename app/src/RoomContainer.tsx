@@ -14,7 +14,7 @@ import { RevealLeaderboardScreen } from './screens/RevealLeaderboardScreen';
 import { useRoomSnapshot } from './hooks/useRoomSnapshot';
 import { getBackend } from './lib/backend';
 import { findParticipant, submittedCount } from './lib/selectors';
-import { fmtTime } from './lib/coe';
+import { fmtTime, identityAlwaysVisible } from './lib/coe';
 import { useElapsedSeconds } from './hooks/useRoomSnapshot';
 
 export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: string; clientId: string; onLeaveRoom: () => void }) {
@@ -52,9 +52,10 @@ export function RoomContainer({ roomId, clientId, onLeaveRoom }: { roomId: strin
   const { room } = snap;
   const isBlind = room.mode === 'blind';
   // 'leaderboard' mode also hides sample identity and needs a guess step before
-  // reveal (per-attribute guessing instead of picking the whole bean) — only
-  // 'open' mode skips both.
-  const needsGuessStep = room.mode !== 'open';
+  // reveal (per-attribute guessing instead of picking the whole bean).
+  // 'open' and 'competition' both skip it — 'competition' never has bean
+  // identity to hide in the first place (see identityAlwaysVisible).
+  const needsGuessStep = !identityAlwaysVisible(room.mode);
 
   let view: 'lobby' | 'scoring' | 'waitSub' | 'guess' | 'waitReveal' | 'revealOpen' | 'revealBlind' | 'revealLeaderboard';
   if (room.stage === 'waiting') view = 'lobby';

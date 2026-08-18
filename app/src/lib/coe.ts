@@ -1,4 +1,27 @@
-import type { Bean, CatKey } from './types';
+import type { Bean, CatKey, Mode } from './types';
+
+/**
+ * Modes with no hidden sample↔bean mapping to protect — the physical pour
+ * order can be assigned as the sample slot immediately at creation, with no
+ * host "set answer key" step and no participant guess step before reveal.
+ * 'blind' and 'leaderboard' both keep that mapping secret until reveal;
+ * 'open' and 'competition' never have anything to hide (the latter never
+ * even has bean identity, auto-numbered or otherwise).
+ */
+export function identityAlwaysVisible(mode: Mode): boolean {
+  return mode === 'open' || mode === 'competition';
+}
+
+const MODE_LABELS: Record<Mode, string> = {
+  blind: '盲測',
+  open: '公開',
+  leaderboard: '排行榜',
+  competition: '競賽',
+};
+
+export function modeLabel(mode: Mode): string {
+  return MODE_LABELS[mode];
+}
 
 export const CATS: { key: CatKey; label: string; en: string }[] = [
   { key: 'clean', label: '乾淨度', en: 'Clean Cup' },

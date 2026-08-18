@@ -40,6 +40,7 @@ export function HostSetupScreen({
   const [beans, setBeans] = useState<DraftBean[]>([]);
   const [addSheet, setAddSheet] = useState<null | 'menu' | 'db' | 'scan' | 'loffee'>(null);
   const [creating, setCreating] = useState(false);
+  const [compCount, setCompCount] = useState(4);
 
   useEffect(() => {
     getBackend()
@@ -59,6 +60,37 @@ export function HostSetupScreen({
   function addBean(bean: Bean) {
     setBeans((bs) => bs.concat([{ ...bean, localId: localUid() }]));
     setAddSheet(null);
+  }
+
+  // 'competition' mode skips per-bean detail entry entirely — beans are just
+  // auto-numbered placeholders, regenerated whenever the count changes.
+  function genCompetitionBeans(n: number): DraftBean[] {
+    return Array.from({ length: n }, (_, i) => ({
+      localId: 'comp-' + i,
+      name: '樣本 ' + (i + 1),
+      area: '',
+      origin: '',
+      process: '',
+      variety: '',
+      roaster: '',
+      producer: '',
+      elevation: '',
+      decaf: false,
+      flavorNotes: '',
+    }));
+  }
+  function selectMode(m: Mode) {
+    if (m === 'competition' && mode !== 'competition') {
+      setBeans(genCompetitionBeans(compCount));
+    } else if (m !== 'competition' && mode === 'competition') {
+      setBeans([]);
+    }
+    setMode(m);
+  }
+  function setCompCountAndRegen(n: number) {
+    const clamped = Math.max(1, Math.min(50, n));
+    setCompCount(clamped);
+    setBeans(genCompetitionBeans(clamped));
   }
 
   async function confirmAddActivity() {
@@ -108,21 +140,21 @@ export function HostSetupScreen({
       </div>
 
       <Field label="杯測模式">
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {(
             [
               { key: 'blind' as Mode, title: '盲測', desc: '只看編號，公佈後猜豆排行' },
               { key: 'open' as Mode, title: '公開', desc: '顯示豆名，公佈平均與自評' },
               { key: 'leaderboard' as Mode, title: '排行榜', desc: '猜產區/處理法/品種/海拔，逐項計分排名' },
+              { key: 'competition' as Mode, title: '競賽', desc: '不填豆子資訊，只需樣本數量，自動編號' },
             ] as const
           ).map((m) => {
             const active = mode === m.key;
             return (
               <button
                 key={m.key}
-                onClick={() => setMode(m.key)}
+                onClick={() => selectMode(m.key)}
                 style={{
-                  flex: 1,
                   padding: '14px 10px',
                   borderRadius: 8,
                   textAlign: 'left',
@@ -231,122 +263,146 @@ export function HostSetupScreen({
         <div style={{ fontSize: 12, color: 'var(--muted-2)' }}>正計時 · 無時間上限</div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 13, color: 'var(--muted)' }}>
-          今日豆單 <span style={{ color: 'var(--muted-3)' }}>{validBeans.length} 支</span>
-        </div>
-        <Btn variant="outline" onClick={() => setAddSheet('menu')} style={{ height: 36, borderRadius: 6, fontSize: 13, padding: '0 16px' }}>
-          ＋ 新增
-        </Btn>
-      </div>
+      {mode === 'competition' ? (
+        <Field label="樣本數量" hint="建立房間後自動編號為「樣本 1」～「樣本 N」，不需填寫豆子資訊">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, justifyContent: 'center' }}>
+            <button
+              onClick={() => setCompCountAndRegen(compCount - 1)}
+              style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--bg-app)', border: '1px solid var(--border)', color: 'var(--gold)', fontSize: 20, cursor: 'pointer' }}
+            >
+              −
+            </button>
+            <div style={{ width: 90, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond',serif", fontSize: 40, background: 'var(--bg-app)', border: '1.5px solid var(--gold)', borderRadius: 6, color: 'var(--gold)' }}>
+              {compCount}
+            </div>
+            <button
+              onClick={() => setCompCountAndRegen(compCount + 1)}
+              style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--bg-app)', border: '1px solid var(--border)', color: 'var(--gold)', fontSize: 20, cursor: 'pointer' }}
+            >
+              ＋
+            </button>
+          </div>
+        </Field>
+      ) : (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ fontSize: 13, color: 'var(--muted)' }}>
+              今日豆單 <span style={{ color: 'var(--muted-3)' }}>{validBeans.length} 支</span>
+            </div>
+            <Btn variant="outline" onClick={() => setAddSheet('menu')} style={{ height: 36, borderRadius: 6, fontSize: 13, padding: '0 16px' }}>
+              ＋ 新增
+            </Btn>
+          </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {beans.map((b, i) => (
-          <Card key={b.localId}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div
-                style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: '50%',
-                  background: 'var(--bg-app)',
-                  border: '1px solid var(--border-strong)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 12,
-                  color: 'var(--muted)',
-                  flex: 'none',
-                }}
-              >
-                {i + 1}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {beans.map((b, i) => (
+            <Card key={b.localId}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div
+                  style={{
+                    width: 26,
+                    height: 26,
+                    borderRadius: '50%',
+                    background: 'var(--bg-app)',
+                    border: '1px solid var(--border-strong)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 12,
+                    color: 'var(--muted)',
+                    flex: 'none',
+                  }}
+                >
+                  {i + 1}
+                </div>
+                <TextInput
+                  value={b.name}
+                  onChange={(e) => updateBean(b.localId, { name: e.target.value })}
+                  placeholder="豆名（必填）"
+                  style={{ flex: 1, height: 38, fontSize: 14, borderRadius: 6 }}
+                />
+                <button
+                  onClick={() => removeBean(b.localId)}
+                  style={{ width: 32, height: 32, borderRadius: '50%', background: 'transparent', border: 'none', color: 'var(--muted-2)', fontSize: 16, cursor: 'pointer', flex: 'none' }}
+                >
+                  ✕
+                </button>
               </div>
-              <TextInput
-                value={b.name}
-                onChange={(e) => updateBean(b.localId, { name: e.target.value })}
-                placeholder="豆名（必填）"
-                style={{ flex: 1, height: 38, fontSize: 14, borderRadius: 6 }}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <ComboBox
+                  value={b.area}
+                  onChange={(v) => {
+                    const validCountries = countriesForArea(v);
+                    updateBean(b.localId, { area: v, origin: validCountries.includes(b.origin) ? b.origin : '' });
+                  }}
+                  options={AREAS}
+                  placeholder="產區大洲 Area"
+                  style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+                />
+                <ComboBox
+                  value={b.origin}
+                  onChange={(v) => updateBean(b.localId, { origin: v })}
+                  options={countriesForArea(b.area)}
+                  placeholder="國家 Country"
+                  style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+                />
+                <ComboBox
+                  value={b.process}
+                  onChange={(v) => updateBean(b.localId, { process: v })}
+                  options={PROCESSES}
+                  placeholder="處理法"
+                  style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+                />
+                <ComboBox
+                  value={b.variety}
+                  onChange={(v) => updateBean(b.localId, { variety: v })}
+                  options={VARIETIES}
+                  placeholder="品種"
+                  style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+                />
+                <TextInput
+                  value={b.elevation}
+                  onChange={(e) => updateBean(b.localId, { elevation: e.target.value })}
+                  placeholder="海拔（公尺）"
+                  style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+                />
+                <SelectInput
+                  value={b.decaf ? 'yes' : 'no'}
+                  onChange={(e) => updateBean(b.localId, { decaf: e.target.value === 'yes' })}
+                  style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px', width: '100%' }}
+                >
+                  <option value="no">低咖啡因：否</option>
+                  <option value="yes">低咖啡因：是</option>
+                </SelectInput>
+                <TextInput
+                  value={b.roaster}
+                  onChange={(e) => updateBean(b.localId, { roaster: e.target.value })}
+                  placeholder="烘焙商"
+                  style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+                />
+                <TextInput
+                  value={b.producer}
+                  onChange={(e) => updateBean(b.localId, { producer: e.target.value })}
+                  placeholder="生產者"
+                  style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
+                />
+              </div>
+              <TextArea
+                value={b.flavorNotes}
+                onChange={(e) => updateBean(b.localId, { flavorNotes: e.target.value })}
+                placeholder="風味敘述（例：柑橘、蜂蜜、烏龍茶感）"
+                style={{ minHeight: 44, fontSize: 12, padding: '8px 10px' }}
               />
-              <button
-                onClick={() => removeBean(b.localId)}
-                style={{ width: 32, height: 32, borderRadius: '50%', background: 'transparent', border: 'none', color: 'var(--muted-2)', fontSize: 16, cursor: 'pointer', flex: 'none' }}
-              >
-                ✕
-              </button>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              <ComboBox
-                value={b.area}
-                onChange={(v) => {
-                  const validCountries = countriesForArea(v);
-                  updateBean(b.localId, { area: v, origin: validCountries.includes(b.origin) ? b.origin : '' });
-                }}
-                options={AREAS}
-                placeholder="產區大洲 Area"
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-              />
-              <ComboBox
-                value={b.origin}
-                onChange={(v) => updateBean(b.localId, { origin: v })}
-                options={countriesForArea(b.area)}
-                placeholder="國家 Country"
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-              />
-              <ComboBox
-                value={b.process}
-                onChange={(v) => updateBean(b.localId, { process: v })}
-                options={PROCESSES}
-                placeholder="處理法"
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-              />
-              <ComboBox
-                value={b.variety}
-                onChange={(v) => updateBean(b.localId, { variety: v })}
-                options={VARIETIES}
-                placeholder="品種"
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-              />
-              <TextInput
-                value={b.elevation}
-                onChange={(e) => updateBean(b.localId, { elevation: e.target.value })}
-                placeholder="海拔（公尺）"
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-              />
-              <SelectInput
-                value={b.decaf ? 'yes' : 'no'}
-                onChange={(e) => updateBean(b.localId, { decaf: e.target.value === 'yes' })}
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px', width: '100%' }}
-              >
-                <option value="no">低咖啡因：否</option>
-                <option value="yes">低咖啡因：是</option>
-              </SelectInput>
-              <TextInput
-                value={b.roaster}
-                onChange={(e) => updateBean(b.localId, { roaster: e.target.value })}
-                placeholder="烘焙商"
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-              />
-              <TextInput
-                value={b.producer}
-                onChange={(e) => updateBean(b.localId, { producer: e.target.value })}
-                placeholder="生產者"
-                style={{ height: 36, fontSize: 12, borderRadius: 6, padding: '0 10px' }}
-              />
-            </div>
-            <TextArea
-              value={b.flavorNotes}
-              onChange={(e) => updateBean(b.localId, { flavorNotes: e.target.value })}
-              placeholder="風味敘述（例：柑橘、蜂蜜、烏龍茶感）"
-              style={{ minHeight: 44, fontSize: 12, padding: '8px 10px' }}
-            />
-          </Card>
-        ))}
-      </div>
+            </Card>
+            ))}
+          </div>
 
-      {beans.length === 0 && (
-        <div style={{ border: '1.5px dashed var(--border)', borderRadius: 8, padding: 22, textAlign: 'center', fontSize: 13, color: 'var(--muted-2)' }}>
-          尚未新增豆子，點「＋ 新增」建立今日豆單
-        </div>
+          {beans.length === 0 && (
+            <div style={{ border: '1.5px dashed var(--border)', borderRadius: 8, padding: 22, textAlign: 'center', fontSize: 13, color: 'var(--muted-2)' }}>
+              尚未新增豆子，點「＋ 新增」建立今日豆單
+            </div>
+          )}
+        </>
       )}
 
       <Btn variant="solid" full onClick={handleCreate} disabled={!canCreate} style={{ marginTop: 8 }}>

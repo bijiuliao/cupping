@@ -1,4 +1,4 @@
-import { fmtTime } from '../lib/coe';
+import { fmtTime, identityAlwaysVisible } from '../lib/coe';
 import { submittedCount } from '../lib/selectors';
 import { useElapsedSeconds } from '../hooks/useRoomSnapshot';
 import type { Mode, RoomSnapshot } from '../lib/types';
@@ -72,7 +72,7 @@ export function WaitRevealScreen({ mode }: { mode: Mode }) {
       </div>
       <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 26, fontWeight: 600 }}>等待房主公佈結果</div>
       <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
-        {mode !== 'open' ? (
+        {!identityAlwaysVisible(mode) ? (
           <>
             你的猜測已送出。
             <br />

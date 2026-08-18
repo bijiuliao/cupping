@@ -206,7 +206,7 @@ export function ScoringScreen({
     changeNotes(next.join('、'));
   }
 
-  const isBlind = room.mode !== 'open';
+  const isBlind = room.mode === 'blind' || room.mode === 'leaderboard';
   const bean = beans.find((b) => b.sampleIdx === sampleIdx);
   const min = scaleMin();
   const total = sheetTotal(vals, defInt, scoreMode, easyScore);
@@ -233,7 +233,9 @@ export function ScoringScreen({
           <div style={{ fontSize: 11, letterSpacing: '.25em', color: 'var(--muted)' }}>
             {isBlind
               ? (room.mode === 'leaderboard' ? '排行榜' : '盲測') + ' · ' + (sampleIdx + 1) + ' / ' + sampleCount
-              : '公開 · ' + (sampleIdx + 1) + ' / ' + sampleCount + '（' + [bean?.origin, bean?.process].filter(Boolean).join(' · ') + '）'}
+              : room.mode === 'competition'
+                ? '競賽 · ' + (sampleIdx + 1) + ' / ' + sampleCount
+                : '公開 · ' + (sampleIdx + 1) + ' / ' + sampleCount + '（' + [bean?.origin, bean?.process].filter(Boolean).join(' · ') + '）'}
           </div>
           <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 26, fontWeight: 600 }}>{isBlind ? '樣本 ' + (sampleIdx + 1) : bean?.name || ''}</div>
         </div>

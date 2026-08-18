@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Btn } from '../components/ui';
 import { ExportSheet } from '../components/ExportSheet';
 import { HistoryCompare } from '../components/HistoryCompare';
+import { modeLabel } from '../lib/coe';
 import { computeResultRows, scoreBreakdownFor } from '../lib/selectors';
 import type { RoomSnapshot } from '../lib/types';
 
@@ -23,7 +24,7 @@ export function RevealOpenScreen({
     <div className="anim-fadeUp" style={{ padding: '24px 22px 120px', display: 'flex', flexDirection: 'column', gap: 18, flex: 1 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ fontSize: 11, letterSpacing: '.25em', color: 'var(--muted)' }}>結果公佈 · 公開模式</div>
+          <div style={{ fontSize: 11, letterSpacing: '.25em', color: 'var(--muted)' }}>結果公佈 · {modeLabel(snap.room.mode)}模式</div>
           <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 26, fontWeight: 600 }}>今日成績</div>
         </div>
         <Btn variant="outline" onClick={() => setExportOpen(true)} style={{ height: 40, padding: '0 18px', borderRadius: 6, fontSize: 13 }}>

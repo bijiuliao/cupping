@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Backend, CreateRoomInput, LeaderboardGuessPatch, ScorePatch } from './backend';
-import { CATS, beanSub, sheetTotal } from './coe';
+import { CATS, beanSub, identityAlwaysVisible, sheetTotal } from './coe';
 import type {
   Bean,
   BeanCatalogEntry,
@@ -210,7 +210,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
             session_date: input.sessionDate,
             host_name: input.hostName,
             stage: 'waiting',
-            answer_confirmed: input.mode === 'open',
+            answer_confirmed: identityAlwaysVisible(input.mode),
           })
           .select('id')
           .single();
@@ -226,7 +226,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
       const beanRows = input.beans.map((b, i) => ({
         room_id: roomId,
         idx: i + 1,
-        sample_idx: input.mode === 'open' ? i : null,
+        sample_idx: identityAlwaysVisible(input.mode) ? i : null,
         name: b.name,
         area: b.area,
         origin: b.origin,
@@ -327,7 +327,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         supabase.from('rooms').select('mode').eq('id', roomId).maybeSingle(),
       ]);
       const nextIdx = lastRows && lastRows.length > 0 ? lastRows[0].idx + 1 : 1;
-      const isOpen = roomRow?.mode === 'open';
+      const isOpen = Boolean(roomRow && identityAlwaysVisible(roomRow.mode));
       const { error } = await supabase.from('room_beans').insert({
         room_id: roomId,
         idx: nextIdx,
@@ -416,6 +416,10 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
         const totals = entries.map((e) => sheetTotal(e.vals, e.defInt, e.scoreMode, e.easyScore));
         const avg = totals.reduce((a, x) => a + x, 0) / totals.length;
         sampleAverages.push(avg);
+        // 'competition' beans are auto-numbered placeholders with no real
+        // identity — recording them into everyone's personal bean history
+        // would just pollute it with meaningless "樣本 N" entries forever.
+        if (room.mode === 'competition') return;
         entries.forEach((e) => {
           const p = participants.find((pp) => pp.id === e.participantId);
           if (!p) return;

@@ -1,5 +1,5 @@
 import type { Backend, CreateRoomInput, LeaderboardGuessPatch, ScorePatch } from './backend';
-import { CATS, beanSub, sheetTotal } from './coe';
+import { CATS, beanSub, identityAlwaysVisible, sheetTotal } from './coe';
 import { getDB, mutate, onChange, scoreKey, uid } from './localStore';
 import type { CatKey, GuessEntry, LeaderboardGuessEntry, Role, RoomSnapshot, ScoreEntry, Stage } from './types';
 
@@ -48,7 +48,7 @@ export const localBackend: Backend = {
         sessionDate: input.sessionDate,
         stage: 'waiting',
         scoringStartedAt: null,
-        answerConfirmed: input.mode === 'open',
+        answerConfirmed: identityAlwaysVisible(input.mode),
         hostName: input.hostName,
         archivedDone: false,
         createdAt: new Date().toISOString(),
@@ -59,7 +59,7 @@ export const localBackend: Backend = {
           id,
           roomId,
           idx: i + 1,
-          sampleIdx: input.mode === 'open' ? i : null,
+          sampleIdx: identityAlwaysVisible(input.mode) ? i : null,
           ...b,
         };
       });
@@ -161,7 +161,7 @@ export const localBackend: Backend = {
         id,
         roomId,
         idx: nextIdx,
-        sampleIdx: room?.mode === 'open' ? nextIdx - 1 : null,
+        sampleIdx: room && identityAlwaysVisible(room.mode) ? nextIdx - 1 : null,
         ...bean,
       };
     });
@@ -213,6 +213,10 @@ export const localBackend: Backend = {
       const totals = entries.map((e) => sheetTotal(e.vals, e.defInt, e.scoreMode, e.easyScore));
       const avg = totals.reduce((a, x) => a + x, 0) / totals.length;
       sampleAverages.push(avg);
+      // 'competition' beans are auto-numbered placeholders with no real
+      // identity — recording them into everyone's personal bean history
+      // would just pollute it with meaningless "樣本 N" entries forever.
+      if (room.mode === 'competition') return;
       entries.forEach((e) => {
         const p = participants.find((pp) => pp.id === e.participantId);
         if (!p) return;

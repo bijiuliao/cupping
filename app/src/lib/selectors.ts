@@ -1,4 +1,4 @@
-import { CATS, beanSub, sheetTotal } from './coe';
+import { CATS, beanSub, modeLabel, sheetTotal } from './coe';
 import type { GuessEntry, HistorySession, LeaderboardGuessEntry, Participant, RoomBean, RoomSnapshot, ScoreEntry } from './types';
 
 export function findParticipant(snap: RoomSnapshot, clientId: string): Participant | undefined {
@@ -301,8 +301,7 @@ export function computeLeaderboardRankRows(snap: RoomSnapshot): LeaderboardRankR
 
 export function buildExportText(snap: RoomSnapshot): string {
   const lines: string[] = [];
-  const modeLabel = snap.room.mode === 'blind' ? '盲測' : snap.room.mode === 'leaderboard' ? '排行榜' : '公開';
-  lines.push('☕ 杯測結果 — 房間 ' + snap.room.code + '（' + modeLabel + '模式）');
+  lines.push('☕ 杯測結果 — 房間 ' + snap.room.code + '（' + modeLabel(snap.room.mode) + '模式）');
   lines.push('杯測師 ' + snap.participants.length + ' 位 · 豆子 ' + snap.beans.length + ' 支');
   lines.push('────────────────');
   const rows = computeResultRows(snap, undefined)

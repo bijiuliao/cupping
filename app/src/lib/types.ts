@@ -1,4 +1,4 @@
-export type Mode = 'blind' | 'open' | 'leaderboard';
+export type Mode = 'blind' | 'open' | 'leaderboard' | 'competition';
 export type Stage = 'waiting' | 'scoring' | 'locked' | 'reveal';
 export type Role = 'host' | 'participant';
 export type ScoreMode = 'pro' | 'easy';
