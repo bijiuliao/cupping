@@ -475,7 +475,7 @@ export function createSupabaseBackend(url: string, anonKey: string): Backend {
             scoreMode: 'pro',
             vals: defaultVals(),
             defInt: 0,
-            easyScore: 80,
+            easyScore: 86,
             notes: '',
           } as Pick<ScoreEntry, 'scoreMode' | 'vals' | 'defInt' | 'easyScore' | 'notes'>);
       const vals = { ...base.vals, ...(patch.vals ?? {}) };

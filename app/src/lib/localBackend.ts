@@ -267,7 +267,7 @@ export const localBackend: Backend = {
           scoreMode: 'pro',
           vals: defaultVals(),
           defInt: 0,
-          easyScore: 80,
+          easyScore: 86,
           notes: '',
         };
       if (patch.scoreMode !== undefined) base.scoreMode = patch.scoreMode;

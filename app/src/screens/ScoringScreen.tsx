@@ -145,7 +145,7 @@ export function ScoringScreen({
   const [scoreMode, setScoreMode] = useState<ScoreMode>(serverEntry?.scoreMode ?? 'pro');
   const [vals, setVals] = useState<Record<CatKey, number>>(serverEntry?.vals ?? DEFAULT_VALS);
   const [defInt, setDefInt] = useState(serverEntry?.defInt ?? 0);
-  const [easyScore, setEasyScore] = useState(serverEntry?.easyScore ?? 80);
+  const [easyScore, setEasyScore] = useState(serverEntry?.easyScore ?? 86);
   const [notes, setNotes] = useState(serverEntry?.notes ?? '');
 
   // re-init local draft when the sample changes, and make sure a score row
@@ -157,14 +157,14 @@ export function ScoringScreen({
     setScoreMode(e?.scoreMode ?? 'pro');
     setVals(e?.vals ?? DEFAULT_VALS);
     setDefInt(e?.defInt ?? 0);
-    setEasyScore(e?.easyScore ?? 80);
+    setEasyScore(e?.easyScore ?? 86);
     setNotes(e?.notes ?? '');
     if (!e) {
       backend.upsertScore(room.id, myParticipantId, sampleIdx, {
         scoreMode: 'pro',
         vals: DEFAULT_VALS,
         defInt: 0,
-        easyScore: 80,
+        easyScore: 86,
         notes: '',
       });
     }
@@ -359,10 +359,34 @@ export function ScoringScreen({
           </div>
         </>
       ) : (
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-            <div style={{ fontSize: 14, fontWeight: 500 }}>直接輸入總分</div>
-            <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>36–100</div>
+            <div style={{ fontSize: 14, fontWeight: 500 }}>快速選擇總分</div>
+            <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>點選 80–90，再用 ± 微調 0.25</div>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
+            {Array.from({ length: 11 }, (_, i) => 80 + i).map((n) => {
+              const active = Math.trunc(easyScore) === n;
+              return (
+                <button
+                  key={n}
+                  onClick={() => changeEasy(n)}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 6,
+                    fontSize: 14,
+                    fontWeight: active ? 700 : 400,
+                    cursor: 'pointer',
+                    background: active ? 'var(--gold)' : 'var(--bg-app)',
+                    border: '1px solid ' + (active ? 'var(--gold)' : 'var(--border)'),
+                    color: active ? '#241a12' : 'var(--sub)',
+                  }}
+                >
+                  {n}
+                </button>
+              );
+            })}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, justifyContent: 'center' }}>
             <button
@@ -371,26 +395,23 @@ export function ScoringScreen({
             >
               −
             </button>
-            <input
-              value={easyScore.toFixed(2)}
-              onChange={(e) => {
-                const v = parseFloat(e.target.value);
-                if (!isNaN(v)) changeEasy(v);
-              }}
-              inputMode="decimal"
+            <div
               style={{
                 width: 130,
                 height: 64,
-                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 fontFamily: "'Cormorant Garamond',serif",
                 fontSize: 34,
                 background: 'var(--bg-app)',
                 border: '1.5px solid var(--gold)',
                 borderRadius: 6,
                 color: 'var(--gold)',
-                outline: 'none',
               }}
-            />
+            >
+              {easyScore.toFixed(2)}
+            </div>
             <button
               onClick={() => changeEasy(easyScore + 0.25)}
               style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--bg-app)', border: '1px solid var(--border)', color: 'var(--gold)', fontSize: 20, cursor: 'pointer' }}
