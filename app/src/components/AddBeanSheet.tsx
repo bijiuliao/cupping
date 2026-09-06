@@ -45,15 +45,27 @@ function BeanCatalogSheet({
   const [addOpen, setAddOpen] = useState(false);
   const [draft, setDraft] = useState<Bean>(EMPTY_DRAFT);
   const [saving, setSaving] = useState(false);
+  // Sheet stays open across multiple picks (see onPickFromDb) — track which
+  // ones were just added in this visit so each row can confirm it went in,
+  // since there's no other feedback once you're not bounced back to the sheet.
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
 
   function refresh() {
     backend.listBeanCatalog().then(setCatalog);
   }
 
   useEffect(() => {
-    if (open) refresh();
+    if (open) {
+      refresh();
+      setAddedIds(new Set());
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+
+  function pick(b: BeanCatalogEntry) {
+    onPick(b);
+    setAddedIds((s) => new Set(s).add(b.id));
+  }
 
   async function confirmAdd() {
     const name = draft.name.trim();
@@ -80,6 +92,7 @@ function BeanCatalogSheet({
         <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>豆單資料庫</div>
         <div style={{ fontSize: 11, color: 'var(--muted-3)' }}>共用 · 大家新增的豆子都會累積在這裡</div>
       </div>
+      <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>可連續點選多支豆子，選完再按下方「完成」返回</div>
 
       <Btn variant="outline" onClick={() => setAddOpen((v) => !v)} style={{ height: 38, borderRadius: 6, fontSize: 13 }}>
         {addOpen ? '取消新增' : '＋ 新增豆子到資料庫'}
@@ -175,52 +188,62 @@ function BeanCatalogSheet({
             手動新增一支，或建立房間輸入豆子後會自動存進來。
           </div>
         )}
-        {(catalog ?? []).map((b) => (
-          <div
-            key={b.id}
-            style={{
-              borderRadius: 8,
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border)',
-              padding: '13px 14px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-            }}
-          >
-            <button
-              onClick={() => onPick(b)}
+        {(catalog ?? []).map((b) => {
+          const added = addedIds.has(b.id);
+          return (
+            <div
+              key={b.id}
               style={{
-                background: 'none',
-                border: 'none',
-                textAlign: 'left',
-                cursor: 'pointer',
+                borderRadius: 8,
+                background: 'var(--bg-card)',
+                border: '1px solid ' + (added ? 'var(--gold)' : 'var(--border)'),
+                padding: '13px 14px',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                flex: 1,
-                minWidth: 0,
-                padding: 0,
+                alignItems: 'center',
+                gap: 12,
               }}
             >
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--cream)' }}>{b.name}</div>
-              <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{beanSub(b)}</div>
-            </button>
-            <button
-              onClick={() => onPick(b)}
-              style={{ background: 'none', border: 'none', color: 'var(--gold)', fontSize: 18, cursor: 'pointer', flex: 'none', padding: 0 }}
-            >
-              ＋
-            </button>
-            <button
-              onClick={() => remove(b.id)}
-              style={{ background: 'none', border: 'none', color: 'var(--muted-2)', fontSize: 14, cursor: 'pointer', flex: 'none', padding: 0 }}
-            >
-              ✕
-            </button>
-          </div>
-        ))}
+              <button
+                onClick={() => pick(b)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                  flex: 1,
+                  minWidth: 0,
+                  padding: 0,
+                }}
+              >
+                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--cream)' }}>{b.name}</div>
+                <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{beanSub(b)}</div>
+              </button>
+              <button
+                onClick={() => pick(b)}
+                style={{ background: 'none', border: 'none', color: 'var(--gold)', fontSize: added ? 13 : 18, cursor: 'pointer', flex: 'none', padding: 0 }}
+              >
+                {added ? '已加入 ✓' : '＋'}
+              </button>
+              <button
+                onClick={() => remove(b.id)}
+                style={{ background: 'none', border: 'none', color: 'var(--muted-2)', fontSize: 14, cursor: 'pointer', flex: 'none', padding: 0 }}
+              >
+                ✕
+              </button>
+            </div>
+          );
+        })}
       </div>
+
+      <button
+        onClick={onClose}
+        style={{ height: 48, borderRadius: 6, background: 'var(--gold)', color: '#241a12', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+      >
+        完成
+      </button>
     </Sheet>
   );
 }
@@ -239,6 +262,11 @@ function LoffeeSearchSheet({
   const [results, setResults] = useState<Bean[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // Sheet stays open across multiple picks (see onPickFromDb) — track which
+  // result rows were just added in this visit so each can confirm it went
+  // in, since there's no other feedback once you're not bounced back to the
+  // sheet. Keyed by index into `results`, reset whenever a new search runs.
+  const [addedIdx, setAddedIdx] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (!open) {
@@ -252,6 +280,7 @@ function LoffeeSearchSheet({
     if (!query.trim() || loading) return;
     setLoading(true);
     setError('');
+    setAddedIdx(new Set());
     try {
       setResults(await searchLoffeeBeans(query.trim()));
     } catch (e) {
@@ -262,9 +291,10 @@ function LoffeeSearchSheet({
     }
   }
 
-  function pick(bean: Bean) {
+  function pick(bean: Bean, i: number) {
     backend.upsertBeanToCatalog(bean).catch(() => {});
     onPick(bean);
+    setAddedIdx((s) => new Set(s).add(i));
   }
 
   return (
@@ -273,6 +303,7 @@ function LoffeeSearchSheet({
         <div style={{ fontFamily: "'Noto Serif TC',serif", fontSize: 20, fontWeight: 600 }}>搜尋 Loffee Labs</div>
         <div style={{ fontSize: 11, color: 'var(--muted-3)' }}>全球烘焙商豆單資料庫</div>
       </div>
+      <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>可連續點選多支豆子，選完再按下方「完成」返回</div>
       <div style={{ display: 'flex', gap: 8 }}>
         <TextInput
           value={query}
@@ -292,46 +323,56 @@ function LoffeeSearchSheet({
         {results !== null && results.length === 0 && !error && (
           <div style={{ fontSize: 12, color: 'var(--muted-2)', textAlign: 'center', padding: '20px 0' }}>沒有找到符合的豆子</div>
         )}
-        {(results ?? []).map((b, i) => (
-          <div
-            key={i}
-            style={{
-              borderRadius: 8,
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border)',
-              padding: '13px 14px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-            }}
-          >
-            <button
-              onClick={() => pick(b)}
+        {(results ?? []).map((b, i) => {
+          const added = addedIdx.has(i);
+          return (
+            <div
+              key={i}
               style={{
-                background: 'none',
-                border: 'none',
-                textAlign: 'left',
-                cursor: 'pointer',
+                borderRadius: 8,
+                background: 'var(--bg-card)',
+                border: '1px solid ' + (added ? 'var(--gold)' : 'var(--border)'),
+                padding: '13px 14px',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                flex: 1,
-                minWidth: 0,
-                padding: 0,
+                alignItems: 'center',
+                gap: 12,
               }}
             >
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--cream)' }}>{b.name || '（無名稱）'}</div>
-              <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{beanSub(b)}</div>
-            </button>
-            <button
-              onClick={() => pick(b)}
-              style={{ background: 'none', border: 'none', color: 'var(--gold)', fontSize: 18, cursor: 'pointer', flex: 'none', padding: 0 }}
-            >
-              ＋
-            </button>
-          </div>
-        ))}
+              <button
+                onClick={() => pick(b, i)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                  flex: 1,
+                  minWidth: 0,
+                  padding: 0,
+                }}
+              >
+                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--cream)' }}>{b.name || '（無名稱）'}</div>
+                <div style={{ fontSize: 11, color: 'var(--muted-2)' }}>{beanSub(b)}</div>
+              </button>
+              <button
+                onClick={() => pick(b, i)}
+                style={{ background: 'none', border: 'none', color: 'var(--gold)', fontSize: added ? 13 : 18, cursor: 'pointer', flex: 'none', padding: 0 }}
+              >
+                {added ? '已加入 ✓' : '＋'}
+              </button>
+            </div>
+          );
+        })}
       </div>
+
+      <button
+        onClick={onClose}
+        style={{ height: 48, borderRadius: 6, background: 'var(--gold)', color: '#241a12', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+      >
+        完成
+      </button>
     </Sheet>
   );
 }

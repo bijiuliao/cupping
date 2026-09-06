@@ -156,6 +156,12 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
     backend.addRoomBean(room.id, bean);
     setAddSheet(null);
   }
+  // Used for picks from a list (bean catalog / Loffee Labs search) — keeps
+  // the sheet open so multiple beans can be added back-to-back, instead of
+  // bouncing back to the Lobby after every single pick.
+  function addBeanKeepOpen(bean: Bean) {
+    backend.addRoomBean(room.id, bean);
+  }
 
   return (
     <ScreenShell padBottom={120}>
@@ -277,7 +283,7 @@ export function LobbyScreen({ snap, myClientId }: { snap: RoomSnapshot; myClient
           onOpenDb={() => setAddSheet('db')}
           onOpenScan={() => setAddSheet('scan')}
           onOpenLoffee={() => setAddSheet('loffee')}
-          onPickFromDb={addBean}
+          onPickFromDb={addBeanKeepOpen}
           onScanResult={addBean}
         />
       )}

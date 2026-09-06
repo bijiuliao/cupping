@@ -61,6 +61,12 @@ export function HostSetupScreen({
     setBeans((bs) => bs.concat([{ ...bean, localId: localUid() }]));
     setAddSheet(null);
   }
+  // Used for picks from a list (bean catalog / Loffee Labs search) — keeps
+  // the sheet open so multiple beans can be added back-to-back, instead of
+  // bouncing back to this screen after every single pick.
+  function addBeanKeepOpen(bean: Bean) {
+    setBeans((bs) => bs.concat([{ ...bean, localId: localUid() }]));
+  }
 
   // 'competition' mode skips per-bean detail entry entirely — beans are just
   // auto-numbered placeholders, regenerated whenever the count changes.
@@ -416,7 +422,7 @@ export function HostSetupScreen({
         onOpenDb={() => setAddSheet('db')}
         onOpenScan={() => setAddSheet('scan')}
         onOpenLoffee={() => setAddSheet('loffee')}
-        onPickFromDb={addBean}
+        onPickFromDb={addBeanKeepOpen}
         onScanResult={addBean}
       />
     </ScreenShell>
