@@ -147,6 +147,13 @@ export function ScoringScreen({
   const [defInt, setDefInt] = useState(serverEntry?.defInt ?? 0);
   const [easyScore, setEasyScore] = useState(serverEntry?.easyScore ?? 86);
   const [notes, setNotes] = useState(serverEntry?.notes ?? '');
+  // Local echo of the blind-mode candidate picker (guess_entries.candidates)
+  // — kept separate from the score fields above since it lives on a
+  // different backend row (GuessEntry, not ScoreEntry), but synced the same
+  // way: instant local update on click, reconciled from the server on
+  // sample switch. Without this, clicking a candidate button waited for the
+  // full write→realtime→refetch round trip before it visibly toggled.
+  const [candidates, setCandidates] = useState<number[]>(guessFor(snap, myParticipantId, sampleIdx)?.candidates ?? []);
   // Carries the most recently used scoreMode across sample switches, so a
   // sample visited for the first time starts in whichever mode (pro/easy)
   // you were just using — not hard-coded back to 'pro' every time.
@@ -165,6 +172,7 @@ export function ScoringScreen({
     setDefInt(e?.defInt ?? 0);
     setEasyScore(e?.easyScore ?? 86);
     setNotes(e?.notes ?? '');
+    setCandidates(guessFor(snap, myParticipantId, sampleIdx)?.candidates ?? []);
     if (!e) {
       backend.upsertScore(room.id, myParticipantId, sampleIdx, {
         scoreMode: initialMode,
@@ -219,11 +227,9 @@ export function ScoringScreen({
   const total = sheetTotal(vals, defInt, scoreMode, easyScore);
   const isLast = sampleIdx === sampleCount - 1;
 
-  const candidateEntry = guessFor(snap, myParticipantId, sampleIdx);
-  const candidates = candidateEntry?.candidates ?? [];
-
   function toggleCandidate(beanIdx: number) {
     const next = candidates.includes(beanIdx) ? candidates.filter((x) => x !== beanIdx) : candidates.concat([beanIdx]);
+    setCandidates(next);
     backend.upsertGuessCandidates(room.id, myParticipantId, sampleIdx, next);
   }
 
