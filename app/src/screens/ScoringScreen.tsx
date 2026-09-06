@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Btn, Chip, Segmented } from '../components/ui';
 import { getBackend } from '../lib/backend';
 import { CATS, FLAVOR_TAGS, fmtTime, scaleMin, sheetTotal } from '../lib/coe';
@@ -147,6 +147,10 @@ export function ScoringScreen({
   const [defInt, setDefInt] = useState(serverEntry?.defInt ?? 0);
   const [easyScore, setEasyScore] = useState(serverEntry?.easyScore ?? 86);
   const [notes, setNotes] = useState(serverEntry?.notes ?? '');
+  // Carries the most recently used scoreMode across sample switches, so a
+  // sample visited for the first time starts in whichever mode (pro/easy)
+  // you were just using — not hard-coded back to 'pro' every time.
+  const lastModeRef = useRef<ScoreMode>(serverEntry?.scoreMode ?? 'pro');
 
   // re-init local draft when the sample changes, and make sure a score row
   // exists as soon as a sample is visited — otherwise someone who accepts every
@@ -154,14 +158,16 @@ export function ScoringScreen({
   // excluded from averages/history instead of counting with the default score.
   useEffect(() => {
     const e = scoreFor(snap, myParticipantId, sampleIdx);
-    setScoreMode(e?.scoreMode ?? 'pro');
+    const initialMode = e?.scoreMode ?? lastModeRef.current;
+    setScoreMode(initialMode);
+    lastModeRef.current = initialMode;
     setVals(e?.vals ?? DEFAULT_VALS);
     setDefInt(e?.defInt ?? 0);
     setEasyScore(e?.easyScore ?? 86);
     setNotes(e?.notes ?? '');
     if (!e) {
       backend.upsertScore(room.id, myParticipantId, sampleIdx, {
-        scoreMode: 'pro',
+        scoreMode: initialMode,
         vals: DEFAULT_VALS,
         defInt: 0,
         easyScore: 86,
@@ -188,6 +194,7 @@ export function ScoringScreen({
   }
   function setMode(m: ScoreMode) {
     setScoreMode(m);
+    lastModeRef.current = m;
     backend.upsertScore(room.id, myParticipantId, sampleIdx, { scoreMode: m });
   }
   function changeEasy(v: number) {
