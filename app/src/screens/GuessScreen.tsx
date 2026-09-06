@@ -52,6 +52,8 @@ export function GuessScreen({ snap, myParticipantId }: { snap: RoomSnapshot; myP
 
   const allGuessed = rows.length > 0 && rows.every((r) => guessedBeanIdx(r.sampleIdx) != null);
   const guessedCount = rows.filter((r) => guessedBeanIdx(r.sampleIdx) != null).length;
+  const guessedBeanIdxSet = new Set(rows.map((r) => guessedBeanIdx(r.sampleIdx)).filter((idx): idx is number => idx != null));
+  const unusedBeans = beans.filter((b) => !guessedBeanIdxSet.has(b.idx));
 
   function pick(sampleIdx: number, beanIdx: number) {
     setOverride((cur) => {
@@ -80,12 +82,15 @@ export function GuessScreen({ snap, myParticipantId }: { snap: RoomSnapshot; myP
       </div>
 
       {!allGuessed && (
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--gold)', borderRadius: 8, padding: '10px 12px', fontSize: 12, color: 'var(--muted)' }}>
-          尚未選擇的樣本：
-          {rows
-            .filter((r) => guessedBeanIdx(r.sampleIdx) == null)
-            .map((r) => '樣本 ' + (r.sampleIdx + 1))
-            .join('、')}
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--gold)', borderRadius: 8, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: 'var(--muted)' }}>
+          <div>
+            尚未選擇的樣本：
+            {rows
+              .filter((r) => guessedBeanIdx(r.sampleIdx) == null)
+              .map((r) => '樣本 ' + (r.sampleIdx + 1))
+              .join('、')}
+          </div>
+          {unusedBeans.length > 0 && <div>尚未選用的豆子：{unusedBeans.map((b) => b.name).join('、')}</div>}
         </div>
       )}
 
@@ -106,6 +111,7 @@ export function GuessScreen({ snap, myParticipantId }: { snap: RoomSnapshot; myP
                 {beans.map((b) => {
                   const sel = myGuess === b.idx;
                   const cand = (r.guess?.candidates ?? []).includes(b.idx);
+                  const usedElsewhere = !sel && guessedBeanIdxSet.has(b.idx);
                   return (
                     <button
                       key={b.id}
@@ -116,12 +122,14 @@ export function GuessScreen({ snap, myParticipantId }: { snap: RoomSnapshot; myP
                         borderRadius: 6,
                         fontSize: 12,
                         cursor: 'pointer',
+                        opacity: usedElsewhere ? 0.55 : 1,
                         background: sel ? 'var(--gold)' : 'var(--bg-app)',
                         border: '1px solid ' + (sel || cand ? 'var(--gold)' : 'var(--border)'),
                         color: sel ? '#241a12' : cand ? 'var(--gold)' : 'var(--sub)',
                       }}
                     >
                       {b.name}
+                      {usedElsewhere ? ' ✓' : ''}
                     </button>
                   );
                 })}
